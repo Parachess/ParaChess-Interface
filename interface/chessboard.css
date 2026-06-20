@@ -1,0 +1,307 @@
+:root {
+    --board-size: clamp(300px, 50vw, 85vh);
+    --square-size: calc(var(--board-size) / 8);
+    --piece-size: calc(var(--square-size) * 0.7);
+    --shadow-size: calc(var(--piece-size) * 0.03);
+}
+
+/***************/
+/** Container **/
+/***************/
+.board-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.board-outer {
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: 20px auto;
+    grid-template-rows: auto 20px;
+    gap: 4px;
+    width: auto;
+    aspect-ratio: 1;
+    min-width: 300px;
+    min-height: 300px;
+    margin: 0;
+    overflow: hidden;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 12px;
+}
+
+.ranks-col {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    height: var(--board-size);
+    margin-top: 6px;
+    font-size: clamp(10px, calc(var(--board-size) * 0.025), 20px);
+}
+
+.files-row {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    grid-column: 2;
+    width: var(--board-size);
+    font-size: clamp(10px, calc(var(--board-size) * 0.025), 20px);
+}
+
+/****************/
+/** Chessboard **/
+/****************/
+
+.pieceContent.white-piece {
+    color: white;
+    text-shadow:
+        var(--shadow-size) 0 #000,
+        calc(var(--shadow-size) * -1) 0 #000,
+        0 var(--shadow-size) #000,
+        0 calc(var(--shadow-size) * -1) #000,
+        calc(var(--shadow-size) * 0.5) calc(var(--shadow-size) * 0.5) #000,
+        calc(var(--shadow-size) * -0.5) calc(var(--shadow-size) * -0.5) #000,
+        calc(var(--shadow-size) * 0.5) calc(var(--shadow-size) * -0.5) #000,
+        calc(var(--shadow-size) * -0.5) calc(var(--shadow-size) * 0.5) #000;
+}
+
+.pieceContent.black-piece {
+    color: black;
+}
+
+.chessboard {
+    display: grid;
+    grid-template-columns: repeat(8, var(--square-size));
+    width: var(--board-size);
+    height: var(--board-size);
+    filter: drop-shadow(2px 2px 20px rgba(0, 32.5, 47.5, 0.15));
+    border: 5px ridge rgb(0, 0, 0);
+    border-radius: 10px;
+    transition: 0.5s;
+    overflow: hidden;
+}
+
+.chessboard.rotated {
+    transform: rotate(180deg);
+}
+
+.chessboard.rotated .square {
+    transform: rotate(180deg);
+}
+
+.square {
+    position: relative;
+    width: var(--square-size);
+    min-height: var(--square-size);
+    height: var(--square-size);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--piece-size);
+    cursor: pointer;
+    user-select: none;
+    font-variant-emoji: text;
+    -webkit-font-variant-emoji: text;
+}
+
+.square:focus {
+    outline: 4px solid #f39c12;
+    outline-offset: -4px;
+    z-index: 10;
+}
+
+.square.is-dragging {
+    outline: 4px solid #2980b9;
+    outline-offset: -4px;
+    z-index: 5;
+}
+
+.square.light.is-dragging:not(.square.light.check.is-dragging),
+.square.dark.is-dragging:not(.square.dark.check.is-dragging) {
+    background: #4da9b5;
+}
+
+.square.light.check,
+.square.dark.check {
+    background: rgb(181, 77, 77);
+}
+
+.square.light.legal,
+.square.dark.legal {
+    background: #62b54d;
+}
+
+.square.light:not(.square.light.legal, .square.light.is-dragging, .square.light.check) {
+    background: #dedede;
+}
+
+.square.dark:not(.square.dark.legal, .square.dark.is-dragging, .square.dark.check) {
+    background: #a0a0a0;
+}
+
+.squareText {
+    position: absolute;
+    bottom: 2px;
+    left: 2px;
+    z-index: 2;
+    font-size: clamp(8px, calc(var(--board-size) * 0.02), 14px);
+    margin: 0;
+    opacity: 0.6;
+    display: none;
+}
+
+.show-coordinates .squareText {
+    display: block;
+}
+
+/*******************/
+/** Dragged piece **/
+/*******************/
+.blank {
+    width: var(--square-size);
+    height: var(--square-size);
+    max-height: var(--square-size);
+    position: fixed;
+    justify-content: center;
+    font-size: var(--piece-size);
+    user-select: none;
+    z-index: 2;
+    pointer-events: none;
+    font-variant-emoji: text;
+    -webkit-font-variant-emoji: text;
+}
+
+.blank.white-piece {
+    color: white;
+    text-shadow: 2px 0 #000,
+        -2px 0 #000,
+        0 2px #000,
+        0 -2px #000,
+        1px 1px #000,
+        -1px -1px #000,
+        1px -1px #000,
+        -1px 1px #000;
+}
+
+/****************/
+/*** Side div ***/
+/****************/
+#side {
+    margin: 0;
+    font-family: Inter, system-ui;
+    font-size: 1.5em;
+    font-weight: normal;
+    display: block;
+    text-align: center;
+    width: 100%;
+    border-radius: 8px;
+    padding: 10px;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+}
+
+#side.white-turn {
+    background: #ffffff;
+    color: #000000;
+    border: 2px solid #ddd;
+}
+
+#side.black-turn {
+    background: #222222;
+    color: #ffffff;
+    border: 2px solid #111;
+}
+
+/***************/
+/** Promotion **/
+/***************/
+table {
+    display: table;
+    border-collapse: collapse;
+    margin: 10px;
+}
+
+table thead tr td {
+    margin: 20px 0 10px 0;
+    text-align: center;
+    font-size: 15px;
+    font-family: Inter, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: bold;
+}
+
+table tr td button.promotion {
+    font-size: 60px;
+    margin: auto 0 auto 0;
+    width: 100px;
+    cursor: pointer;
+    border: none;
+    background-color: white;
+}
+
+table tr td:hover button.promotion {
+    animation: shake 0.25s 2;
+    scale: 125%;
+}
+
+@keyframes shake {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    25% {
+        transform: rotate(5deg);
+    }
+
+    50% {
+        transform: rotate(0eg);
+    }
+
+    75% {
+        transform: rotate(-5deg);
+    }
+
+    100% {
+        transform: rotate(0deg);
+    }
+}
+
+p#game-id {
+    text-align: center;
+}
+
+span#game-id-span {
+    border-radius: 10px;
+    padding: 2px;
+    font-family: consolas;
+    background-color: #0097db;
+    color: white;
+    margin: 2px;
+    cursor: text;
+}
+
+.captured-group {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 5px;
+}
+
+.captured-count {
+    font-size: 0.6em;
+    font-family: Inter, system-ui;
+    font-weight: bold;
+    margin-left: 2px;
+    vertical-align: super;
+}
+
+#captured-pieces {
+    min-height: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#captured-pieces:has(#captured-by-white:empty):has(#captured-by-black:empty) {
+    display: none !important;
+}

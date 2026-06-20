@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Parachess</title>
+    <link rel="stylesheet" href="/public/style.css" />
+    <link rel="stylesheet" href="/public/chessboard.css" />
+    <link rel="stylesheet" href="/public/watch/watch.css" />
+    <link rel="icon" href="/public/assets/favicon.ico" />
+    <script src="https://cdn.socket.io/4.8.3/socket.io.min.js"
+        integrity="sha384-kzavj5fiMwLKzzD1f8S7TeoVIEi7uKHvbTA3ueZkrzYq75pNQUiUi6Dy98Q3fxb0"
+        crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div id="eye-tracker"></div>
+    <div id="face-detection-popup" class="popup">
+        <div class="popup-body">
+            <h3 id="face-detection-title">
+                Détection du visage
+            </h3>
+            <div class="inline-options">
+                <button id="activate-face-detection" class="popup-option" onclick="activateFacialDetection();">✅
+                    Activer</button>
+                <button id="deactivate-face-detection" class="popup-option" onclick="deactivateFacialDetection();">❌
+                    Désactiver</button>
+            </div>
+            <p>Sensibilité : <span id="sensibility-value">XX</span> %</p>
+            <input type="range" min="0" max="100" id="sensibility-range" value="17" />
+            <p>Durée d'un clin d'œil : <span id="blink-value">XX</span> s</p>
+            <input type="range" min="0" max="1" id="blink-range" value=".25" step="0.1" />
+            <div class="inline-options">
+                <button onclick="toDefaultParameters();" class="popup-option">Retour au paramètre par défaut</button>
+                <button onclick="closeDetectionPopup();" class="popup-option">Fermer</button>
+            </div>
+        </div>
+        <div class="popupBackground"></div>
+    </div>
+    <div id="promotion-popup" class="popup">
+        <div class="popup-body">
+            <h3 id="askPiece-title">
+                Promotion du pion
+            </h3>
+            <div id="piece-form">
+                <table>
+                    <thead>
+                        <td>
+                            Tour
+                        </td>
+                        <td>
+                            Cavalier
+                        </td>
+                        <td>
+                            Fou
+                        </td>
+                        <td>
+                            Dame
+                        </td>
+                    </thead>
+                    <tr>
+                        <td><br /></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button id="rook-promotion" class="promotion" onclick="promote(event, 'r');" data-from=""
+                                data-to="">♜</button>
+                        </td>
+                        <td>
+                            <button id="knight-promotion" class="promotion" onclick="promote(event, 'n');" data-from=""
+                                data-to="">♘</button>
+                        </td>
+                        <td>
+                            <button id="bishop-promotion" class="promotion" onclick="promote(event, 'b');" data-from=""
+                                data-to="">♝</button>
+                        </td>
+                        <td>
+                            <button id="queen-promotion" class="promotion" onclick="promote(event, 'q');" data-from=""
+                                data-to="">♕</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="popupBackground"></div>
+    </div>
+    <div id="state-popup" class="popup">
+        <div class="popup-body">
+            <h3 id="state-popup-title">
+                Partie en cours
+            </h3>
+            <div class="inline-options">
+                <button class="popup-option" onclick="hideAll();">Fermer</button>
+                <button class="popup-option" onclick="goToMenu();">Retour au menu !</button>
+            </div>
+        </div>
+        <div class="popupBackground">
+        </div>
+    </div>
+    <div id="content">
+        <div id="header">
+            <a href="/games/" id="return" aria-label="Retourner au menu" >
+                <img src="/public/assets/return.svg" alt="return" />
+            </a>
+            <button id="toggle-facial-button" class="facial-active" aria-label="Activer/Désactiver le suivi du visage" onclick="displayFacialDetectionPopup(event);">
+                <img id="toggle-face-button-image" src="/public/assets/eye-open.svg" alt="🔴" />
+            </button>
+        </div>
+        <img class="background" src="/public/assets/background.svg" alt="" />
+        
+        <div class="play-container">
+        <div class="board-container">
+            <div class="board-outer">
+            <div class="ranks-col">
+
+                <span class="rank-label"></span>
+                <span class="rank-label"></span>
+                <span class="rank-label"></span>
+                <span class="rank-label"></span>
+                <span class="rank-label"></span>
+                <span class="rank-label"></span>
+                <span class="rank-label"></span>
+                <span class="rank-label"></span>
+
+            </div>
+            <div class="chessboard" id="chessboard"></div>
+
+            <div class="files-row">
+                <span class="file-label"></span>
+                <span class="file-label"></span>
+                <span class="file-label"></span>
+                <span class="file-label"></span>
+                <span class="file-label"></span>
+                <span class="file-label"></span>
+                <span class="file-label"></span>
+                <span class="file-label"></span>
+
+            </div>
+        </div>
+        </div>
+
+        <div class="side-panel">
+            <a href="/">
+                <img id="logo" src="/public/assets/parachess_logo.svg" alt="Logo Parachess" />
+            </a>
+            <p id="game-id">
+                Partie : <span id="game-id-span"></span>
+            </p>
+            <div id="captured-pieces" style="margin: 10px 0; width: 100%; display: flex; flex-direction: column; gap: 10px; align-items: flex-start; min-height: 50px;">
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <span style="font-size: 14px; font-weight: bold; width: 60px;">Blancs :</span>
+                    <div id="captured-by-white" style="display: flex; flex-wrap: wrap; gap: 2px; font-size: 20px; color: var(--text);"></div>
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <span style="font-size: 14px; font-weight: bold; width: 60px;">Noirs :</span>
+                    <div id="captured-by-black" style="display: flex; flex-wrap: wrap; gap: 2px; font-size: 20px; color: var(--text);"></div>
+                </div>
+            </div>
+
+            <div id="side" class="white-turn">
+                Trait au blanc.
+            </div>
+
+            <label for="showCoordinates" class="switch" style="align-self: center;">
+                <span class="switch-label">Coordonnées</span>
+                <input type="checkbox" class="toggle-checkbox" id="showCoordinates"
+                    aria-label="Afficher/Masquer les coordonnées">
+            </label>
+            <div id="eval-stats">
+                <h3>
+                    Chances de victoires :
+                </h3>
+                <ul id="stats-list">
+                    <li>
+                        <p>
+                            Blanc : <span id="white-stats">0</span> %
+                        </p>
+                    </li>
+                    <li>
+                        <p>
+                            Noir : <span id="black-stats">0</span> %
+                        </p>
+                    </li>
+                    <li>
+                        <p>
+                            Égalité : <span id="draw-stats">0</span> %
+                        </p>
+                    </li>
+                    <li>
+                        <p>
+                            Score : <span id="score-p">0</span> pions
+                        </p>
+                    </li>
+                </ul>
+                <p id="stats-error" class="hidden">
+                    Erreur lors du chargement de l'évaluation !
+                </p>
+            </div>
+            
+        </div>
+            </div>
+        </div>
+    </div>
+    <video id="webcam" autoplay playsinline></video>
+    <script src="/public/watch/watch.js"></script>
+    <script src="/public/chessboard.js"></script>
+    <script src="/public/eye-tracking.js" type="module"></script>
+</body>
+
+</html>

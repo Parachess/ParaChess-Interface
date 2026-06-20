@@ -1,0 +1,63 @@
+#separate {
+  width: 75%;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  height: 65vh;
+}
+
+#left,
+#right {
+  width: 50%;
+  height: 100%;
+}
+
+#left {
+    height: 100%;
+    overflow-y: scroll;
+}
+
+#right {
+    border-left: 1px solid rgba(0, 32.5, 47.5);
+    height: 100%;
+}
+
+h2 {
+    margin: 20px 0 10px 0;
+    text-align: center;
+    font-size: 20px;
+    font-family: Inter;
+    font-weight: bold;
+}
+
+#left ul#game-list {
+    font-family: Inter;
+    font-size: 15px;
+}
+
+#left ul#game-list li p a {
+    color: black;
+    text-decoration: underline;
+    margin: 0 10px 0 10px;
+}
+
+#left ul#game-list li p span.unplayable {
+    color: rgb(83, 83, 83);
+    text-decoration: line-through;
+    margin: 0 10px 0 10px;
+}
+
+#right #form {
+    text-align: center;
+}
+
+button#create.modern-button, button#auto-create.modern-button  {
+    margin: 0 auto 0 auto;
+    max-width: 250px;
+}
+
+.logo-button {
+    margin: 0 auto 0 auto;
+    font-size: 250%;
+}

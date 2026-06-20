@@ -1,0 +1,11 @@
+.custom-button {
+    margin: auto 0 auto 0;
+    width: 30px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: Inter;
+}
+
+.square.moveHighlighted {
+    background: #5e8091 !important;
+}

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Parachess | Qui sommes-nous ?</title>
+    <link rel="stylesheet" href="/public/style.css" />
+    <link rel="icon" href="/public/assets/favicon.ico" />
+</head>
+
+<body>
+    <div id="eye-tracker"></div>
+    <div id="face-detection-popup" class="popup">
+        <div class="popup-body">
+            <h3 id="face-detection-title">
+                Détection du visage
+            </h3>
+            <div class="inline-options">
+                <button id="activate-face-detection" class="popup-option" onclick="activateFacialDetection();">✅
+                    Activer</button>
+                <button id="deactivate-face-detection" class="popup-option" onclick="deactivateFacialDetection();">❌
+                    Désactiver</button>
+            </div>
+            <p>Sensibilité : <span id="sensibility-value">XX</span> %</p>
+            <input type="range" min="0" max="100" id="sensibility-range" value="17" />
+            <p>Durée d'un clin d'œil : <span id="blink-value">XX</span> s</p>
+            <input type="range" min="0" max="1" id="blink-range" value=".25" step="0.1" />
+            <div class="inline-options">
+                <button onclick="toDefaultParameters();" class="popup-option">Retour au paramètre par défaut</button>
+                <button onclick="closeDetectionPopup();" class="popup-option">Fermer</button>
+            </div>
+        </div>
+        <div class="popupBackground"></div>
+    </div>
+    <div id="content">
+        <div id="header">
+            <a href="/" id="return" aria-label="Retourner au menu"><img src="/public/assets/return.svg" alt="return" /></a>
+            <a href="/"><img id="logo" src="/public/assets/parachess_logo.svg" alt="Logo Parachess" /></a>
+            <button id="toggle-facial-button" class="facial-active" aria-label="Activer/Désactiver le suivi du visage"
+                onclick="displayFacialDetectionPopup(event);">
+                <img id="toggle-face-button-image" src="/public/assets/eye-open.svg" alt="🔴" />
+            </button>
+        </div>
+        <img class="background" src="/public/assets/background.svg" alt="" />
+        <div class="panel">
+            <h1>Présentation du projet</h1>
+            <div id="text">
+                <h3><i>Parachess</i> est un projet qui vise à rendre les échecs accessibles à tous.</h3>
+                <p>Dans le cadre d'un projet annuel en 2e année à Polytech Nantes, nous sommes une petite équipe mixte
+                    de 12 personnes toutes préoccupées par les inégalités autour des personnes à mobilités réduites. Les
+                    profils mécaniciens, mélangés aux profils plutôt développeurs ainsi qu'à l'appétence de certains
+                    pour les échecs ou le design nous ont dirigé vers la conception totale d'un jeu d'échec contrôlé par
+                    commande vocale.</p>
+                <p>Les échecs, ainsi que des millions d'autres activités non existentielles du quotidiens participent au
+                    bien-être de chacun. Malheureusement, ces activités sont encore trop marquées par des inégalités vis
+                    à vis des personnes en situations de handicap.</p>
+                <p>Aujourd'hui, près de 12% de la population est atteinte d'un handicap moteur ou d'une maladie
+                    invalidante ne permettant pas de jouer aux échecs. Ainsi, à notre échelle, nous souhaiterions
+                    montrer que des efforts peuvent être faits, relativement facilement par des grandes entreprises,
+                    pour proposer des alternatives accessibles. Une motivation qui s'inscrit également dans les
+                    Objectifs De Développement de l'ONU (ODD 3, 10, 12 et 17). Pour y parvenir le projet comprend :</p>
+                <ul>
+                    <li>La programmation de A à Z du jeu et de toutes ses subtilités</li>
+                    <li>La programmation de la commande vocale pour "jouer sans les mains"</li>
+                    <li>La fabrication de l'échiquier et des pièces en suivant une démarche éco-responsable</li>
+                    <li>La conception des commandes de déplacement des pièces</li>
+                </ul>
+                <p>L'objectif est d'avoir terminé le projet le 28 mai 2026.</p>
+                <h3>Contact</h3>
+                <p>
+                    <a href="https://www.linkedin.com/in/parachess-project-249a823b4/" target="_blank">LinkedIn</a>
+                    <br />
+                    <a href="https://www.instagram.com/parachess.nantes/" target="_blank">Instagram</a>
+                </p>
+            </div>
+        </div>
+    </div>
+    <video id="webcam" autoplay playsinline></video>
+    <script src="/public/eye-tracking.js" type="module"></script>
+</body>
+
+</html>>

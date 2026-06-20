@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>test life companion</title>
+</head>
+<body>
+    <h1 style="margin: auto" id="displayer"></h1>
+    <h1 id="actions"></h1>
+
+    <script>
+        const displayer = document.getElementById('displayer');
+        const actions = document.getElementById('actions');
+        const authorized = 'abcdefgh12345678nqrb';
+        const typed = [];
+
+        function isChessSquare(...chars) {
+            const letters = authorized.slice(0, 8);
+            if(letters.includes(chars[0]) && Number.isInteger(Number(chars[1])) && chars[1] >= 1 && chars[1] <= 8) return true;
+            return false;
+        }
+
+        function isPromotion(char) {
+            return 'nqrb'.includes(char);
+        }
+
+        window.addEventListener('keydown', e => {
+            const finalKey = e.key.toLowerCase();
+            if(finalKey === 'm') {
+                typed.splice(0, typed.length);
+                displayer.textContent = '';
+                return;
+            }
+            if(!authorized.includes(finalKey)) return;
+            displayer.textContent += finalKey;
+
+            const twoLast = [typed[typed.length - 1], finalKey];
+            const isSquare = isChessSquare(...twoLast);
+            typed.push(finalKey);
+
+            if(isSquare) actions.textContent += twoLast.join('') + ' ';
+            if(isPromotion(finalKey)) actions.textContent += finalKey + ' ';
+        });
+    </script>
+</body>
+</html>

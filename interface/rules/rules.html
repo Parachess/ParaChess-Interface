@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8" />
+    <title>
+        Parachess | Règles
+    </title>
+    <link rel="stylesheet" href="/public/style.css" />
+    <link rel="icon" href="/public/assets/favicon.ico" />
+</head>
+
+<body>
+    <div id="eye-tracker"></div>
+    <div id="face-detection-popup" class="popup">
+        <div class="popup-body">
+            <h3 id="face-detection-title">
+                Détection du visage
+            </h3>
+            <div class="inline-options">
+                <button id="activate-face-detection" class="popup-option" onclick="activateFacialDetection();">✅
+                    Activer</button>
+                <button id="deactivate-face-detection" class="popup-option" onclick="deactivateFacialDetection();">❌
+                    Désactiver</button>
+            </div>
+            <p>Sensibilité : <span id="sensibility-value">XX</span> %</p>
+            <input type="range" min="0" max="100" id="sensibility-range" value="17" />
+            <p>Durée d'un clin d'œil : <span id="blink-value">XX</span> s</p>
+            <input type="range" min="0" max="1" id="blink-range" value=".25" step="0.1" />
+            <div class="inline-options">
+                <button onclick="toDefaultParameters();" class="popup-option">Retour au paramètre par défaut</button>
+                <button onclick="closeDetectionPopup();" class="popup-option">Fermer</button>
+            </div>
+        </div>
+        <div class="popupBackground"></div>
+    </div>
+    <div id="content">
+        <div id="header">
+            <a href="/" id="return" aria-label="Retourner au menu">
+                <img src="/public/assets/return.svg" alt="return" />
+            </a>
+            <a href="/">
+                <img id="logo" src="/public/assets/parachess_logo.svg" alt="Logo Parachess" />
+            </a>
+            <button id="toggle-facial-button" class="facial-active" aria-label="Activer/Désactiver le suivi du visage"
+                onclick="displayFacialDetectionPopup(event);">
+                <img id="toggle-face-button-image" src="/public/assets/eye-open.svg" alt="🔴" />
+            </button>
+        </div>
+        <img class="background" src="/public/assets/background.svg" alt="" />
+
+
+        <div class="panel">
+
+            <h1>Règles</h1>
+
+            <h3>Comment utiliser ParaChess ?</h3>
+            <p>
+                ParaChess propose quatres modes de contrôle, utilisables séparément ou en combinaison :
+            </p>
+            <ul>
+                <li><strong>Souris / écran tactile</strong> : cliquez sur une pièce pour la sélectionner, puis cliquez
+                    sur la case de destination.</li>
+                <li><strong>Reconnaissance faciale</strong> : bougez la tête pour déplacer le curseur rouge, et clignez
+                    des yeux pour cliquer.</li>
+                <li><strong>Clavier</strong> : utilisez les touches du clavier (tabulation, flèches, entrée et espace) pour naviguer, sélectionner et déplacer les pièces.</li>
+                <li><strong>Reconnaissance vocale</strong> : utilisez des commandes vocales pour interagir avec le jeu.</li>
+
+            </ul>
+
+            <h3>Comment fonctionne la commande vocale ?</h3>
+            <p>
+                Pour déplacer une pièce, énoncez la case de départ puis la case d'arrivée en notation algébrique (lettre
+                + chiffre). Par exemple : « E2 E4 ».
+                Pour une <strong>promotion</strong>, ajoutez le nom de la pièce choisie : par exemple « A7 A8 Dame » ou
+                « A7 A8 Cavalier ».
+                Pour <strong>annuler</strong> un coup avant qu'il soit joué, dites simplement « non ».
+                Une LED rouge s'allume sur l'échiquier physique lorsque le coup n'a pas été compris ou est illégal.
+            </p>
+
+            <h3>Comment fonctionne la reconnaissance faciale ?</h3>
+            <p>
+                Le bouton œil en haut à droite permet de paramétrer la fonctionnalité ainsi que d'activer ou de désactiver ce mode.
+                Une fois activé, bougez la tête pour déplacer le curseur rouge sur l'écran.
+                Clignez des yeux pour déclencher un clic sur la case pointée.
+                Ce mode est conçu pour les joueurs qui ne peuvent pas utiliser leurs mains.
+            </p>
+
+            <h3>Comment fonctionne l'échiquier physique ?</h3>
+            <p>
+                L'échiquier physique est relié à l'interface web. Lorsqu'un coup est validé (par voix, souris ou
+                reconnaissance faciale),
+                les pièces se déplacent automatiquement grâce à un système de moteurs et d'électro-aimants sous le
+                plateau.
+                Aucune intervention manuelle n'est nécessaire pour déplacer les pièces.
+            </p>
+
+            <div class="divider"></div>
+
+            <h3>Règles des échecs</h3>
+            <p>
+                Le but du jeu est de mettre le roi adverse en <strong>échec et mat</strong> — une situation où il est
+                attaqué et ne peut pas y échapper.
+                Chaque joueur commence avec 16 pièces : un roi, une dame, deux tours, deux fous, deux cavaliers et huit
+                pions.
+                Les Blancs (pièces claires) jouent toujours en premier.
+            </p>
+
+            <strong>Placement initial</strong>
+            <p>
+                Les pièces se placent sur les deux premières rangées de chaque camp.
+                La rangée du fond accueille, de gauche à droite : tour, cavalier, fou, dame, roi, fou, cavalier, tour.
+                La dame se place toujours sur sa propre couleur (dame blanche sur case blanche, dame noire sur case
+                noire).
+                Les pions occupent la deuxième rangée entière.
+            </p>
+
+            <strong>Déplacements des pièces</strong>
+            <ul>
+                <li><strong>Le roi ♔</strong> : une case dans n'importe quelle direction. Ne peut jamais se mettre en
+                    échec.</li>
+                <li><strong>La dame ♕</strong> : autant de cases qu'elle veut en ligne droite ou en diagonale — la pièce
+                    la plus puissante.</li>
+                <li><strong>La tour ♖</strong> : autant de cases qu'elle veut horizontalement ou verticalement.</li>
+                <li><strong>Le fou ♗</strong> : autant de cases qu'il veut en diagonale. Reste toujours sur la même
+                    couleur de case.</li>
+                <li><strong>Le cavalier ♘</strong> : en « L » — deux cases dans une direction puis une
+                    perpendiculairement. Seule pièce pouvant sauter par-dessus les autres.</li>
+                <li><strong>Le pion ♙</strong> : avance d'une case (ou deux depuis sa position initiale), capture en
+                    diagonale vers l'avant.</li>
+            </ul>
+
+            <strong>Règles spéciales</strong>
+            <ul>
+                <li>
+                    <strong>Le roque</strong> : le roi se déplace de deux cases vers une tour, qui vient alors se placer
+                    de l'autre côté du roi.
+                    Impossible si le roi ou la tour a déjà bougé, si le roi est en échec, ou si une case traversée est
+                    attaquée.
+                </li>
+                <li>
+                    <strong>La prise en passant</strong> : si un pion avance de deux cases et se retrouve à côté d'un
+                    pion adverse, ce dernier peut le capturer comme s'il n'avait avancé que d'une case.
+                    Ce droit ne dure qu'un seul coup : si vous ne le jouez pas immédiatement, il est perdu.
+                </li>
+                <li>
+                    <strong>La promotion</strong> : quand un pion atteint la dernière rangée, il est obligatoirement
+                    promu en dame, tour, fou ou cavalier.
+                    On choisit presque toujours la dame, mais choisir un cavalier peut parfois être plus efficace.
+                </li>
+            </ul>
+
+            <strong>L'échec et mat</strong>
+            <p>
+                Un roi est <strong>en échec</strong> quand il est attaqué par une pièce adverse. Il faut alors
+                obligatoirement parer l'échec en :
+            </p>
+            <ul>
+                <li>déplaçant le roi vers une case non attaquée ;</li>
+                <li>capturant la pièce attaquante ;</li>
+                <li>interposant une pièce entre le roi et l'attaquant.</li>
+            </ul>
+            <p>
+                Si aucune de ces trois options n'est possible, c'est l'<strong>échec et mat</strong> : la partie est
+                terminée et le joueur qui l'a donné a gagné.
+            </p>
+
+            <strong>La nulle (match nul)</strong>
+            <p>
+                Une partie peut aussi se terminer sans vainqueur dans plusieurs cas :
+            </p>
+            <ul>
+                <li><strong>Le pat</strong> : le joueur dont c'est le tour n'est pas en échec mais n'a aucun coup légal
+                    disponible.</li>
+                <li><strong>La répétition</strong> : la même position se répète trois fois.</li>
+                <li><strong>L'accord mutuel</strong> : les deux joueurs acceptent la nulle.</li>
+                <li><strong>Les 50 coups</strong> : 50 coups consécutifs sans capture ni mouvement de pion.</li>
+            </ul>
+        </div>
+    </div>
+    <video id="webcam" autoplay playsinline></video>
+    <script src="/public/eye-tracking.js" type="module"></script>
+</body>
+
+</html>

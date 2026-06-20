@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8" />
+    <title>
+        Parachess | Crédits
+    </title>
+    <link rel="stylesheet" href="/public/style.css" />
+    <link rel="icon" href="/public/assets/favicon.ico" />
+</head>
+
+<body>
+    <div id="eye-tracker"></div>
+    <div id="face-detection-popup" class="popup">
+        <div class="popup-body">
+            <h3 id="face-detection-title">
+                Détection du visage
+            </h3>
+            <div class="inline-options">
+                <button id="activate-face-detection" class="popup-option" onclick="activateFacialDetection();">✅
+                    Activer</button>
+                <button id="deactivate-face-detection" class="popup-option" onclick="deactivateFacialDetection();">❌
+                    Désactiver</button>
+            </div>
+            <p>Sensibilité : <span id="sensibility-value">XX</span> %</p>
+            <input type="range" min="0" max="100" id="sensibility-range" value="17" />
+            <p>Durée d'un clin d'œil : <span id="blink-value">XX</span> s</p>
+            <input type="range" min="0" max="1" id="blink-range" value=".25" step="0.1" />
+            <div class="inline-options">
+                <button onclick="toDefaultParameters();" class="popup-option">Retour au paramètre par défaut</button>
+                <button onclick="closeDetectionPopup();" class="popup-option">Fermer</button>
+            </div>
+        </div>
+        <div class="popupBackground"></div>
+    </div>
+    <div id="content">
+        <div id="header">
+            <a href="/" id="return" aria-label="Retourner au menu">
+                <img src="/public/assets/return.svg" alt="return" />
+            </a>
+            <a href="/">
+                <img id="logo" src="/public/assets/parachess_logo.svg" alt="Logo Parachess" />
+            </a>
+            <button id="toggle-facial-button" class="facial-active" aria-label="Activer/Désactiver le suivi du visage"
+                onclick="displayFacialDetectionPopup(event);">
+                <img id="toggle-face-button-image" src="/public/assets/eye-open.svg" alt="🔴" />
+            </button>
+        </div>
+        <img class="background" src="/public/assets/background.svg" alt="" />
+        <div class="panel" id="text">
+            <h1>Crédits</h1>
+            <div class="credits-grid">
+                <div>
+                    <h3>Équipe</h3>
+                    <ul>
+                        <li>BACLET Nathan</li>
+                        <li>BLANCHARD Léon</li>
+                        <li>DUBOIS Tonin</li>
+                        <li>GUERIN Arthur</li>
+                        <li>JOUVIN Aurélie</li>
+                        <li>LEBOT Gustave</li>
+                        <li>LE GLANIC Guilhem</li>
+                        <li>LE SAOS Anaïs</li>
+                        <li>MILER Maïlis</li>
+                        <li>RENAUD Maélys</li>
+                        <li>THOMAS Anatole</li>
+                        <li>VELIOT Timéo</li>
+                        <li>LE CORRE Liza</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Remerciements</h3>
+                    <p>Nous souhaitons remercier les différents corps de métiers du handicap avec qui nous avons échangé
+                        : l’APF France Handicap ; Corentin LEVENES, érgothérapeute ; Mathieu GAHIER, médecin de médecine
+                        physique et de réadaptation ; Matthieu RAYNAL, chercheur en informatique spécialisé dans le
+                        handicap ; le HumanLab de Rennes ainsi que le fondateur du réseau REHABLAB Willy ALLEGRE.</p>
+                </div>
+                <div>
+                    <h3>Programmation</h3>
+                    <ul class="links-list">
+                        <li>
+                            <a href="https://alphacephei.com/vosk/" target="_blank">
+                                VOSK Offline Speech Recognition
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://stockfishchess.org/" target="_blank">
+                                Stockfish Chess Engine
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://ai.google.dev/edge/mediapipe/solutions/vision/face_landmarker?hl=fr"
+                                target="_blank">
+                                MediaPipe Face Landmarker
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <video id="webcam" autoplay playsinline></video>
+        <script src="/public/eye-tracking.js" type="module"></script>
+</body>
+
+</html>

@@ -1,0 +1,6 @@
+div#eval-stats {
+    padding: 10px;
+}
+div#eval-stats ul {
+    list-style-type: none;
+}

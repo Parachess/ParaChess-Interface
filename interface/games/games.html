@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Parachess | Jouer</title>
+        <link rel="stylesheet" href="/public/style.css" />
+        <link rel="stylesheet" href="/public/games/games.css" />
+        <link rel="icon" href="/public/assets/favicon.ico" />
+    </head>
+    <body>
+        <div id="eye-tracker"></div>
+        <div id="face-detection-popup" class="popup">
+            <div class="popup-body">
+                <h3 id="face-detection-title">
+                    Détection du visage
+                </h3>
+                <div class="inline-options">
+                    <button id="activate-face-detection" class="popup-option" onclick="activateFacialDetection();">✅
+                        Activer</button>
+                    <button id="deactivate-face-detection" class="popup-option" onclick="deactivateFacialDetection();">❌
+                        Désactiver</button>
+                </div>
+                <p>Sensibilité : <span id="sensibility-value">XX</span> %</p>
+                <input type="range" min="0" max="100" id="sensibility-range" value="17" />
+                <p>Durée d'un clin d'œil : <span id="blink-value">XX</span> s</p>
+                <input type="range" min="0" max="1" id="blink-range" value=".25" step="0.1" />
+                <div class="inline-options">
+                    <button onclick="toDefaultParameters();" class="popup-option">Retour au paramètre par défaut</button>
+                    <button onclick="closeDetectionPopup();" class="popup-option">Fermer</button>
+                </div>
+            </div>
+            <div class="popupBackground"></div>
+        </div>
+        <div id="wrong-id-popup" class="popup">
+            <div class="popup-body">
+                <h3>
+                    Nom incorrect !
+                </h3>
+                <p>
+                    Le nom est déjà réservé ou invalide !
+                </p>
+                <div class="inline-options">
+                    <button class="popup-option" onclick="closePopups();">Fermer</button>
+                </div>
+            </div>
+            <div class="popupBackground"></div>
+        </div>
+        <div id="wait-popup" class="popup">
+            <div class="popup-body">
+                <h3>
+                    Attendez un peu !
+                </h3>
+                <p>
+                    Nous sommes en train de créer votre partie, vous allez être redirigé.
+                </p>
+                <div class="inline-options">
+                    <button class="popup-option" onclick="closePopups();">Fermer</button>
+                </div>
+            </div>
+            <div class="popupBackground"></div>
+        </div>
+        <div id="content">
+            <div id="header">
+                <a href="/" id="return" aria-label="Retourner au menu">
+                    <img src="/public/assets/return.svg" alt="return" />
+                </a>
+                <a href="/">
+                    <img id="logo" src="/public/assets/parachess_logo.svg" alt="Logo Parachess" />
+                </a>
+                <button id="toggle-facial-button" class="facial-active" aria-label="Activer/Désactiver le suivi du visage" onclick="displayFacialDetectionPopup(event);">
+                    <img id="toggle-face-button-image" src="/public/assets/eye-open.svg" alt="🔴" />
+                </button>
+            </div>
+            <img class="background" src="/public/assets/background.svg" alt="" />
+            <div id="separate">
+                                <div class="panel" id="right">
+                    <h2>
+                        <div class="logo-button">♕</div>
+                        Créer une nouvelle partie
+                    </h2>
+                    <br />
+                    <br />
+                    <div id="form">
+                        <button id="auto-create" aria-label="Créer automatiquement la partie" class="modern-button" onclick="createGameAutomatically();">
+                            Créer automatiquement !
+                        </button>
+                        <br />
+                        <div class="divider"></div>
+                        <br />
+                        <label for="id">
+                            Nom de la partie :
+                        </label>
+                        <input id="id" name="id" type="text" selected placeholder="Nom de la partie" />
+                        <br />
+                        <br />
+                        <label for="fen-code">
+                            Code FEN (optionnel) :
+                        </label>
+                        <input id="fen-code" name="fen" type="text" placeholder="Position initiale" />
+                        <br />
+                        <br />
+                        <button id="create" aria-label="Créer la partie" class="modern-button" onclick="createGame();" select>Créer</button>
+                    </div>
+                </div>
+                <div class="panel" id="left">
+                    <h2>
+                        <div class="logo-button">♔</div>
+                        Rejoindre une partie existante
+                    </h2>
+                    <br />
+                    <ul id="game-list">
+            
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+        <video id="webcam" autoplay playsinline></video>
+        <script src="/public/games/games.js" type="module"></script>
+        <script src="/public/eye-tracking.js" type="module"></script>
+    </body>
+</html>
