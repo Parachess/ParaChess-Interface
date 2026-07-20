@@ -1,0 +1,90 @@
+/* --- CONFIGURATION GENERALE --- */
+:root {
+    /* 
+       Cette ligne magique (clamp) calcule la taille d'une case.
+       Elle dit : "Fais 10vw (10% de la largeur), mais ne dépasse jamais 7vh (7% de la hauteur) 
+       pour ne pas déborder en hauteur, avec un maximum absolu de 80px".
+    Length de référence automatique pour le jeu.
+    */
+    --size-case: clamp(35px, min(10vw, 7vh), 80px);
+}
+
+body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;    /* Empile les boutons au-dessus du jeu */
+    justify-content: center;   /* Centre verticalement */
+    align-items: center;       /* Centre horizontalement */
+    font-family: sans-serif;
+    gap: calc(var(--size-case) * 0.2); /* L'espace s'adapte aussi ! */
+    padding: 10px;
+    box-sizing: border-box;
+    overflow: hidden;          /* Empêche l'apparition de barres de défilement */
+}
+
+#div-button, #div-tab {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+/* --- STRUCTURE DES TABLEAUX --- */
+#grille-boutons, #grille {
+    border-collapse: separate;
+    /* L'espace entre les cases devient proportionnel à la taille des cases */
+    border-spacing: calc(var(--size-case) * 0.12); 
+    box-sizing: border-box;
+}
+
+/* --- GRILLE DE BOUTONS (En haut) --- */
+#grille-boutons td {
+    width: var(--size-case);   /* S'adapte dynamiquement */
+    height: calc(var(--size-case) * 0.5); /* Moitié moins haut qu'une case */
+    padding: 0;
+}
+
+#grille-boutons button {
+    width: 100%;
+    height: 100%;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: calc(var(--size-case) * 0.1); /* Arrondi fluide */
+    font-weight: bold;
+    cursor: pointer;
+    font-size: calc(var(--size-case) * 0.3); /* Le texte s'adapte pour ne pas déborder */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.1s, background-color 0.2s;
+}
+
+#grille-boutons button:hover {
+    background-color: #c0392b;
+    transform: scale(1.05);
+}
+
+/* --- GRILLE DE JEU (En bas) --- */
+#grille {
+    background-color: #2c3e50;
+    border-radius: calc(var(--size-case) * 0.15);
+    padding: calc(var(--size-case) * 0.15);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5);
+}
+
+#grille td {
+    width: var(--size-case);  /* Devient plus petit sur petit écran, grand sur grand écran */
+    height: var(--size-case); /* Reste parfaitement carré */
+    background-color: #111;
+    border-radius: 50%;       /* Trous toujours parfaitement ronds */
+    padding: 0;
+}
+
+.blue-turn {
+    background-color: blue;
+}
+
+.red-turn {
+    background-color: red;
+}

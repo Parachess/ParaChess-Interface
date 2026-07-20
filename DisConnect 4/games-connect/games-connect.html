@@ -4,9 +4,9 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Parachess | Jouer</title>
-        <link rel="stylesheet" href="/public/style.css" />
-        <link rel="stylesheet" href="/public/games/games.css" />
-        <link rel="icon" href="/public/assets/favicon.ico" />
+        <link rel="stylesheet" href="../../interface/style.css" />
+        <link rel="stylesheet" href="games.css" />
+        <link rel="icon" href="../../interface/assets/favicon.ico" />
     </head>
     <script>
         const displayer = document.getElementById('displayer');
@@ -97,41 +97,31 @@
         <div id="content">
             <div id="header">
                 <a href="/" id="return" aria-label="Retourner au menu">
-                    <img src="/public/assets/return.svg" alt="return" />
+                    <img src="../../interface/assets/return.svg" alt="return" />
                 </a>
                 <a href="/">
-                    <img id="logo" src="/public/assets/parachess_logo.svg" alt="Logo Parachess" />
+                    <img id="logo" src="../../interface/assets/parachess_logo.svg" alt="Logo Parachess" />
                 </a>
                 <button id="toggle-facial-button" class="facial-active" aria-label="Activer/Désactiver le suivi du visage" onclick="displayFacialDetectionPopup(event);">
-                    <img id="toggle-face-button-image" src="/public/assets/eye-open.svg" alt="🔴" />
+                    <img id="toggle-face-button-image" src="../../interface/assets/eye-open.svg" alt="🔴" />
                 </button>
             </div>
-            <img class="background" src="/public/assets/background.svg" alt="" />
+            <img class="background" src="../../interface/assets/background.svg" alt="" />
             <div id="separate">
                                 <div class="panel" id="right">
                     <h2>
-                        <div class="logo-button">♕</div>
+                        <div class="logo-button">🔴</div>
                         Créer une nouvelle partie
                     </h2>
-                    <br />
-                    <br />
                     <div id="form">
                         <button id="auto-create" aria-label="Créer automatiquement la partie" class="modern-button" onclick="createGameAutomatically();">
                             Créer automatiquement !
                         </button>
-                        <br />
                         <div class="divider"></div>
-                        <br />
                         <label for="id">
                             Nom de la partie :
                         </label>
                         <input id="id" name="id" type="text" selected placeholder="Nom de la partie" />
-                        <br />
-                        <br />
-                        <label for="fen-code">
-                            Code FEN (optionnel) :
-                        </label>
-                        <input id="fen-code" name="fen" type="text" placeholder="Position initiale" />
                         <br />
                         <br />
                         <button id="create" aria-label="Créer la partie" class="modern-button" onclick="createGame();" select>Créer</button>
@@ -139,7 +129,7 @@
                 </div>
                 <div class="panel" id="left">
                     <h2>
-                        <div class="logo-button">♔</div>
+                        <div class="logo-button">🔵</div>
                         Rejoindre une partie existante
                     </h2>
                     <br />
@@ -151,7 +141,7 @@
             </div>
         </div>
         <video id="webcam" autoplay playsinline></video>
-        <script src="/public/games/games.js" type="module"></script>
-        <script src="/public/eye-tracking.js" type="module"></script>
+        <script src="games-connect.js" type="module"></script>
+        <script src="../../eye-tracking.js" type="module"></script>
     </body>
 </html>

@@ -9,7 +9,33 @@
     <link rel="stylesheet" href="/public/style.css" />
     <link rel="icon" href="/public/assets/favicon.ico" />
 </head>
+<script>
+    const keyPressed = {};
+    let i = 0;
+    window.addEventListener('keydown', e => {
+            keyPressed[e.key] = true;
 
+            if (keyPressed['Control'] && keyPressed['Alt']) {
+                if (e.key === 'c') {
+                    if (i === 0){
+                        i = 1;
+                        activateFacialDetection();
+                    }
+                    else{
+                        i = 0;
+                        deactivateFacialDetection();
+                    }
+                } 
+                else if (e.key === 'r') {
+                    window.open(window.location.origin, '_self'); // Aller au Menu
+                } 
+            }
+        });
+
+        window.addEventListener('keyup', e => {
+            delete keyPressed[e.key];
+        });      
+</script>
 <body>
     <div id="eye-tracker"></div>
     <div id="face-detection-popup" class="popup">
@@ -74,7 +100,12 @@
                     <p>Nous souhaitons remercier les différents corps de métiers du handicap avec qui nous avons échangé
                         : l’APF France Handicap ; Corentin LEVENES, érgothérapeute ; Mathieu GAHIER, médecin de médecine
                         physique et de réadaptation ; Matthieu RAYNAL, chercheur en informatique spécialisé dans le
-                        handicap ; le HumanLab de Rennes ainsi que le fondateur du réseau REHABLAB Willy ALLEGRE.</p>
+                        handicap ainsi que le fondateur du réseau REHABLAB Willy ALLEGRE.</p>
+                    <p>Nous voulions également remercier l'association My Human Kit pour la mise en Open-Source de notre
+                        projet sur leur WikiLab et en particulier Nicolas POUSSET,
+                        Yohann VERRON et Christian Fromentin pour leur accompagnement durant notre projet
+                        
+                    </p>
                 </div>
                 <div>
                     <h3>Programmation</h3>

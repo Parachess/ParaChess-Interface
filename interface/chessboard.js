@@ -188,6 +188,8 @@ document.addEventListener('keydown', e => {
     }
 });
 
+
+
 let announceTimeout = null;
 let announceBuffer = [];
 
@@ -368,6 +370,7 @@ window.addEventListener('keydown', e => {
         setChessBoard();
     }
 });
+
 
 function promote(e, piece) {
     const index = e.currentTarget.dataset.white === "true" ? piece.toUpperCase() : piece.toLowerCase();
@@ -678,3 +681,50 @@ const search = new URLSearchParams(window.location.search);
 if (search.has('g') && document.getElementById('game-id-span')) {
     document.getElementById('game-id-span').textContent = search.get('g');
 }
+
+
+const keyPressed = {};
+let isFacialDetectionActivate = 0;
+window.addEventListener('keydown', e => {
+    keyPressed[e.key] = true;
+    if (keyPressed['Control'] && keyPressed['Alt']) {
+        if (e.key === 'm'){
+            toggleVocalMode(); // Activer Micro
+        }
+        else if ( e.key === 'c'){ 
+            if (isFacialDetectionActivate === 0){
+                isFacialDetectionActivate = 1;
+                activateFacialDetection(); // Activer Détection faciale
+            }
+            else{
+                isFacialDetectionActivate = 0;
+                deactivateFacialDetection(); // Désactiver Détection faciale
+            }
+        }
+        else if (e.key === 'r'){
+            window.open(window.location.origin, '_self'); // Pour retourner au menu
+        }
+        else if (e.key === 'i'){
+        resetGame(); // Pour recommencer la partie
+        }
+        else if (e.key === 'j'){
+        undo(); // Pour annuler le coup
+        }
+        else if ( e.key === 'u'){
+        socket?.emit("resign"); // Pour abandonner la partie
+        }
+        else if (e.key == 'b'){
+            const caseCoteBlanc = document.querySelector(`.square[data-pos="e2"]`);
+            caseCoteBlanc.focus();
+        }
+        else if (e.key == 'n'){
+            const caseCoteNoir = document.querySelector(`.square[data-pos="e7"]`);
+            caseCoteNoir.focus();
+        }
+    }
+})
+
+
+window.addEventListener('keyup', (event) => {
+    delete keyPressed[event.key];
+});

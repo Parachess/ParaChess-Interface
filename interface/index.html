@@ -10,7 +10,42 @@
     <link rel="stylesheet" href="/public/index.css" />
     <link rel="icon" href="/public/assets/favicon.ico" />
 </head>
+<script>
+    const keyPressed = {};
+    let i = 0
+    window.addEventListener('keydown', e => {
+            keyPressed[e.key] = true;
 
+            if (keyPressed['Control'] && keyPressed['Alt']) {
+                if (e.key === 'c') {
+                    if (i === 0){
+                        i = 1;
+                        activateFacialDetection();
+                    }
+                    else{
+                        i = 0;
+                        deactivateFacialDetection();
+                    }
+                }
+                else if (e.key === 'q') {
+                    window.open('/rules/', '_self'); // Aller dans l'onglet Règles du jeu
+                } 
+                else if (e.key === 'z') {
+                    window.open('/about-us/', '_self'); // Aller dans l'onglet Qui sommes-nous ?
+                } 
+                else if (e.key === 's') {
+                    window.open('/credits/', '_self'); // Aller dans l'onglet Crédits
+                } 
+                else if (e.key === 'a') {
+                        createGameAutomatically(); // Créer une partie automatiquement
+                }
+            }
+        });
+
+        window.addEventListener('keyup', e => {
+            delete keyPressed[e.key];
+        });
+</script>
 <body>
     <div id="eye-tracker"></div>
     <div id="face-detection-popup" class="popup">

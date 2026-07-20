@@ -9,7 +9,33 @@
     <link rel="stylesheet" href="/public/style.css" />
     <link rel="icon" href="/public/assets/favicon.ico" />
 </head>
+<script>
+    const keyPressed = {};
+    let i = 0;
+    window.addEventListener('keydown', e => {
+            keyPressed[e.key] = true;
 
+            if (keyPressed['Control'] && keyPressed['Alt']) {
+                if (e.key === 'c') {
+                    if (i === 0){
+                        i = 1;
+                        activateFacialDetection();
+                    }
+                    else{
+                        i = 0;
+                        deactivateFacialDetection();
+                    }
+                }
+                else if (e.key === 'r') {
+                    window.open(window.location.origin, '_self'); // Aller au Menu
+                } 
+            }
+        });
+
+        window.addEventListener('keyup', e => {
+            delete keyPressed[e.key];
+        });      
+</script>
 <body>
     <div id="eye-tracker"></div>
     <div id="face-detection-popup" class="popup">

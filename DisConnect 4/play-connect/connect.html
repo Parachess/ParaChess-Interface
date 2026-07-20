@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>DisConnect 4</title>
+    <link rel="stylesheet" href="style_connect_4.css" />
+    <link rel="stylesheet" href="../../interface/style.css" />
+    <link rel="stylesheet" href="../../interface/play/play.css" />
+    <link rel="stylesheet" href="../../interface/chessboard.css" />
+    <link rel="icon" href="../../interface/assets/favicon.ico" />
+</head>
+<body>
+    <div id="eye-tracker"></div>
+    <div id="face-detection-popup" class="popup">
+        <div class="popup-body">
+            <h3 id="face-detection-title">
+                Détection du visage
+            </h3>
+            <div class="inline-options">
+                <button id="activate-face-detection" class="popup-option" onclick="activateFacialDetection();">✅
+                    Activer</button>
+                <button id="deactivate-face-detection" class="popup-option" onclick="deactivateFacialDetection();">❌
+                    Désactiver</button>
+            </div>
+            <p>Sensibilité : <span id="sensibility-value">XX</span> %</p>
+            <input type="range" min="0" max="100" id="sensibility-range" value="17" />
+            <p>Durée d'un clin d'œil : <span id="blink-value">XX</span> s</p>
+            <input type="range" min="0" max="1" id="blink-range" value=".25" step="0.1" />
+            <div class="inline-options">
+                <button onclick="toDefaultParameters();" class="popup-option">Retour au paramètre par défaut</button>
+                <button onclick="closeDetectionPopup();" class="popup-option">Fermer</button>
+            </div>
+        </div>
+        <div class="popupBackground"></div>
+    </div>
+    <div id="confirmation-popup" class="popup">
+        <div class="popup-body">
+            <h3 class="confirmation-popup-title">
+                Êtes-vous sûr de vouloir abandonner ?
+            </h3>
+            <div class="inline-options">
+                <button class="popup-option" onclick="validateResign(false);">Non</button>
+                <button class="popup-option" onclick="validateResign(true);">Oui</button>
+            </div>
+        </div>
+        <div class="popupBackground">
+        </div>
+    </div>
+    <div id ='content'>
+    <img class="background" src="../../interface/assets/background.svg" alt=""/>
+    <div id="header">
+            <a href="/games/" id="return" aria-label="Retourner au menu">
+                <img src="../../interface/assets/return.svg" alt="return" />
+            </a>
+            <button id="toggle-facial-button" class="facial-active" aria-label="Activer/Désactiver le suivi du visage" onclick="displayFacialDetectionPopup(event);">
+                <img id="toggle-face-button-image" src="../../interface/assets/eye-open.svg" alt="🔴" />
+            </button>
+            <button id="toggle-vocal-button" class="vocal-active" aria-label="Activer/Désactiver la commande vocale"
+                onclick="toggleVocalMode(event);">
+                <img id="toggle-vocal-button-image" src="../../interface/assets/mic-on.svg" alt="🎙️" />
+            </button>
+        </div>
+    <div class='play-container'>
+        <div class="board-container">
+            <div id="div-button"></div>
+            <div id="div-tab"></div>
+        </div>
+        <div class="side-panel">
+            
+            <a href="/">
+                <img id="logo" src="../../interface/assets/parachess_logo.svg" alt="Logo Parachess" />
+            </a>
+            <p id="game-id">
+                Partie : <span id="game-id-span"></span>
+            </p>
+            <div id="side">
+                Trait au bleu 🔵.
+            </div>
+        <div class="button-group">
+                <button class="modern-button icon-button" onclick="resetGame();" aria-label="Recommencer la partie">
+                    <img src="../../interface/assets/reset.svg" alt="" class="button-icon" />
+                    <span>Recommencer la partie</span>
+                </button>
+                <button class="modern-button btn-danger" aria-label="Annuler le dernier coup" onclick="undo();">
+                    Annuler le coup
+                </button>
+                <button class="modern-button btn-danger" aria-label="Abandonner la partie" onclick="resign();">
+                    Abandonner la partie
+                </button>
+        </div>
+    </div>
+    </div>
+    <video id="webcam" autoplay playsinline></video>
+    <script src="connect.js"></script>
+    <script src="../../eye-tracking.js" type="module"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const focusPremierBouton = document.getElementById('btn_1');
+            if (focusPremierBouton) {
+                focusPremierBouton.focus();
+            }
+        });
+    </script>
+</body>
+
+</html>
