@@ -192,17 +192,6 @@ window.addEventListener('keydown',e =>{
 
 /* ----------- Fonctions OnClick() ------ */
 
-// function resign() {
-//     document.getElementById("confirmation-popup").classList.add("visible");
-//     setTimeout(() => document.querySelector('#confirmation-popup .popup-option').focus(), 100);
-// }
-
-// // Fonction à compléter
-// function validateResign(validation=false) {
-//     document.getElementById("confirmation-popup").classList.remove("visible");
-//     if (validation) socket?.emit("resign");
-// }
-
 function undo(){
     ligne = coordsDerniereCaseModifiee[0];
     colonne = coordsDerniereCaseModifiee[1];
