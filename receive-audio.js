@@ -28,7 +28,7 @@ const alphabetHomophones = {
 };
 
 const chiffresHomophones = {
-    "un": ["un", "hein"],
+    "un": ["un", "hein", "une"],
     "deux": ["deux", "de"],
     "trois": ["trois"],
     "quatre": ["quatre"],
@@ -38,6 +38,12 @@ const chiffresHomophones = {
     "huit": ["huit", "oui"]
 };
 
+const puissance4Homophones = {
+    "colonne" : ["colonnes", "colonne", 'cologne']
+};
+
+const vocMenu = ["menu", "retour", "quitter", "revenir", "accueil", "principal", "crédits", "qui", "sommes", "nous","règle"];
+const vocPuissance4 = ["colonne"];
 const pieces = ["tour", "cavalier", "fou", "dame", "pion", "roi"];
 const ordre = ["abandon", "réinitialiser", "non", "annuler"];
 const ignore = ["échec", "mat", "petit roque", "grand roque", "échec et mat", "roque", "petit", "grand", "pat"];
@@ -45,8 +51,9 @@ const ignore = ["échec", "mat", "petit roque", "grand roque", "échec et mat", 
 const reverseMap = {};
 Object.entries(alphabetHomophones).forEach(([letter, syns]) => syns.forEach(s => reverseMap[s] = letter));
 Object.entries(chiffresHomophones).forEach(([digit, syns]) => syns.forEach(s => reverseMap[s] = digit));
+Object.entries(puissance4Homophones).forEach(([word, syns]) => syns.forEach(s => reverseMap[s] = word));
 
-const grammar = [...pieces, ...ordre, ...ignore];
+const grammar = [...pieces, ...ordre, ...ignore, ...vocMenu, ...vocPuissance4];
 
 Object.values(alphabetHomophones).forEach(letterSyns => {
     Object.values(chiffresHomophones).forEach(digitSyns => {
@@ -58,8 +65,18 @@ Object.values(alphabetHomophones).forEach(letterSyns => {
     });
 });
 
+const chiffresPuissance4 = ["un", "deux", "trois", "quatre", "cinq", "six", "sept"];
+puissance4Homophones["colonne"].forEach(colSyn => {
+    chiffresPuissance4.forEach(chiffreKey => {
+        chiffresHomophones[chiffreKey].forEach(digitSyn => {
+            grammar.push(`${colSyn} ${digitSyn}`);
+        });
+    });
+});
+
 Object.values(alphabetHomophones).forEach(syns => grammar.push(...syns));
 Object.values(chiffresHomophones).forEach(syns => grammar.push(...syns));
+Object.values(puissance4Homophones).forEach(syns => grammar.push(...syns));
 
 console.log('[✱] Ecoute du flux audio sur le port')
 console.log("[✱] Chargement du modèle Vosk");
@@ -78,7 +95,12 @@ export function startListening(callback) {
     server.on('message', (msg, rinfo) => {
         const audioPayload = msg.slice(12);
         if (rec.acceptWaveform(audioPayload)) {
-            callback(transform(rec.result().text), rinfo.address);
+            const rawText = rec.result().text;
+            const cleanedText = transform(rawText);
+            // console.log(`[🎙️ Brut]    : "${rawText}"`);
+            // console.log(`[⚡ Nettoyé] : "${cleanedText}"`);
+            // console.log('------------------------------------');
+            callback(cleanedText, rinfo.address);
         }
     });
 
@@ -94,3 +116,7 @@ export function transform(text) {
     let cleanText = text.split(" ").map(w => reverseMap[w] || w).join(" ");
     return cleanText.replaceAll(" un", "1").replaceAll(" deux", "2").replaceAll(" trois", "3").replaceAll(" quatre", '4').replaceAll(" cinq", '5').replaceAll(" six", '6').replaceAll(" sept", "7").replaceAll(" huit", "8");
 }
+
+// startListening((text, address) => {
+//     console.log(`[🎯 Résultat final] : "${text}" (depuis ${address})`);
+// });

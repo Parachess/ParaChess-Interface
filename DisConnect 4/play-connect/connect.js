@@ -3,6 +3,9 @@
 const dictCouleurs = {'red' : 'rouge', 'blue' : 'bleu'};
 const dictCouleursEmojis = {'red' : '🔴', 'blue' : '🔵'};
 
+function creationArrayJeu(){
+    return Array(6).fill(null).map(() => Array(7).fill(null))
+}
 
 function creationGrilleBoutons(){
     /*
@@ -127,8 +130,10 @@ creationGrilleBoutons();
 creationGrilleJeu();
 
 // Création du tableau représentant la partie en cours
-let partieEnCours = Array(6).fill(null).map(() => Array(7).fill(null)); 
+let partieEnCours = creationArrayJeu();
 let couleur = 'blue';
+let coordsDerniereCaseModifiee = null;
+let derniereCaseModifiee = null;
 
 const zoneBoutons = document.getElementById('div-button');
 zoneBoutons.addEventListener('click', e => {
@@ -144,6 +149,8 @@ zoneBoutons.addEventListener('click', e => {
         const ligneListe =  ligneChoisie - 1;
         partieEnCours[ligneListe][colonneListe] = couleur[0]
         const baliseCaseLibre = getBaliseCaseLibre(colonneChoisie, ligneChoisie);
+        coordsDerniereCaseModifiee  = [ligneListe, colonneListe];
+        derniereCaseModifiee = baliseCaseLibre;
         baliseCaseLibre.style.backgroundColor = couleur;
         
         // AJOUT : Vérification de la victoire (consersation stricte de tes variables)
@@ -185,17 +192,27 @@ window.addEventListener('keydown',e =>{
 
 /* ----------- Fonctions OnClick() ------ */
 
-function resign() {
-    document.getElementById("confirmation-popup").classList.add("visible");
-    setTimeout(() => document.querySelector('#confirmation-popup .popup-option').focus(), 100);
-}
+// function resign() {
+//     document.getElementById("confirmation-popup").classList.add("visible");
+//     setTimeout(() => document.querySelector('#confirmation-popup .popup-option').focus(), 100);
+// }
 
-// Fonction à compléter
-function validateResign(validation=false) {
-    document.getElementById("confirmation-popup").classList.remove("visible");
-    if (validation) socket?.emit("resign");
-}
+// // Fonction à compléter
+// function validateResign(validation=false) {
+//     document.getElementById("confirmation-popup").classList.remove("visible");
+//     if (validation) socket?.emit("resign");
+// }
 
 function undo(){
-    
+    ligne = coordsDerniereCaseModifiee[0];
+    colonne = coordsDerniereCaseModifiee[1];
+    partieEnCours[ligne][colonne] = null;
+    derniereCaseModifiee.style.backgroundColor = "black";
+}
+
+function resetGame(){
+    const grilleJeu = document.getElementById("grille");
+    grilleJeu.remove();
+    partieEnCours = creationArrayJeu();
+    creationGrilleJeu();
 }
