@@ -12,6 +12,7 @@ import gameNamespace from './namespaces/game.js';
 const app = express();
 app.set('trust proxy', true);
 app.use('/public', express.static(path.join(process.cwd(), 'interface')));
+app.use('/disconnect4', express.static(path.join(process.cwd(), 'interface/disconnect4')));
 
 const server = http.createServer(app);
 const io = new Server(server);
@@ -36,6 +37,8 @@ app.use('/play', play());
 app.use('/watch', watch());
 app.use('/games', games());
 app.use('/about-us', (req, res) => {res.sendFile(path.join(process.cwd(), '/interface/about-us/about-us.html'));});
+app.use('/legal-notice', (req, res) => {res.sendFile(path.join(process.cwd(), '/interface/legal-notice/legal-notice.html'));});
+app.use('/cookies-policy', (req, res) => {res.sendFile(path.join(process.cwd(), '/interface/cookies-policy/cookies-policy.html'));});
 app.use('/credits', (req, res) => {res.sendFile(path.join(process.cwd(), '/interface/credits/credits.html'));});
 app.use('/rules', (req, res) => {res.sendFile(path.join(process.cwd(), '/interface/rules/rules.html'));});
 app.get('/lifecompanion', (req, res) => res.sendFile(path.join(process.cwd(), '/interface/testlifecompanion/index.html')));

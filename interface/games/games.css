@@ -52,7 +52,7 @@ h2 {
     text-align: center;
 }
 
-button#create.modern-button, button#auto-create.modern-button  {
+button#create.modern-button, button#auto-create.modern-button, #form a.modern-button {
     margin: 0 auto 0 auto;
     max-width: 250px;
 }
@@ -60,4 +60,29 @@ button#create.modern-button, button#auto-create.modern-button  {
 .logo-button {
     margin: 0 auto 0 auto;
     font-size: 250%;
+}
+#rules-button {
+  position: absolute;
+  top: 100px;
+  right: 40px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  border: 2px solid transparent;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  text-decoration: none;
+  z-index: 1000;
+}
+
+#rules-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
 }

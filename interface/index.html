@@ -1,58 +1,18 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
-    <meta charset="utf-8" />
-    <title>
-        Parachess
-    </title>
-    <link rel="stylesheet" href="/public/style.css" />
-    <link rel="stylesheet" href="/public/index.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portail des Jeux - ParaChess & DisConnect 4</title>
+    <link rel="stylesheet" href="/public/portal.css">
     <link rel="icon" href="/public/assets/favicon.ico" />
 </head>
-<script>
-    const keyPressed = {};
-    let i = 0
-    window.addEventListener('keydown', e => {
-            keyPressed[e.key] = true;
-
-            if (keyPressed['Control'] && keyPressed['Alt']) {
-                if (e.key === 'c') {
-                    if (i === 0){
-                        i = 1;
-                        activateFacialDetection();
-                    }
-                    else{
-                        i = 0;
-                        deactivateFacialDetection();
-                    }
-                }
-                else if (e.key === 'q') {
-                    window.open('/rules/', '_self'); // Aller dans l'onglet Règles du jeu
-                } 
-                else if (e.key === 'z') {
-                    window.open('/about-us/', '_self'); // Aller dans l'onglet Qui sommes-nous ?
-                } 
-                else if (e.key === 's') {
-                    window.open('/credits/', '_self'); // Aller dans l'onglet Crédits
-                } 
-                else if (e.key === 'a') {
-                        createGameAutomatically(); // Créer une partie automatiquement
-                }
-            }
-        });
-
-        window.addEventListener('keyup', e => {
-            delete keyPressed[e.key];
-        });
-</script>
 <body>
-    <div id="eye-tracker"></div>
+    <!-- Head Tracking Elements (from old index) -->
+    <div id="head-tracker"></div>
     <div id="face-detection-popup" class="popup">
         <div class="popup-body">
-            <h3 id="face-detection-title">
-                Détection du visage
-            </h3>
+            <h3 id="face-detection-title">Détection du visage</h3>
             <div class="inline-options">
                 <button id="activate-face-detection" class="popup-option" onclick="activateFacialDetection();">✅ Activer</button>
                 <button id="deactivate-face-detection" class="popup-option" onclick="deactivateFacialDetection();">❌ Désactiver</button>
@@ -61,73 +21,86 @@
             <input type="range" min="0" max="100" id="sensibility-range" value="17" />
             <p>Durée d'un clin d'œil : <span id="blink-value">XX</span> s</p>
             <input type="range" min="0" max="1" id="blink-range" value=".25" step="0.1" />
-                <div class="inline-options">
-                    <button onclick="toDefaultParameters();" class="popup-option">Retour au paramètre par défaut</button>
-                    <button onclick="closeDetectionPopup();" class="popup-option">Fermer</button>
-                </div>
+            <div class="inline-options">
+                <button onclick="toDefaultParameters();" class="popup-option">Retour au paramètre par défaut</button>
+                <button onclick="closeDetectionPopup();" class="popup-option">Fermer</button>
+            </div>
         </div>
         <div class="popupBackground"></div>
     </div>
-    <div id="content">
-        <div id="header">
-            <a href="#">
-                <img id="logo" src="/public/assets/parachess_logo.svg" alt="Logo Parachess" />
-            </a>
-            <button id="toggle-facial-button" class="facial-active" aria-label="Paramètres du suivi du visage"
-                onclick="displayFacialDetectionPopup();">
-                <img id="toggle-face-button-image" src="/public/assets/eye-open.svg" alt="🔴" />
-            </button>
-        </div>
-        <img class="background" src="/public/assets/background.svg" alt="" />
-        <div id="chess">
-            <div class="line">
-                <div class="card card-light">
-                    <a href="/games/">
-                        <p class="card-title">
-                            Aller jouer !
-                        </p>
-                        <p class="piece" aria-hidden="true">
-                            ♖
-                        </p>
-                    </a>
-                </div>
-                <div class="card card-dark">
-                    <a href="/about-us/">
-                        <p class="card-title">
-                            Qui sommes nous ?
-                        </p>
-                        <p class="piece" aria-hidden="true">
-                            ♗
-                        </p>
-                    </a>
-                </div>
-            </div>
-            <div class="line">
-                <div class="card card-dark">
-                    <a href="/rules/">
-                        <p class="card-title">
-                            Règles du jeu
-                        </p>
-                        <p class="piece" aria-hidden="true">
-                            ♔
-                        </p>
-                    </a>
-                </div>
-                <div class="card card-light">
-                    <a href="/credits/">
-                        <p class="card-title">
-                            Crédits
-                        </p>
-                        <p class="piece" aria-hidden="true">
-                            ♙
-                        </p>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <video id="webcam" autoplay playsinline></video>
-    <script src="/public/eye-tracking.js" type="module"></script>
-</body>
 
+    <!-- Toggle Facial Button -->
+    <button id="toggle-facial-button" class="facial-active" aria-label="Paramètres du suivi du visage" onclick="displayFacialDetectionPopup();">
+        <img id="toggle-face-button-image" src="/public/assets/eye-open.svg" alt="🔴" />
+    </button>
+<img class="background" src="/public/assets/background.svg" alt="" />
+    <div class="portal-header">
+        <h1>Choisissez votre Jeu</h1>
+        <p>Jouez avec vos yeux, votre voix, votre clavier, ou votre souris.</p>
+    </div>
+
+    <div class="cards-container">
+        <a href="/games/" class="game-card parachess" tabindex="0">
+            <div class="mini-board-wrapper">
+                <div class="mini-chess-board">
+                    <div>♜</div><div class="dark-cell">♞</div><div>♝</div><div class="dark-cell">♛</div>
+                    <div class="dark-cell">♟</div><div>♟</div><div class="dark-cell">♟</div><div>♟</div>
+                    <div></div><div class="dark-cell"></div><div></div><div class="dark-cell"></div>
+                    <div class="dark-cell"></div><div></div><div class="dark-cell"></div><div></div>
+                </div>
+            </div>
+            <h2 class="game-title">ParaChess</h2>
+            <p class="game-desc">Le jeu d'échecs accessible à tous.</p>
+        </a>
+
+        <a href="/disconnect4/play-connect/connect.html" class="game-card disconnect" tabindex="0">
+            <div class="mini-board-wrapper">
+                <div class="mini-connect-board">
+                    <div></div><div></div><div></div><div></div><div></div>
+                    <div></div><div></div><div class="red-chip"></div><div></div><div></div>
+                    <div></div><div class="blue-chip"></div><div class="red-chip"></div><div></div><div></div>
+                    <div></div><div class="red-chip"></div><div class="blue-chip"></div><div class="blue-chip"></div><div></div>
+                </div>
+            </div>
+            <h2 class="game-title">DisConnect 4</h2>
+        </a>
+    </div>
+
+
+    <div class="portal-footer">
+        <a href="/about-us/" class="footer-link">Qui sommes-nous ?</a>
+        <span class="footer-separator">•</span>
+        <a href="/credits/" class="footer-link">Crédits</a>
+        <span class="footer-separator">•</span>
+        <a href="/legal-notice/" class="footer-link">Mentions légales</a>
+        <span class="footer-separator">•</span>
+        <a href="/cookies-policy/" class="footer-link">Politique de cookies</a>
+    </div>
+
+    <video id="webcam" autoplay playsinline style="display:none;"></video>
+    <script src="/public/head-tracking.js" type="module"></script>
+    <script>
+        const keyPressed = {};
+        let i = 0;
+        window.addEventListener('keydown', e => {
+            keyPressed[e.key] = true;
+
+            if (keyPressed['Control'] && keyPressed['Alt']) {
+                if (e.key === 'c') {
+                    if (i === 0) {
+                        i = 1;
+                        if(window.activateFacialDetection) window.activateFacialDetection();
+                    } else {
+                        i = 0;
+                        if(window.deactivateFacialDetection) window.deactivateFacialDetection();
+                    }
+                }
+            }
+        });
+
+        window.addEventListener('keyup', e => {
+            delete keyPressed[e.key];
+        });
+    </script>
+</body>
 </html>

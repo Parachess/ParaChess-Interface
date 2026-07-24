@@ -1,0 +1,371 @@
+:root {
+    --bg-color: #0f172a;
+    --text-color: #f8fafc;
+    --card-bg-parachess: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    --card-bg-disconnect: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    --hover-glow: rgba(59, 130, 246, 0.5);
+    --focus-ring: #60a5fa;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color: var(--text-color);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow-x: hidden;
+}
+
+.background {
+    filter: contrast(50%);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    user-select: none;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.portal-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    animation: fadeInDown 0.8s ease-out;
+}
+.portal-header h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(to right, #d4a373, #e9c46a);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.portal-header p {
+    font-size: 1.2rem;
+    color: #c4b5a0;
+}
+
+.game-card.parachess {
+    background: var(--card-bg-parachess);
+    border: 1px solid #4a3b2c;
+}
+
+.game-card.parachess:hover {
+    border-color: #6b5643;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(233, 196, 106, 0.15);
+}
+
+.footer-link {
+    color: #c4b5a0;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: color 0.2s ease, transform 0.2s ease;
+    font-weight: 500;
+}
+
+.footer-link:hover,
+.footer-link:focus-visible {
+    color: #f5ede0;
+    transform: scale(1.05);
+    outline: none;
+    text-shadow: 0 0 10px rgba(233, 196, 106, 0.3);
+}
+
+.footer-separator {
+    color: #4a3b2c;
+    user-select: none;
+}
+
+.cards-container {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 1rem;
+    animation: fadeInUp 0.8s ease-out;
+}
+
+.game-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 300px;
+    height: 300px;
+    border-radius: 24px;
+    text-decoration: none;
+    color: white;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    border: 2px solid transparent;
+    cursor: pointer;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Make it accessible via head-tracking and keyboard */
+.game-card:focus {
+    outline: none;
+    border-color: var(--focus-ring);
+    box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.3), 0 20px 40px rgba(0, 0, 0, 0.4);
+    transform: translateY(-5px);
+}
+
+.game-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+
+.game-card.disconnect {
+    background: var(--card-bg-disconnect);
+}
+
+.game-card.disconnect:hover {
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px var(--hover-glow);
+}
+
+.game-icon {
+    font-size: 5rem;
+    margin-bottom: 1.5rem;
+    transition: transform 0.3s ease;
+}
+
+.game-card:hover .game-icon,
+.game-card:focus .game-icon {
+    transform: scale(1.1);
+}
+
+.game-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    z-index: 2;
+}
+
+.game-desc {
+    font-size: 1rem;
+    opacity: 0.8;
+    text-align: center;
+    padding: 0 1.5rem;
+    z-index: 2;
+}
+
+/* Mini Boards */
+.mini-board-wrapper {
+    margin-bottom: 1.5rem;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 2;
+}
+
+.game-card:hover .mini-board-wrapper,
+.game-card:focus .mini-board-wrapper {
+    transform: scale(1.1) translateY(-10px);
+}
+
+/* Chess Mini Board */
+.mini-chess-board {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    width: 100px;
+    height: 100px;
+    border: 2px solid #334155;
+    border-radius: 4px;
+    overflow: hidden;
+    background: #e2e8f0;
+}
+
+.mini-chess-board > div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+    color: #1e293b;
+}
+
+.mini-chess-board > div:nth-child(odd) {
+    background: #cbd5e1;
+}
+.mini-chess-board > div.dark-cell {
+    background: #64748b !important;
+}
+
+/* Connect 4 Mini Board */
+.mini-connect-board {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    width: 120px;
+    height: 96px;
+    background: #2563eb;
+    border-radius: 8px;
+    padding: 4px;
+    gap: 4px;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.mini-connect-board > div {
+    background: #0f172a;
+    border-radius: 50%;
+    width: 100%;
+    height: 100%;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.mini-connect-board > div.red-chip {
+    background: #ef4444;
+    box-shadow: inset 0 -2px 4px rgba(0,0,0,0.2), 0 2px 4px rgba(255,255,255,0.3);
+}
+
+.mini-connect-board > div.blue-chip {
+    background: #3b82f6;
+    box-shadow: inset 0 -2px 4px rgba(0,0,0,0.2), 0 2px 4px rgba(255,255,255,0.3);
+}
+
+/* Animations */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Re-use eye tracker dot styling */
+#head-tracker {
+    position: fixed;
+    width: 20px;
+    height: 20px;
+    background-color: rgba(255, 0, 0, 0.7);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    display: none;
+    transition: left 0.05s ease-out, top 0.05s ease-out;
+}
+
+#head-tracker.active {
+    display: block;
+}
+
+/* Minimal facial detection popup styling reused */
+.popup {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+.popup.visible {
+    display: flex;
+}
+.popup-body {
+    background: #1e293b;
+    padding: 2rem;
+    border-radius: 12px;
+    z-index: 1001;
+    color: white;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    border: 1px solid #334155;
+}
+.popupBackground {
+    position: absolute;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+}
+.popup-option {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    margin: 0.5rem 0;
+}
+.inline-options {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+/* Setup eye tracking button */
+#toggle-facial-button {
+    position: absolute;
+    top: 30px;
+    right: 40px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    border: 2px solid transparent;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+#toggle-facial-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+#toggle-facial-button img {
+    max-width: 35px;
+    max-height: 35px;
+}
+
+
+.portal-footer {
+    margin-top: 3rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    animation: fadeIn 1s ease-out 0.8s both;
+}
+
+
+
+

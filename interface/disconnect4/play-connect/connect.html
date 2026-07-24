@@ -3,12 +3,12 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Puissance 4 | Partie</title>
+    <title>DisConnect 4</title>
     <link rel="stylesheet" href="style_connect_4.css" />
-    <link rel="stylesheet" href="../../interface/style.css" />
-    <link rel="stylesheet" href="../../interface/play/play.css" />
-    <link rel="stylesheet" href="../../interface/chessboard.css" />
-    <link rel="icon" href="../../interface/assets/favicon.ico" />
+    <link rel="stylesheet" href="/public/style.css" />
+    <link rel="stylesheet" href="/public/play/play.css" />
+    <link rel="stylesheet" href="/public/chessboard.css" />
+    <link rel="icon" href="/public/assets/favicon.ico" />
 </head>
 <body>
     <div id="head-tracker"></div>
@@ -48,17 +48,17 @@
         </div>
     </div>
     <div id ='content'>
-    <img class="background" src="../../interface/assets/background.svg" alt=""/>
+    <img class="background" src="/public/assets/background.svg" alt=""/>
     <div id="header">
-            <a href="/games/" id="return" aria-label="Retourner au menu">
-                <img src="../../interface/assets/return.svg" alt="return" />
+            <a href="/" id="return" aria-label="Retourner au portail">
+                <img src="/public/assets/return.svg" alt="return" />
             </a>
             <button id="toggle-facial-button" class="facial-active" aria-label="Activer/Désactiver le suivi du visage" onclick="displayFacialDetectionPopup(event);">
-                <img id="toggle-face-button-image" src="../../interface/assets/eye-open.svg" alt="🔴" />
+                <img id="toggle-face-button-image" src="/public/assets/eye-open.svg" alt="🔴" />
             </button>
             <button id="toggle-vocal-button" class="vocal-active" aria-label="Activer/Désactiver la commande vocale"
                 onclick="toggleVocalMode(event);">
-                <img id="toggle-vocal-button-image" src="../../interface/assets/mic-on.svg" alt="🎙️" />
+                <img id="toggle-vocal-button-image" src="/public/assets/mic-on.svg" alt="🎙️" />
             </button>
         </div>
     <div class='play-container'>
@@ -69,7 +69,7 @@
         <div class="side-panel">
             
             <a href="/">
-                <img id="logo" src="../../interface/assets/parachess_logo.svg" alt="Logo Parachess" />
+                <img id="logo" src="/public/assets/parachess_logo.svg" alt="Logo Parachess" />
             </a>
             <p id="game-id">
                 Partie : <span id="game-id-span"></span>
@@ -79,7 +79,7 @@
             </div>
         <div class="button-group">
                 <button class="modern-button icon-button" onclick="resetGame();" aria-label="Recommencer la partie">
-                    <img src="../../interface/assets/reset.svg" alt="" class="button-icon" />
+                    <img src="/public/assets/reset.svg" alt="" class="button-icon" />
                     <span>Recommencer la partie</span>
                 </button>
                 <button class="modern-button btn-danger" aria-label="Annuler le dernier coup" onclick="undo();">
@@ -93,7 +93,7 @@
     </div>
     <video id="webcam" autoplay playsinline></video>
     <script src="connect.js"></script>
-    <script src="../../interface/head-tracking.js" type="module"></script>
+    <script src="/public/head-tracking.js" type="module"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const focusPremierBouton = document.getElementById('btn_1');

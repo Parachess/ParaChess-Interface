@@ -1,7 +1,7 @@
 import { FaceLandmarker, FilesetResolver } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.8";
 
 const video = document.getElementById("webcam");
-const gazeDot = document.getElementById("eye-tracker");
+const gazeDot = document.getElementById("head-tracker");
 const predictionInterval = 33; // 33 fps
 
 let faceLandmarker;
