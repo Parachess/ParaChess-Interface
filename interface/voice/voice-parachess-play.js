@@ -14,21 +14,21 @@ function handleVoiceCommand(command) {
             window.open('/credits', '_self');
             break;
         case 'aide':
-            window.open('/help', '_self');
+            window.open('/aide', '_self');
             break;
         case 'regles':
-            window.open('/rules/?g=parachess', '_self');
+            window.open('/regles/?g=parachess', '_self');
             break;
-        case 'about':
-            window.open('/about-us', '_self');
+        case 'a-propos':
+            window.open('/a-propos', '_self');
             break;
-        case 'legal':
-            window.open('/legal-notice', '_self');
+        case 'mentions-legales':
+            window.open('/mentions-legales', '_self');
             break;
         case 'parachess':
             break;
         case 'disconnect4':
-            window.open('/games/?g=disconnect4', '_self');
+            window.open('/jeux/?g=disconnect4', '_self');
             break;
         case 'coordonnees-on':
             setCoordinates(true);

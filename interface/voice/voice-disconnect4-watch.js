@@ -14,16 +14,16 @@ function handleVoiceCommand(command) {
             window.open('/credits', '_self');
             break;
         case 'aide':
-            window.open('/help', '_self');
+            window.open('aide', '_self');
             break;
         case 'regles':
-            window.open('/rules/?g=disconnect4', '_self');
+            window.open('/regles/?g=disconnect4', '_self');
             break;
-        case 'about':
-            window.open('/about-us', '_self');
+        case 'a-propos':
+            window.open('/a-propos', '_self');
             break;
-        case 'legal':
-            window.open('/legal-notice', '_self');
+        case 'mentions-legales':
+            window.open('/mentions-legales', '_self');
             break;
         case 'visage-on':
             if (typeof window.activateFacialDetection === 'function') window.activateFacialDetection();
@@ -34,7 +34,7 @@ function handleVoiceCommand(command) {
         case 'disconnect4':
             break; // déjà sur DisConnect 4
         case 'parachess':
-            window.open('/games/?g=parachess', '_self');
+            window.open('/jeux/?g=parachess', '_self');
             break;
     }
 }

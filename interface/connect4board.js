@@ -139,7 +139,7 @@ function showState(text) {
  * go to the menu of game selection
  */
 function goToMenu() {
-    window.open('/games?g=disconnect4', '_self');
+    window.open('/jeux?g=disconnect4', '_self');
 }
 
 createButtonGrid();

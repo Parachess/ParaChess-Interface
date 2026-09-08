@@ -81,7 +81,7 @@ function hideAll() {
 
 function watch() {
     const search = new URLSearchParams(window.location.search);
-    window.open('/watch/?g=' + search.get('g'), '_self');
+    window.open('/regarder/?g=' + search.get('g'), '_self');
 }
 
 function undo() {

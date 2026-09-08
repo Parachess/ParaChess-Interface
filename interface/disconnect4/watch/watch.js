@@ -51,3 +51,4 @@ function hideAll() {
 }
 
 window.addEventListener('DOMContentLoaded', () => connection());
+connection();

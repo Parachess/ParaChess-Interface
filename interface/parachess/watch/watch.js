@@ -22,16 +22,16 @@ function connection() {
         legalMoves = moves;
     });
 
-    socket?.on('eval', eval => {
-        if (!eval) return;
-        if (typeof eval?.white === "number" && typeof eval?.black === "number"
-            && typeof eval?.draw === "number" && typeof eval?.p === "number") {
+    socket?.on('eval', evaluation => {
+        if (!evaluation) return;
+        if (typeof evaluation?.white === "number" && typeof evaluation?.black === "number"
+            && typeof evaluation?.draw === "number" && typeof evaluation?.p === "number") {
             document.getElementById('stats-error').classList.add('hidden');
             document.getElementById('stats-list').classList.remove('hidden');
-            document.getElementById('white-stats').innerText = eval.white;
-            document.getElementById('black-stats').innerText = eval.black;
-            document.getElementById('draw-stats').innerText = eval.draw;
-            document.getElementById('score-p').innerText = (eval.p > 0 ? "+": "") + eval.p;
+            document.getElementById('white-stats').innerText = evaluation.white;
+            document.getElementById('black-stats').innerText = evaluation.black;
+            document.getElementById('draw-stats').innerText = evaluation.draw;
+            document.getElementById('score-p').innerText = (evaluation.p > 0 ? "+" : "") + evaluation.p;
         } else {
             document.getElementById('stats-list').classList.add('hidden');
             document.getElementById('stats-error').classList.remove('hidden');
@@ -96,3 +96,4 @@ function showCoordinates() {
 }
 
 document.getElementById('showCoordinates').onchange = showCoordinates;
+connection();
