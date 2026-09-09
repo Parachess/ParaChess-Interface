@@ -175,17 +175,17 @@ export default class Connect4 {
  * Attempt to add a player to the game
  * 
  * @param {string} player the player id
+ * @param {int} roles the number of roles that a player will have (max. 2)
  * @return {boolean} true if the player can play, false otherwise
  */
-    addPlayer(player) {
+    addPlayer(player, roles) {
         if (Connect4.SUPER_USERS.includes(player)) return true;
-        if (Object.keys(this.players).includes(player)) {
-            if (Object.keys(this.players).length === 1)
-                this.players[player] = '*';
-            return true;
-        }
-        if (!this.isPlayable()) return false
-        this.players[player] = Object.keys(this.players).length === 0 ? 'r' : 'b';
+        if (Object.keys(this.players).includes(player)) return true;
+        if (!this.isPlayable()) return false;
+        if (Object.keys(this.players).length === 0 && roles > 1)
+            this.players[player] = '*';
+        else
+            this.players[player] = Object.keys(this.players).length === 0 ? 'r' : 'b';
         return true;
     }
 

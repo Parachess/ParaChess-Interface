@@ -166,12 +166,12 @@ export default function parachessNamespace(io) {
             nsp.to(roomIdentifier).emit('legalMoves', moves);
         });
 
-        socket.on('may-play', () => {
+        socket.on('may-play', roles => {
             const object = {
                 status: "",
                 side: ""
             }
-            if (parachessGames[id].addPlayer(ip)) {
+            if (parachessGames[id].addPlayer(ip, roles)) {
                 object.status = "ALLOWED";
                 object.side = parachessGames[id].getPlayer(ip);
             } else {

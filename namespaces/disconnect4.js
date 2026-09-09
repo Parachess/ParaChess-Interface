@@ -114,12 +114,12 @@ export default function disconnect4Namespace(io) {
             nsp.to(roomIdentifier).emit('state', disconnect4Games[id].getState());
         });
 
-        socket.on('may-play', () => {
+        socket.on('may-play', roles => {
             const object = {
                 status: "",
                 side: ""
             }
-            if (disconnect4Games[id].addPlayer(ip)) {
+            if (disconnect4Games[id].addPlayer(ip, roles)) {
                 object.status = "ALLOWED";
                 object.side = disconnect4Games[id].getPlayer(ip);
             } else {

@@ -132,7 +132,7 @@
             <img class="background" src="/public/assets/background.svg" alt="" />
             
             <div id="separate">
-                                <div class="panel" id="right">
+                <div class="panel" id="right">
                     <h2>
                         <div id="logo-button-1" class="logo-button"></div>
                         Créer une nouvelle partie
@@ -140,6 +140,12 @@
                     <br />
                     <br />
                     <div id="form">
+                        <label for="playWithSomeone" class="switch" style="align-self: center;">
+                            <span class="switch-label">Jouer à <span id="number-of-computer">2</span> ordinateur<span id="computer-s">s</span></span>.
+                            <input type="checkbox" class="toggle-checkbox" id="play-with-someone" aria-label="Jouer seul ou à plusieurs." onclick="switchComputer();" checked />
+                        </label>
+                        <br />
+                        <br />
                         <button id="auto-create" aria-label="Créer automatiquement la partie" class="modern-button" onclick="createGameAutomatically();">
                             Créer automatiquement !
                         </button>

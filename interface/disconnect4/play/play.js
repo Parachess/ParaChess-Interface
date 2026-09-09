@@ -46,7 +46,7 @@ function connection() {
         }
     });
 
-    socket?.emit('may-play');
+    socket?.emit('may-play', search.has("seul") ? 2 : 1);
 }
 
 function sendMove(column) {

@@ -1,4 +1,5 @@
 const gamesList = document.getElementById('game-list');
+window.switchComputer = switchComputer; 
 let gameURLAddress = null;
 
 async function getGames() {
@@ -13,11 +14,12 @@ async function getGames() {
 async function createGame() {
     const id = document.getElementById('id').value;
     const fen = document.getElementById('fen-code').value;
+    const checked = document.getElementById('play-with-someone').checked;
     if (await isValidNewId(id)) {
         if (fen === "" || fen === null || fen === undefined) {
-            window.open('/' + gameURLAddress + '/jouer?g=' + id, '_self');
+            window.open('/' + gameURLAddress + '/jouer?g=' + id + (!checked ? "&seul=true" : ""), '_self');
         } else {
-            window.open('/' + gameURLAddress + '/jouer?g=' + id + "&fen=" + fen, '_self');
+            window.open('/' + gameURLAddress + '/jouer?g=' + id + (!checked ? "&seul=true" : "")  + "&fen=" + fen, '_self');
         }
     } else {
         document.getElementById("wrong-id-popup").classList.add('visible');
@@ -122,7 +124,19 @@ window.onload = async _ => {
 
 async function createGameAutomatically() {
     document.getElementById('wait-popup').classList.add("visible");
+    const checked = document.getElementById("play-with-someone").checked;
     const req = await fetch("/api/" + gameURLAddress + "/create-game");
     const name = (await req.json()).name;
-    window.open('/' + gameURLAddress + '/jouer?g=' + name, '_self');
+    window.open('/' + gameURLAddress + '/jouer?g=' + name + (!checked ? "&seul=true" : ""), '_self');
+}
+
+function switchComputer() {
+    const checked = document.getElementById("play-with-someone").checked;
+    if (checked) {
+        document.getElementById("number-of-computer").innerText = 2;
+        document.getElementById("computer-s").innerText = "s";
+    } else {
+        document.getElementById("number-of-computer").innerText = 1;
+        document.getElementById("computer-s").innerText = "";
+    }
 }
