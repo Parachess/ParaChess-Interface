@@ -116,7 +116,7 @@ export default function parachessNamespace(io) {
                 nsp.to(roomIdentifier).emit('legalMoves', moves);
                 nsp.to(roomIdentifier).emit('boardStates', parachessGames[id].getPositions());
                 nsp.to(roomIdentifier).emit('state', parachessGames[id].getState());
-                nsp.to(roomIdentifier).emit('move', from, to, promotion)
+                nsp.to(roomIdentifier).emit('move', from, to, promotion);
             } else {
                 socket.emit('boardStates', parachessGames[id].getPositions());
                 socket.emit('state', parachessGames[id].getState());

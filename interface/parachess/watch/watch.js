@@ -96,3 +96,4 @@ function showCoordinates() {
 }
 
 document.getElementById('showCoordinates').onchange = showCoordinates;
+connection();

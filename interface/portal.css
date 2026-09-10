@@ -45,9 +45,15 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 1.75rem;
     flex-wrap: wrap;
     text-align: left; /* le texte s'aligne à gauche à côté du logo */
+    font-size: 200px;
+    gap: 25px;
+}
+
+.portal-header-inner #logo {
+  margin: 10px auto -25px auto;
+  display: block;
 }
 
 .portal-header-text {
@@ -56,7 +62,7 @@ body {
 }
 
 .portal-header h1 {
-    font-size: 3rem;
+    font-size: 2rem;
     font-weight: 800;
     margin: 0 0 0.25rem 0;
     background: linear-gradient(to right, #d4a373, #e9c46a);
@@ -65,9 +71,10 @@ body {
 }
 
 .portal-header p {
-    font-size: 1.2rem;
+    font-size: 1rem;
     color: #c4b5a0;
-    margin: 0;
+    width: 20rem;
+    margin-top: 0.5rem;
 }
 
 .portal-header img {
@@ -96,6 +103,7 @@ body {
     font-size: 1rem;
     transition: color 0.2s ease, transform 0.2s ease;
     font-weight: 500;
+    text-align: center;
 }
 
 .footer-link:hover,
@@ -445,18 +453,22 @@ body {
     }
 
     body {
-        padding: 200px 16px 40px;
+        padding: 0px 16px 40px;
     }
 
-    .portal-header h1 {
-        font-size: 2.2rem;
+    .portal-header-inner {
+      gap: 0;
+    }
+
+    .portal-header p {
+      margin-top: 0.2rem;
     }
 }
 
 .portal-footer {
-    margin-top: 3rem;
+    margin-top: 2rem;
     display: flex;
-    gap: 1rem;
+    gap: 0.5rem;
     justify-content: center;
     align-items: center;
     z-index: 10;

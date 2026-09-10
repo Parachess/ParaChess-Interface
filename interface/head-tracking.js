@@ -4,6 +4,7 @@ const video = document.getElementById("webcam");
 const gazeDot = document.getElementById("head-tracker");
 const predictionInterval = 33; // 33 fps
 
+
 let faceLandmarker;
 let lastVideoTime = -1;
 
