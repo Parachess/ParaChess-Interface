@@ -13,7 +13,7 @@ function connection() {
     });
 
     socket?.on('side', (status, side) => displayAttemptResult(status, side));
-socket?.on('voice-command', handleVoiceCommand);
+    socket?.on('voice-command', handleVoiceCommand);
 
     socket?.on('boardStates', states => {
         positionsIndex = states.length - 1;
@@ -75,12 +75,16 @@ socket?.on('voice-command', handleVoiceCommand);
                 announcement.push("Match nul !");
             }
         }
+        if (document.getElementById("side-value").value === "*") {
+            if (state.opportunity == 'w') chessboard.classList.remove("rotated");
+            else chessboard.classList.add("rotated");
+        }
+
         if (announcement.length > 0) {
             announce(announcement.join(" "));
         }
     });
-    
-    socket?.emit('may-play');
+    socket?.emit('may-play', search.has("seul") ? 2 : 1);
     if (!search.has('fen')) return;
     socket?.emit('fen', search.get('fen'));
 }
@@ -121,15 +125,17 @@ function askFen() {
 
 function displayAttemptResult(status, side) {
     const chessboard = document.getElementById("chessboard");
+    document.getElementById("side-value").value = side;
     if (status !== "ALLOWED") {
         document.getElementById('refused-popup-text').innerText = side;
         document.getElementById('refused-popup').classList.add('visible');
         setTimeout(() => document.querySelector('#refused-popup .popup-option').focus(), 100);
     } else if (side === 'b' && !Array.from(chessboard.classList).includes("rotated")) chessboard.classList.add('rotated');
     else if (side === 'w' && Array.from(chessboard.classList).includes("rotated")) chessboard.classList.remove('rotated');
-    if (side !== '*') {
+    if (side !== '*')
         document.getElementById('undo-button').classList.add('hidden');
-    }
+    else if (side === '*')
+        document.getElementById('undo-button').classList.remove('hidden');
 }
 
 function hideAll() {
@@ -142,7 +148,7 @@ function hideAll() {
 
 function watch() {
     const search = new URLSearchParams(window.location.search);
-    window.open('/watch/?g=' + search.get('g'), '_self');
+    window.open('/regarder/?g=' + search.get('g'), '_self');
 }
 
 function undo() {

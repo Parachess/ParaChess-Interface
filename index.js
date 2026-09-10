@@ -32,7 +32,7 @@ app.use((req, res, next) => {
 const voicePool = new VoicePool(); // demarre le(s) worker(s) au lancement du serveur
  
 io.on('connection', socket => {
-    socket.on('alive', status => {
+    socket.on('alive', _ => {
         socket.emit('alive_conn', 1)
     });
  
@@ -56,12 +56,12 @@ voicePool.on('voice-command', (socketId, command) => {
 app.use('/api', api());
 app.use('/parachess', parachess());
 app.use('/disconnect4', disconnect4());
-app.use('/games', games());
-app.use('/about-us', (req, res) => {res.sendFile(path.join(process.cwd(), '/interface/about-us/about-us.html'));});
-app.use('/legal-notice', (req, res) => {res.sendFile(path.join(process.cwd(), '/interface/legal-notice/legal-notice.html'));});
+app.use('/jeux', games());
+app.use('/a-propos', (req, res) => {res.sendFile(path.join(process.cwd(), '/interface/about-us/about-us.html'));});
+app.use('/mentions-legales', (req, res) => {res.sendFile(path.join(process.cwd(), '/interface/legal-notice/legal-notice.html'));});
 app.use('/credits', (req, res) => {res.sendFile(path.join(process.cwd(), '/interface/credits/credits.html'));});
-app.use('/rules', (req, res) => {res.sendFile(path.join(process.cwd(), '/interface/rules/rules.html'));});
-app.use('/help', (req, res) => {res.sendFile(path.join(process.cwd(), '/interface/help/help.html'));});
+app.use('/regles', (req, res) => {res.sendFile(path.join(process.cwd(), '/interface/rules/rules.html'));});
+app.use('/aide', (req, res) => {res.sendFile(path.join(process.cwd(), '/interface/help/help.html'));});
 app.get('/lifecompanion', (req, res) => res.sendFile(path.join(process.cwd(), '/interface/testlifecompanion/index.html')));
 app.use(home());
 

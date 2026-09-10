@@ -4,3 +4,11 @@ div#eval-stats {
 div#eval-stats ul {
     list-style-type: none;
 }
+
+div#stats-list.hidden {
+    visibility: hidden;
+}
+
+p#stats-error.hidden {
+    visibility: hidden;
+}

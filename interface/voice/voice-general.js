@@ -9,14 +9,13 @@
     function dest() {
         return {
             credits: page === 'credits' ? null : '/credits',
-            about: page === 'about-us' ? null : '/about-us',
-            legal: page === 'legal-notice' ? null : '/legal-notice',
-            aide: page === 'help' ? null : '/help',
-            regles: (page === 'games' || page === 'rules')
-                ? (page === 'rules' ? null : (game ? `/rules/?g=${game}` : '/rules'))
-                : null,
-            parachess: (page === 'games' && game === 'parachess') ? null : '/games/?g=parachess',
-            disconnect4: (page === 'games' && game === 'disconnect4') ? null : '/games/?g=disconnect4'
+            about: page === 'a-propos' ? null : '/a-propos',
+            legal: page === 'mentions-legales' ? null : '/mentions-legales',
+            aide: page === 'help' ? null : '/aide',
+            regles: (page === 'regles') ? null :
+                ((page === "jeux" && game) ? `/regles/?g=${game}` : '/regles'),
+            parachess: (page === 'jeux' && game === 'parachess') ? null : '/jeux/?g=parachess',
+            disconnect4: (page === 'jeux' && game === 'disconnect4') ? null : '/jeux/?g=disconnect4'
         };
     }
 
@@ -42,8 +41,8 @@
             case 'quitter':
             case 'accueil': go(page === 'index' ? null : '/'); break;
             case 'credits': go(d.credits); break;
-            case 'about': go(d.about); break;
-            case 'legal': go(d.legal); break;
+            case 'a-propos': go(d.about); break;
+            case 'mentions-legales': go(d.legal); break;
             case 'aide': go(d.aide); break;
             case 'regles': go(d.regles); break;
             case 'parachess': go(d.parachess); break;

@@ -43,7 +43,7 @@ const puissance4Homophones = {
 };
 
 const vocMenu = ["menu", "retour", "quitter", "revenir", "accueil",
-    "crédits", "qui", "sommes", "nous", "règle", "règles", "aide", "mentions", "légales",
+    "crédits", "propos", "sommes", "nous", "règle", "règles", "aide", "mentions", "légales",
     "échecs", "puissance", "coordonnées", "caméra",
     "activer", "désactiver", "créer", "automatiquement", "partie"];
 const vocPuissance4 = ["colonne"];
@@ -107,9 +107,6 @@ export function startListening(callback) {
         if (rec.acceptWaveform(audioPayload)) {
             const rawText = rec.result().text;
             const cleanedText = transform(rawText);
-            // console.log(`[🎙️ Brut]    : "${rawText}"`);
-            // console.log(`[⚡ Nettoyé] : "${cleanedText}"`);
-            // console.log('------------------------------------');
             callback(cleanedText, rinfo.address);
         }
     });
@@ -130,7 +127,6 @@ export function transform(text) {
         ...ignore,
         ...vocMenu
     ]);
-
     return text
         .split(" ")
         .map(w => reverseMap[w] || w)
@@ -140,10 +136,9 @@ export function transform(text) {
 
 export function detectMenuCommand(text) {
     const words = text.split(" ");
-
     if (words.includes("crédits")) return "credits";
-    if (words.includes("mentions") || words.includes("légales")) return "legal";
-    if (words.includes("qui")) return "about";
+    if (words.includes("mention") || words.includes("légal") || words.includes("mentions") || words.includes("légales")) return "mentions-legales";
+    if (words.includes("propos") || words.includes("sommes") || words.includes("nous")) return "a-propos";
     if (words.includes("échecs") || words.includes("échec")) return "parachess";
     if (words.includes("puissance")) return "disconnect4";
     if (words.includes("caméra")) {

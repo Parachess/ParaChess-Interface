@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Parachess</title>
     <link rel="stylesheet" href="/public/style.css" />
-    <link rel="stylesheet" href="/parachess/play/play.css" />
+    <link rel="stylesheet" href="/parachess/jouer/play.css" />
     <link rel="stylesheet" href="/public/chessboard.css" />
     <link rel="icon" href="/public/assets/favicon.ico" />
     <script src="https://cdn.socket.io/4.8.3/socket.io.min.js"
@@ -143,9 +143,10 @@
         <div class="popupBackground">
         </div>
     </div>
+    <input type="hidden" id="side-value" value="w" />
     <div id="content">
         <div id="header">
-            <a href="/games/?g=parachess" id="return" aria-label="Retourner au menu">
+            <a href="/jeux/?g=parachess" id="return" aria-label="Retourner au menu">
                 <img src="/public/assets/return.svg" alt="return" />
             </a>
             <button id="toggle-facial-button" class="facial-active" aria-label="Activer/Désactiver le suivi du visage" onclick="displayFacialDetectionPopup(event);">
@@ -240,7 +241,7 @@
         </div>
     </div>
     <video id="webcam" autoplay playsinline></video>
-    <script src="/parachess/play/play.js"></script>
+    <script src="/parachess/jouer/play.js"></script>
     <script src="/public/voice/voice-parachess-play.js"></script>
     <script src="/public/chessboard.js"></script>
     <script src="/public/head-tracking.js" type="module"></script>
