@@ -2,8 +2,7 @@ import { FaceLandmarker, FilesetResolver } from "https://cdn.jsdelivr.net/npm/@m
 
 const video = document.getElementById("webcam");
 const gazeDot = document.getElementById("head-tracker");
-const predictionInterval = 33; // 33 fps
-
+const predictionInterval = 150;
 
 let faceLandmarker;
 let lastVideoTime = -1;
@@ -42,10 +41,8 @@ function toggleFacialDetection(checkbox) {
 
 async function init() {
     try {
-        if (detectMobile())
-            throw new Error("Mobile phone incompatible with face tracking.");
-
         if (!setupDone) {
+            gazeDot.classList.add("loading");
             const vision = await FilesetResolver.forVisionTasks(
                 "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm"
             );
@@ -55,11 +52,13 @@ async function init() {
                     delegate: "GPU"
                 },
                 outputFacialTransformationMatrixes: true,
-                runningMode: "VIDEO"
+                runningMode: "VIDEO",
+                numFaces: 1
             });
             setupWebcam();
         }
     } catch (err) {
+        gazeDot.classList.remove("loading");
         document.getElementById("toggle-facial-button").classList.remove("facial-active");
         document.getElementById("toggle-facial-button").classList.add("hidden");
         updateToggleSwitch(false);
@@ -67,7 +66,7 @@ async function init() {
 }
 
 function setupWebcam() {
-    navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 } })
+    navigator.mediaDevices.getUserMedia({ video: { width: 96, height: 72 } })
         .then((stream) => {
             video.srcObject = stream;
             video.addEventListener("loadeddata", () => {
@@ -80,7 +79,6 @@ function setupWebcam() {
             document.getElementById("toggle-facial-button").classList.add("hidden");
             updateToggleSwitch(false);
         });
-
 }
 
 function restartPrediction() {
@@ -95,20 +93,30 @@ async function startPrediction() {
     if (predictionRunning) return;
     updateToggleSwitch(true);
     predictionRunning = true;
+
+    const cameraPermission = await navigator.permissions.query({ name: "camera" });
+    if (cameraPermission.state !== "granted") {
+        cameraGuess = false;
+        document.getElementById("toggle-facial-button").classList.remove("facial-active");
+        document.getElementById("toggle-facial-button").classList.add("hidden");
+        gazeDot.classList.remove("active");
+        updateToggleSwitch(false);
+        return;
+    }
+    cameraPermission.onchange = () => {
+        if (cameraPermission.state !== "granted") {
+            predictionRunning = false;
+            cameraGuess = false;
+            gazeDot.classList.remove("active");
+            updateToggleSwitch(false);
+        }
+    };
+
     try {
+        gazeDot.classList.add("active");
         while (predictionRunning && cameraGuess) {
-            const cameraPermission = await navigator.permissions.query({ name: "camera" });
-            if (cameraPermission.state !== "granted") {
-                cameraGuess = false;
-                document.getElementById("toggle-facial-button").classList.remove("facial-active");
-                document.getElementById("toggle-facial-button").classList.add("hidden");
-                gazeDot.classList.remove("active");
-                updateToggleSwitch(false);
-                return;
-            }
-            gazeDot.classList.add("active");
             await predictWebcam();
-            await new Promise(resolve => setTimeout(resolve, 1));
+            await new Promise(resolve => setTimeout(resolve, 33));
         }
     } catch (e) {
         gazeDot.classList.remove("active");
@@ -148,60 +156,65 @@ function deactivateFacialDetection() {
     closeDetectionPopup();
 }
 
+let firstDetection = false;
+let detectionCount = 0;
+const warmupFrames = 2;
+
 async function predictWebcam() {
-    if (!predictionRunning || !cameraGuess || isProcessing) return;
+    if (!faceLandmarker || !predictionRunning || !cameraGuess || isProcessing) return;
+
+    const nowInMs = performance.now();
+    if (nowInMs - lastVideoTime < predictionInterval) return;
 
     isProcessing = true;
+    lastVideoTime = nowInMs;
 
     try {
         gazeDot.classList.add("active");
-        let nowInMs = performance.now();
+        const results = faceLandmarker.detectForVideo(video, nowInMs);
 
-        if (nowInMs - lastVideoTime >= predictionInterval) {
-            lastVideoTime = video.currentTime;
-            const results = faceLandmarker.detectForVideo(video, nowInMs);
+        if (results.faceLandmarks && results.faceLandmarks[0]) {
+            const lm = results.faceLandmarks[0];
+            
+            const verticalDist = Math.hypot(lm[159].x - lm[145].x, lm[159].y - lm[145].y);
+            const horizontalDist = Math.hypot(lm[33].x - lm[133].x, lm[33].y - lm[133].y);
+            const ear = verticalDist / horizontalDist;
 
-            if (results.faceLandmarks && results.faceLandmarks.length > 0) {
-                const landmarks = results.faceLandmarks[0];
-                const pUpper = landmarks[159];
-                const pLower = landmarks[145];
-                const pLeft = landmarks[33];
-                const pRight = landmarks[133];
-
-                const verticalDist = Math.hypot(pUpper.x - pLower.x, pUpper.y - pLower.y);
-                const horizontalDist = Math.hypot(pLeft.x - pRight.x, pLeft.y - pRight.y);
-                const ear = verticalDist / horizontalDist;
-
-                if (ear < blinkThreshold) {
-                    if (!hasBlinked) {
-                        triggerOcularClick();
-                        hasBlinked = true;
-                    }
-                } else {
-                    hasBlinked = false;
+            if (ear < blinkThreshold) {
+                if (!hasBlinked) {
+                    triggerOcularClick();
+                    hasBlinked = true;
                 }
+            } else {
+                hasBlinked = false;
+            }
+        }
+
+        if (results.facialTransformationMatrixes && results.facialTransformationMatrixes[0]) {
+            detectionCount++;
+            if (detectionCount <= warmupFrames) return;
+
+            if (!firstDetection) {
+                gazeDot.classList.remove("loading");
+                firstDetection = true;
             }
 
-            if (results.facialTransformationMatrixes && results.facialTransformationMatrixes.length > 0) {
-                const matrix = results.facialTransformationMatrixes[0].data;
-                let rotationX = matrix[2];
-                let rotationY = matrix[6];
+            const matrix = results.facialTransformationMatrixes[0].data;
+            
+            const targetX = window.innerWidth / 2 + (matrix[2] * window.innerWidth * 2.0);
+            const targetY = window.innerHeight / 2 + (matrix[6] * window.innerHeight * 2.0);
 
-                let targetX = window.innerWidth / 2 + (rotationX * window.innerWidth * 2.0);
-                let targetY = window.innerHeight / 2 + (rotationY * window.innerHeight * 2.0);
+            positionHistoryX.push(targetX);
+            positionHistoryY.push(targetY);
 
-                positionHistoryX.push(targetX);
-                positionHistoryY.push(targetY);
+            if (positionHistoryX.length > smoothingFactor + 1) positionHistoryX.shift();
+            if (positionHistoryY.length > smoothingFactor + 1) positionHistoryY.shift();
 
-                if (positionHistoryX.length - 1 > smoothingFactor) positionHistoryX.shift(); // If smoothing factor is set to 0
-                if (positionHistoryY.length - 1 > smoothingFactor) positionHistoryY.shift(); // we keep only a single prediction
+            const avgX = positionHistoryX.reduce((a, b) => a + b, 0) / positionHistoryX.length;
+            const avgY = positionHistoryY.reduce((a, b) => a + b, 0) / positionHistoryY.length;
 
-                let avgX = positionHistoryX.reduce((a, b) => a + b, 0) / positionHistoryX.length;
-                let avgY = positionHistoryY.reduce((a, b) => a + b, 0) / positionHistoryY.length;
-
-                gazeDot.style.left = `${Math.max(0, Math.min(avgX, window.innerWidth))}px`;
-                gazeDot.style.top = `${Math.max(0, Math.min(avgY, window.innerHeight))}px`;
-            }
+            gazeDot.style.left = `${Math.max(0, Math.min(avgX, window.innerWidth))}px`;
+            gazeDot.style.top = `${Math.max(0, Math.min(avgY, window.innerHeight))}px`;
         }
     } catch (e) {
         console.error(e);
@@ -245,22 +258,6 @@ function triggerOcularClick() {
             targetElement.click();
         }
     }
-}
-
-function detectMobile() {
-    const toMatch = [
-        /Android/i,
-        /webOS/i,
-        /iPhone/i,
-        /iPad/i,
-        /iPod/i,
-        /BlackBerry/i,
-        /Windows Phone/i
-    ];
-
-    return toMatch.some((toMatchItem) => {
-        return navigator.userAgent.match(toMatchItem);
-    });
 }
 
 function displayFacialDetectionPopup() {
