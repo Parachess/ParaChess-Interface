@@ -51,6 +51,7 @@ body {
   display: flex;
   position: absolute;
   z-index: 9999;
+  color: black;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -222,12 +223,19 @@ body {
 .popup .popup-body input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
-  width: 100%;
-  background: transparent;
+  width: 80%;
+  background-color: #0097db54;  
   box-sizing: border-box;
+  border-radius: 10px;
   cursor: pointer;
   padding: 0;
-  margin: 0;
+  margin: 10px auto;
+}
+
+.popup .popup-body .inline-options button.popup-option.selected {
+  background-color: #0097db;
+  color: white;
+  border-color: #0097db;
 }
 
 .popup .popup-body input[type="range"]::-webkit-slider-runnable-track,

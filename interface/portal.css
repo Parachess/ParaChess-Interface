@@ -307,17 +307,6 @@ body {
 .popup.visible {
     display: flex;
 }
-.popup-body {
-    background: #1e293b;
-    padding: 2rem;
-    border-radius: 12px;
-    z-index: 1001;
-    color: white;
-    max-width: 400px;
-    width: 90%;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-    border: 1px solid #334155;
-}
 .popupBackground {
     position: absolute;
     top: 0; left: 0; width: 100vw; height: 100vh;

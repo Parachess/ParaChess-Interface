@@ -129,11 +129,18 @@ async function startPrediction() {
 function activateFacialDetection() {
     const image = document.getElementById('toggle-face-button-image');
     const button = document.getElementById("toggle-facial-button");
-    if (Array.from(button.classList).includes("facial-active"))
+    const btnAct = document.getElementById('activate-face-detection');
+    const btnDeact = document.getElementById('deactivate-face-detection');
+    if (btnAct) btnAct.classList.add('selected');
+    if (btnDeact) btnDeact.classList.remove('selected');
+    
+    if (button && Array.from(button.classList).includes("facial-active"))
         return;
-    button.classList.add("facial-active");
-    image.src = "/public/assets/eye-open.svg";
-    image.alt = "🔴";
+    if (button) button.classList.add("facial-active");
+    if (image) {
+        image.src = "/public/assets/eye-open.svg";
+        image.alt = "🔴";
+    }
     cameraGuess = true;
     localStorage.setItem("facialDetectionEnabled", "true");
     updateToggleSwitch(true);
@@ -143,17 +150,23 @@ function activateFacialDetection() {
 function deactivateFacialDetection() {
     const image = document.getElementById('toggle-face-button-image');
     const button = document.getElementById("toggle-facial-button");
-    if (Array.from(button.classList).includes("facial-active")) {
+    const btnAct = document.getElementById('activate-face-detection');
+    const btnDeact = document.getElementById('deactivate-face-detection');
+    if (btnAct) btnAct.classList.remove('selected');
+    if (btnDeact) btnDeact.classList.add('selected');
+    
+    if (button && Array.from(button.classList).includes("facial-active")) {
         button.classList.remove("facial-active");
-        image.src = "/public/assets/eye-closed.svg";
-        image.alt = "⚫";
+        if (image) {
+            image.src = "/public/assets/eye-closed.svg";
+            image.alt = "⚫";
+        }
         cameraGuess = false;
         localStorage.setItem("facialDetectionEnabled", "false");
         predictionRunning = false;
         updateToggleSwitch(false);
-        gazeDot.classList.remove("active");
+        if (typeof gazeDot !== 'undefined' && gazeDot) gazeDot.classList.remove("active");
     }
-    closeDetectionPopup();
 }
 
 let firstDetection = false;
@@ -329,7 +342,12 @@ window.addEventListener("DOMContentLoaded", () => {
     window.toggleFacialDetection = toggleFacialDetection;
     
     const savedCameraGuess = localStorage.getItem("facialDetectionEnabled");
+    const btnAct = document.getElementById('activate-face-detection');
+    const btnDeact = document.getElementById('deactivate-face-detection');
+
     if (savedCameraGuess === "false") {
+        if (btnAct) btnAct.classList.remove('selected');
+        if (btnDeact) btnDeact.classList.add('selected');
         const button = document.getElementById("toggle-facial-button");
         const image = document.getElementById('toggle-face-button-image');
         if (button && image) {
@@ -339,6 +357,8 @@ window.addEventListener("DOMContentLoaded", () => {
         }
         cameraGuess = false;
     } else {
+        if (btnAct) btnAct.classList.add('selected');
+        if (btnDeact) btnDeact.classList.remove('selected');
         init();
     }
 });
