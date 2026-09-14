@@ -57,6 +57,13 @@ button#create.modern-button, button#auto-create.modern-button, #form a.modern-bu
     max-width: 250px;
 }
 
+.modern-button img{
+
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
 .logo-button {
     margin: 0 auto 0 auto;
     font-size: 250%;
