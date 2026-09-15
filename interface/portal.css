@@ -54,6 +54,7 @@ body {
 .portal-header-inner #logo {
   margin: 10px auto -25px auto;
   display: block;
+  width: 250px;
 }
 
 .portal-header-text {
@@ -104,11 +105,13 @@ body {
     transition: color 0.2s ease, transform 0.2s ease;
     font-weight: 500;
     text-align: center;
+    gap: 0.3rem;
+    display: inline-flex;
+    align-items: center;
 }
 .footer-link img {
     width: 24px;
     height: 24px;
-    margin-bottom: -3px;
 }
 
 
@@ -431,7 +434,8 @@ body {
     }
 
     body {
-        padding: 0px 16px 40px;
+        justify-content: flex-start;
+        padding: 20px 16px 40px;
     }
 
     .portal-header-inner {
@@ -441,6 +445,79 @@ body {
     .portal-header p {
       margin-top: 0.2rem;
     }
+    .footer-link {
+        font-size: 0.7rem;
+    }
+    .footer-link img {
+        width: 15px;
+        height: 15px;
+    }
+
+    .portal-header-inner #logo {
+        width: 200px;
+    }
+
+    .cards-container {
+        flex-wrap: nowrap;
+        gap: 0.75rem;
+        padding: 2.5rem 0;
+        width: 100%;
+    }
+
+    .game-card {
+        flex: 1 1 0;
+        width: auto;
+        min-width: 0;
+        height: auto;
+        aspect-ratio: 3 / 4;
+        padding: 1rem 0.5rem;
+    }
+
+    .mini-chess-board,
+    .mini-connect-board {
+        width: 90px;
+    }
+
+    .mini-chess-board {
+        height: 90px;
+    }
+    .mini-connect-board {
+        height: 72px;
+    }
+
+    .mini-chess-board > div {
+        font-size: 1rem;
+    }
+
+    .game-icon {
+        font-size: 3rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .game-title {
+        font-size: 1.15rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .game-desc {
+        font-size: 0.75rem;
+        padding: 0 0.25rem;
+    }
+
+    .voice-command-hint {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.5rem;
+        margin-top: 0.6rem;
+        gap: 0.3rem;
+        white-space: nowrap;
+    }
+
+    .voice-command-hint img {
+        width: 14px;
+        height: 14px;
+        flex-shrink: 0;
+    }
+
 }
 
 .portal-footer {
@@ -448,6 +525,7 @@ body {
     display: flex;
     gap: 0.5rem;
     justify-content: center;
+    margin-top: auto;
     align-items: center;
     z-index: 10;
     animation: fadeIn 1s ease-out 0.8s both;
