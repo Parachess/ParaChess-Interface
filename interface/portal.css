@@ -439,7 +439,7 @@ body {
     }
 
     .portal-header-inner {
-      gap: 0;
+      gap: 1;
     }
 
     .portal-header p {
@@ -525,7 +525,6 @@ body {
     display: flex;
     gap: 0.5rem;
     justify-content: center;
-    margin-top: auto;
     align-items: center;
     z-index: 10;
     animation: fadeIn 1s ease-out 0.8s both;
