@@ -11,8 +11,9 @@ function connection() {
             id: search.get('g')
         }
     });
-
+    
     socket?.on('side', (status, side) => displayAttemptResult(status, side));
+
     socket?.on('voice-command', handleVoiceCommand);
 
     socket?.on('boardStates', states => {
@@ -84,6 +85,7 @@ function connection() {
             announce(announcement.join(" "));
         }
     });
+
     socket?.emit('may-play', search.has("seul") ? 2 : 1);
     if (!search.has('fen')) return;
     socket?.emit('fen', search.get('fen'));

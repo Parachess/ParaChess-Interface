@@ -67,7 +67,7 @@ async function init() {
 
 function setupWebcam() {
     navigator.mediaDevices.getUserMedia({ video: { width: 96, height: 72 } })
-        .then((stream) => {
+    .then((stream) => {
             video.srcObject = stream;
             video.addEventListener("loadeddata", () => {
                 startPrediction();
@@ -75,11 +75,12 @@ function setupWebcam() {
             setupDone = true;
         })
         .catch((err) => {
+            gazeDot.classList.remove("loading");
             document.getElementById("toggle-facial-button").classList.remove("facial-active");
             document.getElementById("toggle-facial-button").classList.add("hidden");
             updateToggleSwitch(false);
         });
-}
+    }
 
 function restartPrediction() {
     if (!setupDone)

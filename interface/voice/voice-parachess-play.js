@@ -58,7 +58,10 @@ function setCoordinates(show) {
 }
 
 let vocalMode = true;
-startRec();
+document.addEventListener("DOMContentLoaded", (e) => {
+    startRec();
+});
+
 
 function toggleVocalMode() {
     const image = document.getElementById('toggle-vocal-button-image');

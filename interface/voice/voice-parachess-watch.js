@@ -58,6 +58,9 @@ window.menuSocket = io();
 window.menuSocket.on('voice-command', handleVoiceCommand);
 
 let vocalMode = true;
+document.addEventListener("DOMContentLoaded", (e) => {
+    startRec();
+});
 
 function toggleVocalMode() {
     const image = document.getElementById('toggle-vocal-button-image');
@@ -74,7 +77,7 @@ function toggleVocalMode() {
     }
 }
 
-(async function startRec() {
+async function startRec() {
     try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         const audioCtx = new AudioContext({ sampleRate: 16000 });
@@ -96,4 +99,4 @@ function toggleVocalMode() {
         console.warn("Micro indisponible pour la commande vocale du menu.");
         document.getElementById("toggle-vocal-button")?.classList.add("hidden");
     }
-})();
+}
