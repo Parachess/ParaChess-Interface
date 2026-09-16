@@ -645,6 +645,33 @@ button:disabled,
   color: grey;
 }
 
+
+
+.voice-command-hint-button {
+    position: absolute;
+    top: 85%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    font-size: 0.65rem;
+    color: #f8fafc;
+    background: rgba(0, 0, 0);
+    backdrop-filter: blur(6px);
+    padding: 0.2rem 0.15rem;
+    border-radius: 18px;
+    pointer-events: none;
+}
+
+.voice-command-hint-button img {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+}
+
 /*******************/
 /**   Tablette    **/
 /*******************/
@@ -802,4 +829,11 @@ button:disabled,
       gap: 0;
       align-items: start;
     }
+
+    
+  .voice-command-hint-button {
+      font-size: 0.55rem;
+      padding: 0.2rem 0.15rem;
+  }
+
 }

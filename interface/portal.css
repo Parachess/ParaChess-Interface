@@ -402,6 +402,43 @@ body {
     top: 30px;
 }
 
+
+.portal-footer {
+    margin-top: 2rem;
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    animation: fadeIn 1s ease-out 0.8s both;
+}
+
+.voice-command-hint {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: #e2e8f0;
+    margin-top: 1rem;
+    opacity: 0.9;
+    z-index: 2;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+}
+
+.voice-command-hint img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+.voice-command-hint-button {
+    padding: 0.2rem 0.40rem;
+}
+
+
 @media (max-width: 800px) {
     #toggle-facial-button,
     #toggle-vocal-button,
@@ -518,61 +555,9 @@ body {
         flex-shrink: 0;
     }
 
-}
+    .voice-command-hint-button {
+        font-size: 0.55rem;
+        padding: 0.2rem 0.20rem;
+    }
 
-.portal-footer {
-    margin-top: 2rem;
-    display: flex;
-    gap: 0.5rem;
-    justify-content: center;
-    align-items: center;
-    z-index: 10;
-    animation: fadeIn 1s ease-out 0.8s both;
-}
-
-.voice-command-hint {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    font-size: 0.9rem;
-    color: #e2e8f0;
-    margin-top: 1rem;
-    opacity: 0.9;
-    z-index: 2;
-    background: rgba(0, 0, 0, 0.3);
-    padding: 0.4rem 0.8rem;
-    border-radius: 20px;
-}
-
-.voice-command-hint img {
-    width: 24px;
-    height: 24px;
-    object-fit: contain;
-}
-
-
-.voice-command-hint-button {
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    margin-top: 3px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.3rem;
-    font-size: 0.65rem;
-    color: #f8fafc;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(6px);
-    padding: 0.2rem 0.40rem;
-    border-radius: 20px;
-    pointer-events: none;
-}
-
-.voice-command-hint-button img {
-    width: 15px;
-    height: 15px;
-    flex-shrink: 0;
 }
