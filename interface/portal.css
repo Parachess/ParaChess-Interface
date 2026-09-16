@@ -413,6 +413,24 @@ body {
     animation: fadeIn 1s ease-out 0.8s both;
 }
 
+body:not(.vocal-active) .voice-only {
+    display: none !important;
+}
+
+body.vocal-active .voice-footer-link .footer-text::before {
+    content: '"';
+}
+
+body.vocal-active .voice-footer-link .footer-text::after {
+    content: '"';
+}
+
+.voice-footer-link img {
+    vertical-align: middle;
+    margin-right: 4px;
+    width: 20px;
+}
+
 .voice-command-hint {
     display: flex;
     align-items: center;

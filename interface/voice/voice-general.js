@@ -70,6 +70,7 @@
             vocalMode = false;
             if (vocalStream) vocalStream.getTracks().forEach(track => track.stop());
             if (button) button.classList.remove('vocal-active');
+            document.body.classList.remove('vocal-active');
             if (image) {
                 image.src = '/public/assets/mic-off.svg';
                 image.alt = '🔇';
@@ -81,6 +82,7 @@
                 image.alt = '🎙️';
             }
             if (button) button.classList.add('vocal-active');
+            document.body.classList.add('vocal-active');
             startVoiceMenu();
         }
     }
@@ -90,6 +92,7 @@
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             vocalStream = stream;
+            document.body.classList.add('vocal-active');
             const audioCtx = new AudioContext({ sampleRate: 16000 });
             const source = audioCtx.createMediaStreamSource(stream);
             const processor = audioCtx.createScriptProcessor(4096, 1, 1);
@@ -112,6 +115,7 @@
             console.warn("Micro indisponible pour la commande vocale du menu.");
             vocalMode = false;
             document.getElementById("toggle-vocal-button")?.classList.add("hidden");
+            document.body.classList.remove('vocal-active');
         }
     }
 

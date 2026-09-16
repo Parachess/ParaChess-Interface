@@ -280,7 +280,7 @@ body {
         left: 20px;
 }
 
-#return img{
+#return > img{
   width: 60px;
 }
 
@@ -672,6 +672,11 @@ button:disabled,
     flex-shrink: 0;
 }
 
+body:not(.vocal-active) .voice-command-hint-button,
+body:not(.vocal-active) .voice-command-hint {
+    display: none !important;
+}
+
 /*******************/
 /**   Tablette    **/
 /*******************/
@@ -744,7 +749,7 @@ button:disabled,
         z-index: 999;
     }
 
-    #return img {
+    #return > img {
         width: 50px;
     }
 }
@@ -814,8 +819,8 @@ button:disabled,
         left: 40px;
         z-index: 999;
     }
-
-    #return img {
+    
+    #return > img {
         width: 40px;
     }
 
@@ -830,10 +835,10 @@ button:disabled,
       align-items: start;
     }
 
-    
-  .voice-command-hint-button {
+
+    .voice-command-hint-button {
       font-size: 0.55rem;
       padding: 0.2rem 0.15rem;
-  }
+    }
 
 }

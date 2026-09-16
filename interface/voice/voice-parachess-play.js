@@ -68,12 +68,14 @@ function toggleVocalMode() {
     if (vocalMode) {
         vocalMode = false;
         document.getElementById("toggle-vocal-button").classList.remove("vocal-active");
+        document.body.classList.remove("vocal-active");
         image.src = "/public/assets/mic-off.svg";
         image.alt = "🔇";
     } else {
         vocalMode = true;
         image.src = "/public/assets/mic-on.svg";
         document.getElementById("toggle-vocal-button").classList.add("vocal-active");
+        document.body.classList.add("vocal-active");
         image.alt = "🎙️";
         startRec();
     }
@@ -83,6 +85,7 @@ async function startRec() {
     vocalMode = true;
     try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        document.body.classList.add("vocal-active");
         const audioCtx = new AudioContext({ sampleRate: 16000 });
         const source = audioCtx.createMediaStreamSource(stream);
         const processor = audioCtx.createScriptProcessor(4096, 1, 1);
@@ -104,5 +107,6 @@ async function startRec() {
     } catch (e) {
         vocalMode = false;
         document.getElementById("toggle-vocal-button").classList.add("hidden");
+        document.body.classList.remove("vocal-active");
     }
 }
