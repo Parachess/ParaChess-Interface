@@ -88,7 +88,7 @@ window.onload = async _ => {
         const p = document.createElement("p");
         p.style.textAlign = "center"
         p.style.marginTop = "40px"
-        p.innerText = "Aucune partie n'est actuellement en cours !";
+        p.innerText = "Aucune partie n'est actuellement en cours";
         gamesList.replaceWith(p);
     } else {
         games.forEach(game => {
