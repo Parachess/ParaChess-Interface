@@ -1,9 +1,9 @@
-import { Chess, PROMOTIONS_PIECES_NAME } from '../games/parachess/chess.js';
+    import { Chess, PROMOTIONS_PIECES_NAME } from '../games/parachess/chess.js';
 import { recChess, transform, grammarChess, startListening, detectMenuCommand } from '../voice-recognition.js';
 
 function createSendEval(io, gameId) {
     return function (payload) {
-        const room = io.of('/parachess').adapter.rooms.get('game:' + gameId);
+        const room = io.of('/parachess').adapter.rooms.get('game:' + gameId);   
         if (!room) return;
         room.forEach(socketId => {
             const s = io.of('/parachess').sockets.get(socketId)
@@ -116,6 +116,11 @@ export default function parachessNamespace(io) {
                 nsp.to(roomIdentifier).emit('legalMoves', moves);
                 nsp.to(roomIdentifier).emit('boardStates', parachessGames[id].getPositions());
                 nsp.to(roomIdentifier).emit('state', parachessGames[id].getState());
+
+                if(legal.storageSpot) {
+                    nsp.to(roomIdentifier).emit('move', to, legal.storageSpot);
+                }
+
                 nsp.to(roomIdentifier).emit('move', from, to, promotion);
             } else {
                 socket.emit('boardStates', parachessGames[id].getPositions());

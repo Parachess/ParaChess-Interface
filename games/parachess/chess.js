@@ -75,6 +75,7 @@ export class Chess {
         this.engine = spawn("stockfish");
         this.lastEval = null;
         this.lastMoveTime = Date.now();
+        this.eatenStorage = {};
         this.engine.stdout.on("data", (data) => {
 
             const text = data.toString();
@@ -186,6 +187,23 @@ export class Chess {
         return Number(splitted[5]);
     }
 
+    getAvailableStorageSpace() {
+        for(const letter of 'abcdefgh') {
+            const square = `${letter}9`;
+            if(this.eatenStorage[square]) continue;
+
+            return square;
+        }
+    }
+
+    storePiece(piece) {
+        const spot = this.getAvailableStorageSpace();
+
+        this.eatenStorage[spot] = piece;
+
+        return spot;
+    }
+
     /**
      * Attempts to play a move.
      * 
@@ -211,6 +229,13 @@ export class Chess {
             to,
             ...moveOptions
         })) return false;
+
+        const pieceEaten = moveOptions.action & Actions.CAPTURE || moveOptions.action & Actions.EP_CAPTURE;
+        let storageSpot = null;
+        if(pieceEaten) {
+            storageSpot = this.storePiece('temp');
+        }
+
         this.fiftyMove({ piece: this.board.get(to), action: moveOptions.action });
         this.fullMoveNumber += 1;
         const fen = this.board.toFen();
@@ -220,7 +245,7 @@ export class Chess {
         this.engine?.stdin.write('move ' + from + to + "\n");
         this.evalPosition();
         this.positions.push(this.board.export());
-        return true;
+        return { success: true, pieceEaten, storageSpot };
     }
 
     /**
