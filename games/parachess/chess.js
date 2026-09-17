@@ -188,7 +188,7 @@ export class Chess {
     }
 
     getAvailableStorageSpace() {
-        for(const letter of 'abcdefgh') {
+        for(const letter of 'bcdefg') {
             const square = `${letter}9`;
             if(this.eatenStorage[square]) continue;
 
