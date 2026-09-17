@@ -783,12 +783,15 @@ export class Chess {
     addPlayer(player, roles) {
         if (Chess.SUPER_USERS.includes(player)) return true;
         if (Object.keys(this.players).includes(player)) return true;
-        if (!this.isPlayable()) return false
-        if (Object.keys(this.players).length === 0 && roles > 1)
+        if (!this.isPlayable()) return false;
+        if (Object.keys(this.players).length === 0 && roles > 1) {
             this.players[player] = '*';
-        else
+            return true;
+        }  else if ([0, 1].includes(Object.keys(this.player).length)) {
             this.players[player] = Object.keys(this.players).length === 0 ? 'w' : 'b';
-        return true;
+            return true;
+        }
+        return false;
     }
 
     /**
