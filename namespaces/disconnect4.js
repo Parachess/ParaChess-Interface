@@ -58,7 +58,7 @@ export default function disconnect4Namespace(io) {
     nsp.on('connection', socket => {
         const { id } = socket.handshake.query;
         if (!id) return;
-        const ip = extractIP(socket.handshake.address);
+        const ip = extractIP(socket.handshake.headers['x-real-ip'] ?? socket.handshake.address);
         lastDisconnect4UserGamesId[ip] = id;
         disconnect4Games[id] = disconnect4Games[id] ?? new Connect4();
 
