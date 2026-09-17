@@ -787,7 +787,7 @@ export class Chess {
         if (Object.keys(this.players).length === 0 && roles > 1) {
             this.players[player] = '*';
             return true;
-        }  else if ([0, 1].includes(Object.keys(this.player).length)) {
+        }  else if ([0, 1].includes(Object.keys(this.players).length)) {
             this.players[player] = Object.keys(this.players).length === 0 ? 'w' : 'b';
             return true;
         }
