@@ -1,6 +1,14 @@
 window.connection = connection;
+window.victoryDisplayed = false;
 let socket = null;
 let legalMoves = [];
+
+const fireworksContainer = document.querySelector('#fireworks');
+const fireworks = new Fireworks.Fireworks(fireworksContainer, {
+    explosion: 10
+});
+const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
+
 
 function connection() {
     const search = new URLSearchParams(window.location.search);
@@ -59,6 +67,14 @@ function connection() {
             document.getElementById("side").classList.remove("white-turn");
         }
         if (state.gameOver) {
+            if (!window.victoryDisplayed) {
+                window.victoryDisplayed = true;
+                if (side === '*' || side === 'w' && state.whiteWon || side === 'b' && state.blackWon)
+                    feastVictory();
+                else {
+                    // defeat;
+                }
+            }
             if (state.whiteWon) {
                 showState("Les blancs ont gagné par " + state.reason + ".")
             } else if (state.blackWon) {
@@ -68,6 +84,8 @@ function connection() {
             }
         }
     });
+
+    socket?.on('resetBoard', () => window.victoryDisplayed = false);
 }
 
 function sendMove(from, to) {
@@ -97,3 +115,53 @@ function showCoordinates() {
 
 document.getElementById('showCoordinates').onchange = showCoordinates;
 connection();
+
+async function feastVictory() {
+    setTimeout(() => document.querySelector('#state-popup .popup-option').focus(), 100);
+
+    const colors = [
+        "#FF006E",
+        "#FB5607",
+        "#FFBE0B",
+        "#00F5D4",
+        "#00BBF9",
+        "#8338EC",
+        "#FF4D6D",
+        "#FFFFFF"
+    ];
+
+    fireworks.launch(20);
+
+    setTimeout(() => {
+        confetti({
+            position: { x: window.innerWidth / 2, y: window.innerHeight },
+            count: 1000,
+            size: 3,
+            velocity: 1000,
+            fade: false,
+            colors
+        });
+    }, 600);
+
+    const cheeringSong = document.querySelector('#cheeringSong');
+    cheeringSong.volume = 0.2;
+    try {
+        cheeringSong.currentTime = 1.9
+        await cheeringSong.play();
+
+        setTimeout(() => {
+            cheeringSong.pause();
+        }, 15000);
+    } catch { }
+
+    await wait(2000);
+    fireworks.launch(20);
+    confetti({
+        position: { x: window.innerWidth / 2, y: window.innerHeight },
+        count: 500,
+        size: 2,
+        velocity: 1000,
+        fade: false,
+        colors
+    });
+}

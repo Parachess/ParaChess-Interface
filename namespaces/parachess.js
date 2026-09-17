@@ -45,6 +45,7 @@ function fromTextToMove(nsp, text, address) {
         nsp.to('game:' + id).emit('legalMoves', parachessGames[id].getAllLegalMoves());
         nsp.to('game:' + id).emit('state', parachessGames[id].getState());
         nsp.to('game:' + id).emit('eval', parachessGames[id].getEval());
+        nsp.to('game:' + id).emit('resetBoard');
         return;
     }
     
@@ -132,6 +133,7 @@ export default function parachessNamespace(io) {
             nsp.to(roomIdentifier).emit('legalMoves', parachessGames[id].getAllLegalMoves());
             nsp.to(roomIdentifier).emit('state', parachessGames[id].getState());
             nsp.to(roomIdentifier).emit('eval', parachessGames[id].getEval());
+            nsp.to(roomIdentifier).emit('resetBoard');
             const room = io.of('/parachess').adapter.rooms.get('game:' + id);
             if (!room) return;
             room.forEach(socketId => {
