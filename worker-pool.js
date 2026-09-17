@@ -3,7 +3,7 @@ import { EventEmitter } from 'events';
 import { fileURLToPath } from 'url';
 import os from 'os';
 
-const POOL_SIZE = parseInt(process.env.VOSK_WORKERS || Math.max(1, os.cpus().length - 1), 10);
+const POOL_SIZE = parseInt(process.env.VOSK_WORKERS || Math.max(1, /*os.cpus().length - 1*/ 3), 10);
 
 const workerUrl = new URL('./voice-worker.js', import.meta.url);
 

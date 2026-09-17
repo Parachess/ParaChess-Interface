@@ -6,6 +6,13 @@ let positions = [Array(6).fill(null).map(() => Array(7).fill(null))];
 let color = 'blue';
 let legalColumns = [1, 2, 3, 4, 5, 6, 7];
 
+const fireworksContainer = document.querySelector('#fireworks');
+const fireworks = new Fireworks.Fireworks(fireworksContainer, {
+    explosion: 10
+});
+
+const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
+
 function getBaliseCaseLibre(colonneChoisie, ligneChoisie) {
     return document.getElementById('ligne_' + ligneChoisie + '_col_' + colonneChoisie);
 }
@@ -129,10 +136,72 @@ function pushPawn(column) {
     sendMove(column);
 }
 
-function showState(text) {
+async function showState(text) {
     document.getElementById('state-popup-title').textContent = text;
     document.getElementById('state-popup').classList.add('visible');
     setTimeout(() => document.querySelector('#state-popup .popup-option').focus(), 100);
+
+    const colors = [
+        "#FF006E",
+        "#FB5607",
+        "#FFBE0B",
+        "#00F5D4",
+        "#00BBF9",
+        "#8338EC",
+        "#FF4D6D",
+        "#FFFFFF"
+    ];
+
+    fireworks.launch(20);
+
+    setTimeout(() => {
+        confetti({
+            position: { x: window.innerWidth / 2, y: window.innerHeight },
+            count: 1000,
+            size: 3,
+            velocity: 1000,
+            fade: false,
+            colors
+        });
+    }, 600);
+
+    await wait(1000);
+
+    const cheeringSong = document.querySelector('#cheeringSong');
+    cheeringSong.volume = 0.2;
+    try {
+        cheeringSong.currentTime = 1.9
+        await cheeringSong.play();
+
+        setTimeout(() => {
+            cheeringSong.pause();
+        }, 30000);
+    } catch {}
+
+    await wait(3000)
+
+    const cheeringGifs = document.querySelectorAll('.cheering');
+    for(const cheeringGif of cheeringGifs) {
+        cheeringGif.classList.remove('hidden');
+        setTimeout(() => {
+            cheeringGif.classList.add('hidden');
+        }, 27000);
+    }
+
+    await wait(2000);
+    for(let i = 0; i < 10; i++) {
+        fireworks.launch(30);
+        confetti({
+            position: { x: window.innerWidth / 2, y: window.innerHeight },
+            count: 500,
+            size: 2,
+            velocity: 1000,
+            fade: false,
+            colors
+        });
+        await wait(500);
+    }
+
 }
 
 /**

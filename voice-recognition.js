@@ -42,7 +42,7 @@ const puissance4Homophones = {
     "colonne" : ["colonnes", "colonne", 'cologne']
 };
 
-const vocMenu = ["menu", "retour", "quitter", "revenir", "accueil",
+const vocMenu = ["[unk]", "menu", "retour", "quitter", "revenir", "accueil",
     "crédits", "propos", "sommes", "nous", "règle", "règles", "aide", "mentions", "légales",
     "échecs", "puissance", "coordonnées", "caméra",
     "activer", "désactiver", "créer", "automatiquement", "partie"];
