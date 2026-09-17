@@ -478,7 +478,7 @@ div.center {
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  gap: clamp(20px, 200vw, 80px);
+  gap: clamp(20px, 200vw, 200px);
   min-height: 100vh;
   box-sizing: border-box;
   flex-wrap: wrap;
@@ -515,7 +515,7 @@ div.center {
   width: clamp(220px, 25vw, 300px);
   gap: 25px;
   box-sizing: border-box;
-  margin: 0 auto auto;
+  margin: auto auto;
 }
 
 .side-panel #logo {
@@ -783,9 +783,13 @@ body:not(.vocal-active) .voice-command-hint {
         --board-size: clamp(280px, 90vw, 50vh);
     }
     
+    body {
+        justify-content: flex-start;
+        padding: 20px 0 40px;
+    }
     .play-container {
         position: relative;
-        padding-top: 100px;
+        padding-top: 50px;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -861,4 +865,13 @@ body:not(.vocal-active) .voice-command-hint {
       padding: 0.2rem 0.15rem;
     }
 
+}
+.game-mobile-logo {
+    display: none;
+}
+
+@media (max-width: 1230px) {
+    .game-mobile-logo {
+        display: block;
+    }
 }
