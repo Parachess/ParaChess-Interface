@@ -98,6 +98,19 @@
         document.addEventListener('DOMContentLoaded', async () => {
             const urlParams = new URLSearchParams(window.location.search);
             const game = urlParams.get('g') || 'parachess';
+            
+            const logo = document.getElementById('logo');
+            if (game === 'disconnect4') {
+                logo.src = '/public/assets/paragames.svg';
+            } else {
+                logo.src = '/public/assets/paragames_logo.svg';
+            }
+
+            const returnBtn = document.getElementById('return');
+            if (returnBtn) {
+                returnBtn.href = '/jeux?g=' + game;
+            }
+
             try {
                 const response = await fetch(`/public/rules/${game}.html`);
                 if (response.ok) {
