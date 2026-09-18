@@ -69,11 +69,7 @@ function connection() {
         if (state.gameOver) {
             if (!window.victoryDisplayed) {
                 window.victoryDisplayed = true;
-                if (side === '*' || side === 'w' && state.whiteWon || side === 'b' && state.blackWon)
-                    feastVictory();
-                else {
-                    // defeat;
-                }
+                feastVictory();
             }
             if (state.whiteWon) {
                 showState("Les blancs ont gagné par " + state.reason + ".")
