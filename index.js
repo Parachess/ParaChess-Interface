@@ -24,7 +24,7 @@ const disconnect4NSP = disconnect4Namespace(io);
 
 app.use((req, res, next) => {
     const date = new Date();
-    console.log("[" + date.getDate() +  "/" + date.getMonth() + "/" + date.getFullYear() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + "] connexion : " + req.socket.remoteAddress + ", url : " + req.url);
+    console.log("[" + date.getDate() +  "/" + date.getMonth() + "/" + date.getFullYear() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + "] connexion : " + req.headers['x-real-ip'] ?? req.socket.address + ", url : " + req.url);
     next();
 });
 

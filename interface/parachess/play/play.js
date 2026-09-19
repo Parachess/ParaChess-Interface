@@ -9,7 +9,8 @@ function connection() {
     socket = io('/parachess', {
         query: {
             id: search.get('g')
-        }
+        },
+        transports: ["websocket"]
     });
     
     socket?.on('side', (status, side) => displayAttemptResult(status, side));
