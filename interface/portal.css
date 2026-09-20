@@ -66,7 +66,7 @@ body {
     font-size: 2rem;
     font-weight: 800;
     margin: 0 0 0.25rem 0;
-    background: linear-gradient(to right, #d4a373, #e9c46a);
+    background: #d4a373;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
