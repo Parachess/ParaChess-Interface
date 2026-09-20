@@ -189,3 +189,9 @@ button#create.modern-button, button#auto-create.modern-button, #form a.modern-bu
         margin-top: 6px;
     }
 }
+body.vocal-active .auto-create-inactive { display: none; }
+body.vocal-active .auto-create-active { display: flex; align-items: center; gap: 10px; justify-content: center; }
+
+body:not(.vocal-active) .auto-create-active { display: none; }
+body:not(.vocal-active) .auto-create-inactive { display: inline; }
+
