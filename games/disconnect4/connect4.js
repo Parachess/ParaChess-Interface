@@ -179,7 +179,7 @@ export default class Connect4 {
  * @return {boolean} true if the player can play, false otherwise
  */
     addPlayer(player, roles) {
-        if (Chess.SUPER_USERS.includes(player)) return true;
+        if (Connect4.SUPER_USERS.includes(player)) return true;
         if (Object.keys(this.players).includes(player)) return true;
         if (!this.isPlayable()) return false;
         if (Object.keys(this.players).length === 0 && roles > 1) {

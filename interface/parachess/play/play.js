@@ -93,7 +93,7 @@ function connection() {
 }
 
 // La gestion des commandes vocales (menu + micro) a été déplacée dans
-// /public/voice/voice-parachess-play.js pour plus de clarté.
+// /public/voice-commands.js pour plus de clarté.
 
 function sendMove(from, to) {
     socket?.emit('move', from, to, null);
@@ -170,7 +170,7 @@ function validateResign(validation=false) {
 
 document.getElementById('showCoordinates').onchange = showCoordinates;
 showCoordinates();
-// Micro et commandes vocales : voir /public/voice/voice-parachess-play.js
+// Micro et commandes vocales : voir /public/voice-commands.js
 
 const authorized = 'abcdefgh12345678nqrb';
 const typed = [];

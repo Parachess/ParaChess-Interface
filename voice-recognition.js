@@ -44,8 +44,9 @@ const puissance4Homophones = {
 
 const vocMenu = ["menu", "retour", "quitter", "revenir", "accueil",
     "crédits", "propos", "sommes", "nous", "règle", "règles", "aide", "mentions", "légales",
-    "échecs", "puissance", "coordonnées", "caméra",
-    "activer", "désactiver", "créer", "automatiquement", "partie"];
+    "échecs", "puissance", "coordonnées", "caméra", "micro",
+    "activer", "désactiver", "créer", "automatiquement", "partie",
+    "ordinateur", "ordinateurs"];
 const vocPuissance4 = ["colonne"];
 const pieces = ["tour", "cavalier", "fou", "dame", "pion", "roi"];
 const ordre = ["abandonner", "recommencer", "rejouer", "non", "annuler"];
@@ -71,6 +72,8 @@ Object.values(alphabetHomophones).forEach(letterSyns => {
 Object.values(alphabetHomophones).forEach(syns => grammarChess.push(...syns));
 Object.values(chiffresHomophones).forEach(syns => grammarChess.push(...syns));
 
+grammarChess.push("puissance quatre", "un ordinateur", "deux ordinateurs");
+
 const grammarPuissance4 = [...ordre, ...vocMenu, ...vocPuissance4];
 const chiffresPuissance4 = ["1", "2", "3", "4", "5", "6", "7"];
 
@@ -84,6 +87,8 @@ puissance4Homophones["colonne"].forEach(colSyn => {
 
 Object.values(chiffresHomophones).forEach(syns => grammarPuissance4.push(...syns));
 Object.values(puissance4Homophones).forEach(syns => grammarPuissance4.push(...syns));
+
+grammarPuissance4.push("puissance quatre", "un ordinateur", "deux ordinateurs");
 
 export { grammarChess, grammarPuissance4 };
 
@@ -142,12 +147,20 @@ export function detectMenuCommand(text) {
     if (words.includes("échecs") || words.includes("échec")) return "parachess";
     if (words.includes("puissance")) return "disconnect4";
     if (words.includes("caméra")) {
-        if (words.includes("désactiver")) return "visage-off";
-        if (words.includes("activer")) return "visage-on";
+        if (words.includes("désactiver")) return "camera-off";
+        if (words.includes("activer")) return "camera-on";
+    }
+    if (words.includes("micro")) {
+        if (words.includes("désactiver")) return "micro-off";
+        if (words.includes("activer")) return "micro-on";
     }
     if (words.includes("coordonnées")) {
         if (words.includes("désactiver")) return "coordonnees-off";
         if (words.includes("activer")) return "coordonnees-on";
+    }
+    if (words.includes("ordinateur") || words.includes("ordinateurs")) {
+        if (words.includes("1")) return "un-ordinateur";
+        if (words.includes("2")) return "deux-ordinateurs";
     }
     if (words.includes("créer") && (words.includes("automatiquement") || words.includes("partie"))) return "creer-partie";
     if (words.includes("aide")) return "aide";

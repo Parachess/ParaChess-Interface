@@ -97,7 +97,7 @@ let select = {
 document.addEventListener("mousemove", e => {
     if (!isDragging) return;
     if (!drag.hasMoved) {
-        drag.square.querySelector('.pieceContent').textContent = "";
+        drag.square.querySelector('.pieceContent').removeAttribute('data-piece');
         drag.hasMoved = true;
     }
     blank.style.left = e.clientX + "px";
@@ -114,7 +114,7 @@ document.addEventListener('mousedown', e => {
     drag.piece = piece;
     drag.position = pos;
     drag.square = square;
-    drag.square.childNodes[0].textContent = "";
+    drag.square.childNodes[0].removeAttribute('data-piece');
     drag.square.classList.add("is-dragging");
     const white = Array.from(drag.square.getElementsByClassName("pieceContent")[0].classList).includes("white-piece");
     if (white) {
@@ -262,7 +262,8 @@ function handleSquareKeyboard(square) {
  * @param {*} e the mouse event
  */
 function showDraggingPiece(piece, square, e) {
-    blank.textContent = FULL_PIECES[piece];
+    if (piece) blank.dataset.piece = FULL_PIECES[piece];
+    else blank.removeAttribute('data-piece');
     const squareRec = square.getBoundingClientRect()
     const left = e.clientX - squareRec.left;
     const top = e.clientY - squareRec.top;
@@ -446,7 +447,7 @@ function createBoard() {
             if (white) pieceElem.classList.add('white-piece');
             else if (black) pieceElem.classList.add('black-piece');
             if (piece) {
-                pieceElem.textContent = FULL_PIECES[piece] ?? piece;
+                pieceElem.dataset.piece = FULL_PIECES[piece] ?? piece;
                 square.setAttribute("aria-label", `${PIECE_NAMES[piece] || 'Pièce'} en ${pos}`);
             } else {
                 square.setAttribute("aria-label", `${pos} vide`);
@@ -487,7 +488,7 @@ function updateCoordLabels() {
  */
 function getSquare(pos) {
     const white = Array.from(document.querySelector(`.square[data-pos="${pos}"] .pieceContent`).classList).includes('white-piece')
-    const piece = document.querySelector(`.square[data-pos="${pos}"] .pieceContent`).textContent;
+    const piece = document.querySelector(`.square[data-pos="${pos}"] .pieceContent`).dataset.piece || "";
     return white ? EMPTY_PIECES[piece] : piece;
 }
 
@@ -507,8 +508,12 @@ function setSquare(pos, piece) {
         document.querySelector(`.square[data-pos="${pos}"] .pieceContent`).classList.remove("white-piece");
         document.querySelector(`.square[data-pos="${pos}"] .pieceContent`).classList.remove("black-piece");
     }
-    document.querySelector(`.square[data-pos="${pos}"] .pieceContent`).textContent = FULL_PIECES[piece];
-
+    const pieceContentElem = document.querySelector(`.square[data-pos="${pos}"] .pieceContent`);
+    if (piece && piece.trim() !== "") {
+        pieceContentElem.dataset.piece = FULL_PIECES[piece];
+    } else {
+        pieceContentElem.removeAttribute('data-piece');
+    }
     const squareElem = document.querySelector(`.square[data-pos="${pos}"]`);
     if (piece && piece.trim() !== "") {
         squareElem.setAttribute("aria-label", `${PIECE_NAMES[piece] || 'Pièce'} en ${pos}`);
@@ -624,7 +629,7 @@ function exportChessBoardObject() {
     const squares = document.querySelectorAll('.square');
     const chessboard = {};
     for (const square of squares) {
-        const piece = document.querySelector(`.square[data-pos="${square.dataset.pos}"] .pieceContent`).textContent;
+        const piece = document.querySelector(`.square[data-pos="${square.dataset.pos}"] .pieceContent`).dataset.piece || "";
         if (Array.from(square.getElementsByClassName("pieceContent")[0].classList).includes("white-piece")) {
             chessboard[square.dataset.pos] = SYMBOLS[EMPTY_PIECES[piece]];
         } else {

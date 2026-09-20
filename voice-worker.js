@@ -25,6 +25,21 @@ function getRecognizer(socketId, mode) {
   return entry[mode];
 }
 
+const pendingBuffers = new Map();
+const MERGE_WINDOW_MS = 800;
+
+function flushPending(socketId) {
+  const entry = pendingBuffers.get(socketId);
+  if (!entry) return;
+  clearTimeout(entry.timer);
+  const fullText = entry.words.join(" ");
+  const menuCommand = detectMenuCommand(fullText.toLowerCase());
+  if (menuCommand) {
+    parentPort.postMessage({ type: 'voice-command', socketId, command: menuCommand });
+  }
+  pendingBuffers.delete(socketId);
+}
+
 parentPort.on('message', (msg) => {
   if (msg.type === 'audio') {
     const { socketId, mode, buffer } = msg;
@@ -34,9 +49,14 @@ parentPort.on('message', (msg) => {
       const result = rec.result();
       if (result?.text) {
         const cleaned = transform(result.text);
-        const menuCommand = detectMenuCommand(cleaned.toLowerCase());
-        if (menuCommand) {
-          parentPort.postMessage({ type: 'voice-command', socketId, command: menuCommand });
+        if (cleaned) {
+          if (!pendingBuffers.has(socketId)) {
+            pendingBuffers.set(socketId, { words: [], timer: null });
+          }
+          const entry = pendingBuffers.get(socketId);
+          entry.words.push(cleaned);
+          clearTimeout(entry.timer);
+          entry.timer = setTimeout(() => flushPending(socketId), MERGE_WINDOW_MS);
         }
       }
     }
@@ -46,6 +66,9 @@ parentPort.on('message', (msg) => {
   if (msg.type === 'disconnect') {
     // libere la memoire du/des reconnaisseurs de ce socket
     recognizers.delete(msg.socketId);
+    const entry = pendingBuffers.get(msg.socketId);
+    if (entry) clearTimeout(entry.timer);
+    pendingBuffers.delete(msg.socketId);
   }
 });
 

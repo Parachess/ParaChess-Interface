@@ -54,22 +54,31 @@
 /** Chessboard **/
 /****************/
 
-.pieceContent.white-piece {
-    color: white;
-    text-shadow:
-        var(--shadow-size) 0 #000,
-        calc(var(--shadow-size) * -1) 0 #000,
-        0 var(--shadow-size) #000,
-        0 calc(var(--shadow-size) * -1) #000,
-        calc(var(--shadow-size) * 0.5) calc(var(--shadow-size) * 0.5) #000,
-        calc(var(--shadow-size) * -0.5) calc(var(--shadow-size) * -0.5) #000,
-        calc(var(--shadow-size) * 0.5) calc(var(--shadow-size) * -0.5) #000,
-        calc(var(--shadow-size) * -0.5) calc(var(--shadow-size) * 0.5) #000;
+.pieceContent {
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 75%;
+    height: 100%;
 }
 
-.pieceContent.black-piece {
-    color: black;
-}
+.pieceContent[data-piece="♟"].white-piece { background-image: url("assets/chess-pieces/Chess_plt45.svg"); }
+.pieceContent[data-piece="♟"].black-piece { background-image: url("assets/chess-pieces/Chess_pdt45.svg"); }
+
+.pieceContent[data-piece="♜"].white-piece { background-image: url("assets/chess-pieces/Chess_rlt45.svg"); }
+.pieceContent[data-piece="♜"].black-piece { background-image: url("assets/chess-pieces/Chess_rdt45.svg"); }
+
+.pieceContent[data-piece="♞"].white-piece { background-image: url("assets/chess-pieces/Chess_nlt45.svg"); }
+.pieceContent[data-piece="♞"].black-piece { background-image: url("assets/chess-pieces/Chess_ndt45.svg"); }
+
+.pieceContent[data-piece="♝"].white-piece { background-image: url("assets/chess-pieces/Chess_blt45.svg"); }
+.pieceContent[data-piece="♝"].black-piece { background-image: url("assets/chess-pieces/Chess_bdt45.svg"); }
+
+.pieceContent[data-piece="♛"].white-piece { background-image: url("assets/chess-pieces/Chess_qlt45.svg"); }
+.pieceContent[data-piece="♛"].black-piece { background-image: url("assets/chess-pieces/Chess_qdt45.svg"); }
+
+.pieceContent[data-piece="♚"].white-piece { background-image: url("assets/chess-pieces/Chess_klt45.svg"); }
+.pieceContent[data-piece="♚"].black-piece { background-image: url("assets/chess-pieces/Chess_kdt45.svg"); }
 
 .chessboard {
     display: grid;

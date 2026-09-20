@@ -118,12 +118,14 @@
                 <li><strong>« Échecs »</strong> : ouvre la page de jeu ParaChess.</li>
                 <li><strong>« Puissance 4 »</strong> : ouvre la page de jeu DisConnect 4.</li>
                 <li><strong>« Activer / Désactiver caméra »</strong> : active / désactive la reconnaissance faciale.</li>
+                <li><strong>« Activer / Désactiver micro »</strong> : active / désactive la reconnaissance vocale.</li>
             </ul>
-            <p>Le bouton micro en haut de l'écran permet à tout moment d'activer ou de désactiver l'écoute des commandes vocales.</p>
-
+            <p>Le bouton micro en haut de l'écran permet à tout moment d'activer ou de désactiver l'écoute des commandes vocales. Attention : même en position « désactivé », le micro reste physiquement allumé et continue d'écouter en arrière-plan — seule la commande <strong>« Activer micro »</strong> est encore prise en compte, toutes les autres sont ignorées. Cela permet de réactiver la commande vocale par la voix sans devoir toucher un bouton.</p>
             <p>Sur la page de <strong>création de partie</strong> (ParaChess ou DisConnect 4) :</p>
             <ul>
                 <li><strong>« Créer automatiquement »</strong> : crée immédiatement une nouvelle partie avec un nom généré automatiquement, sans avoir besoin de saisir de nom.</li>
+                <li><strong>« Un ordinateur »</strong> : passe en mode « jouer à 1 ordinateur ».</li>
+                <li><strong>« Deux ordinateurs »</strong> : passe en mode « jouer à 2 ordinateurs ».</li>
             </ul>
 
             <p>Pendant une partie de <strong>ParaChess</strong>, des commandes supplémentaires sont disponibles :</p>
@@ -158,7 +160,7 @@
 
     <video id="webcam" autoplay playsinline></video>
     <script src="/public/head-tracking.js" type="module"></script>
-    <script src="/public/voice/voice-general.js"></script>
+    <script src="/public/voice-commands.js"></script>
 </body>
 
 </html>
