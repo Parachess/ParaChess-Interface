@@ -1,5 +1,12 @@
 window.connection = connection;
+window.victoryDisplayed = false;
 let socket = null;
+
+const fireworksContainer = document.querySelector('#fireworks');
+const fireworks = new Fireworks.Fireworks(fireworksContainer, {
+    explosion: 10
+});
+const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 function connection() {
     const search = new URLSearchParams(window.location.search);
@@ -24,8 +31,12 @@ function connection() {
 
     socket?.on('state', state => {
         let announcement = [];
-        displaySideColor(state.opportunity)
+        displaySideColor(state.opportunity);
         if (state.gameOver) {
+            if (!window.victoryDisplayed) {
+                window.victoryDisplayed = true;
+                feastVictory();
+            }
             if (state.redWon) {
                 showState("Les rouges ont gagné par " + state.reason + " .");
                 announcement.push("Alignement de 4 pions ! Les rouges gagnent.");

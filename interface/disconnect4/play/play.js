@@ -1,5 +1,13 @@
 window.connection = connection;
+window.victoryDisplayed = false;
 let socket = null;
+let side = 'r';
+
+const fireworksContainer = document.querySelector('#fireworks');
+const fireworks = new Fireworks.Fireworks(fireworksContainer, {
+    explosion: 10
+});
+const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 function connection() {
     const search = new URLSearchParams(window.location.search);
@@ -29,6 +37,14 @@ function connection() {
         let announcement = [];
         displaySideColor(state.opportunity)
         if (state.gameOver) {
+            if (!window.victoryDisplayed) {
+                window.victoryDisplayed = true;
+                if (side === '*' || side === 'r' && state.redWon || side === 'b' && state.blueWon)
+                    feastVictory();
+                else {
+                    // defeat;
+                }
+            }
             if (state.redWon) {
                 showState("Les rouges ont gagné par " + state.reason + " .");
                 announcement.push("Alignement de 4 pions ! Les rouges gagnent.");
@@ -46,6 +62,8 @@ function connection() {
         }
     });
 
+    socket?.on("resetBoard", () => window.victoryDisplayed = false);
+
     socket?.emit('may-play', search.has("seul") ? 2 : 1);
 }
 
@@ -62,13 +80,14 @@ function resign() {
     setTimeout(() => document.querySelector('#confirmation-popup .popup-option').focus(), 100);
 }
 
-function displayAttemptResult(status, side) {
+function displayAttemptResult(status, color) {
     if (status !== "ALLOWED") {
-        document.getElementById('refused-popup-text').innerText = side;
+        document.getElementById('refused-popup-text').innerText = color;
         document.getElementById('refused-popup').classList.add('visible');
         setTimeout(() => document.querySelector('#refused-popup .popup-option').focus(), 100);
         return;
     }
+    side = color;
     if (side !== '*')
         document.getElementById('undo-button').classList.add('hidden');
 }
@@ -96,6 +115,56 @@ function resign() {
 function validateResign(validation = false) {
     document.getElementById("confirmation-popup").classList.remove("visible");
     if (validation) socket?.emit("resign");
+}
+
+async function feastVictory() {
+    setTimeout(() => document.querySelector('#state-popup .popup-option').focus(), 100);
+
+    const colors = [
+        "#FF006E",
+        "#FB5607",
+        "#FFBE0B",
+        "#00F5D4",
+        "#00BBF9",
+        "#8338EC",
+        "#FF4D6D",
+        "#FFFFFF"
+    ];
+
+    fireworks.launch(20);
+
+    setTimeout(() => {
+        confetti({
+            position: { x: window.innerWidth / 2, y: window.innerHeight },
+            count: 1000,
+            size: 3,
+            velocity: 1000,
+            fade: false,
+            colors
+        });
+    }, 600);
+
+    const cheeringSong = document.querySelector('#cheeringSong');
+    cheeringSong.volume = 0.2;
+    try {
+        cheeringSong.currentTime = 1.9
+        await cheeringSong.play();
+
+        setTimeout(() => {
+            cheeringSong.pause();
+        }, 15000);
+    } catch { }
+
+    await wait(2000);
+    fireworks.launch(20);
+    confetti({
+        position: { x: window.innerWidth / 2, y: window.innerHeight },
+        count: 500,
+        size: 2,
+        velocity: 1000,
+        fade: false,
+        colors
+    });
 }
 
 window.addEventListener('DOMContentLoaded', () => connection());

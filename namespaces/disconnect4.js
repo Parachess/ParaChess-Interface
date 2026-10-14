@@ -28,6 +28,7 @@ function fromTextToMove(nsp, text, address) {
         nsp.to('game:' + id).emit('boardStates', disconnect4Games[id].getPositions());
         nsp.to('game:' + id).emit('legalColumns', disconnect4Games[id].getLegalColumns());
         nsp.to('game:' + id).emit('state', disconnect4Games[id].getState());
+        nsp.to('game:' + id).emit('resetBoard');
         return;
     }
 
@@ -92,10 +93,11 @@ export default function disconnect4Namespace(io) {
             nsp.to(roomIdentifier).emit('boardStates', disconnect4Games[id].getPositions());
             nsp.to(roomIdentifier).emit('legalColumns', disconnect4Games[id].getLegalColumns());
             nsp.to(roomIdentifier).emit('state', disconnect4Games[id].getState());
+            nsp.to(roomIdentifier).emit('resetBoard');
             const room = io.of('/disconnect4').adapter.rooms.get('game:' + id);
             if (!room) return;
             room.forEach(socketId => {
-                const s = io.of('/disconnect4').sockets.get(socketId)
+                const s = io.of('/disconnect4').sockets.get(socketId);
                 if (!s) return;
                 if (disconnect4Games[id].isPlayer(extractIP(s.handshake.address))) {
                     s.emit("side", "ALLOWED", disconnect4Games[id].getPlayer(extractIP(s.handshake.address)));

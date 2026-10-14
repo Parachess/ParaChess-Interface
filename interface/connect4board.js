@@ -129,10 +129,9 @@ function pushPawn(column) {
     sendMove(column);
 }
 
-function showState(text) {
+async function showState(text) {
     document.getElementById('state-popup-title').textContent = text;
     document.getElementById('state-popup').classList.add('visible');
-    setTimeout(() => document.querySelector('#state-popup .popup-option').focus(), 100);
 }
 
 /**
