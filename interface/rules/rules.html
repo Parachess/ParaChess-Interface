@@ -106,9 +106,69 @@
                 logo.src = '/public/assets/paragames_logo.svg';
             }
 
+            // Déterminer l'URL de retour selon la provenance
+            let returnUrl = null;
+            let isGame = false;
+
+            const fromParam = urlParams.get('from');
+            if (fromParam) {
+                try {
+                    const parsed = new URL(fromParam, window.location.origin);
+                    if (parsed.origin === window.location.origin) {
+                        const path = parsed.pathname;
+                        if (path.startsWith('/parachess/') || path.startsWith('/disconnect4/')) {
+                            returnUrl = parsed.pathname + parsed.search;
+                            isGame = true;
+                        } else if (path.startsWith('/jeux')) {
+                            returnUrl = parsed.pathname + parsed.search;
+                        }
+                    }
+                } catch (e) {
+                    if (fromParam.startsWith('/parachess/') || fromParam.startsWith('/disconnect4/')) {
+                        returnUrl = fromParam;
+                        isGame = true;
+                    } else if (fromParam.startsWith('/jeux')) {
+                        returnUrl = fromParam;
+                    }
+                }
+            }
+
+            if (!returnUrl && document.referrer) {
+                try {
+                    const refUrl = new URL(document.referrer);
+                    if (refUrl.origin === window.location.origin) {
+                        const path = refUrl.pathname;
+                        if (path.startsWith('/parachess/') || path.startsWith('/disconnect4/')) {
+                            returnUrl = refUrl.pathname + refUrl.search;
+                            isGame = true;
+                        } else if (path.startsWith('/jeux')) {
+                            returnUrl = refUrl.pathname + refUrl.search;
+                        }
+                    }
+                } catch (e) {}
+            }
+
+            const sessionKey = 'rules_return_url_' + game;
+            if (returnUrl) {
+                sessionStorage.setItem(sessionKey, JSON.stringify({ url: returnUrl, isGame }));
+            } else {
+                try {
+                    const saved = JSON.parse(sessionStorage.getItem(sessionKey));
+                    if (saved && saved.url) {
+                        returnUrl = saved.url;
+                        isGame = !!saved.isGame;
+                    }
+                } catch (e) {}
+            }
+
+            if (!returnUrl) {
+                returnUrl = '/jeux?g=' + game;
+            }
+
             const returnBtn = document.getElementById('return');
             if (returnBtn) {
-                returnBtn.href = '/jeux?g=' + game;
+                returnBtn.href = returnUrl;
+                returnBtn.setAttribute('aria-label', isGame ? 'Retourner à la partie' : 'Retourner au menu');
             }
 
             try {

@@ -79,7 +79,7 @@ window.onload = async _ => {
     gameURLAddress = gameURL;
     const rulesButton = document.getElementById('rules-button');
     if (rulesButton) {
-        rulesButton.href = "/regles/?g=" + gameURL;
+        rulesButton.href = "/regles/?g=" + gameURL + "&from=" + encodeURIComponent(window.location.pathname + window.location.search);
     }
     loadGameInfo(gameURL);
     const games = await getGames();

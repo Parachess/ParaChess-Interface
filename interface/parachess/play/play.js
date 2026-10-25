@@ -284,3 +284,10 @@ async function feastVictory() {
         colors
     });
 }
+
+window.addEventListener('DOMContentLoaded', () => {
+    const rulesButton = document.getElementById('rules-button');
+    if (rulesButton) {
+        rulesButton.href = '/regles/?g=parachess&from=' + encodeURIComponent(window.location.pathname + window.location.search);
+    }
+});

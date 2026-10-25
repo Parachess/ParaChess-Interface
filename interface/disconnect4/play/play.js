@@ -167,4 +167,10 @@ async function feastVictory() {
     });
 }
 
-window.addEventListener('DOMContentLoaded', () => connection());
+window.addEventListener('DOMContentLoaded', () => {
+    connection();
+    const rulesButton = document.getElementById('rules-button');
+    if (rulesButton) {
+        rulesButton.href = '/regles/?g=disconnect4&from=' + encodeURIComponent(window.location.pathname + window.location.search);
+    }
+});
