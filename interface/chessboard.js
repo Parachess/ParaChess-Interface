@@ -79,7 +79,6 @@ const PIECE_NAMES = {
 let positions = [];
 let positionsIndex = 0;
 
-let side = 'w';
 let isDragging = false;
 let drag = {
     piece: null,
@@ -133,7 +132,7 @@ document.addEventListener("mouseup", e => {
     const square = e.target.closest(".square");
     if (square) {
         drop(square.dataset.pos);
-        if ((select.legal !== [] && select.legal.includes(square.dataset.pos)) ||
+        if (select.legal?.includes(square.dataset.pos) ||
             (legalMoves?.filter(move => move.from === drag.from).map(move => move.to) ?? []).includes(square.dataset.pos))
             updateSide();
     }

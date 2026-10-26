@@ -2,6 +2,8 @@ window.connection = connection;
 window.victoryDisplayed = false;
 let socket = null;
 let legalMoves = [];
+let isAdmin = false;
+let sides = [];
 
 const fireworksContainer = document.querySelector('#fireworks');
 const fireworks = new Fireworks.Fireworks(fireworksContainer, {
@@ -11,7 +13,7 @@ const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 function connection() {
     const search = new URLSearchParams(window.location.search);
-    if(!search.has('g')) return;
+    if (!search.has('g')) return;
 
     socket = io('/parachess', {
         query: {
@@ -19,8 +21,8 @@ function connection() {
         },
         transports: ["websocket"]
     });
-    
-    socket?.on('side', (status, side) => displayAttemptResult(status, side));
+
+    socket?.on('access', result => displayAttemptResult(result));
 
     socket?.on('voice-command', handleVoiceCommand);
 
@@ -34,7 +36,7 @@ function connection() {
 
     socket?.on('move', (from, to) => {
         const moveHighlightedSquares = Array.from(document.getElementsByClassName('moveHighlighted'));
-        for(const square of moveHighlightedSquares) {
+        for (const square of moveHighlightedSquares) {
             square.classList.remove('moveHighlighted');
         }
 
@@ -78,7 +80,7 @@ function connection() {
         if (state.gameOver) {
             if (!window.victoryDisplayed) {
                 window.victoryDisplayed = true;
-                if (side === '*' || side === 'w' && state.whiteWon || side === 'b' && state.blackWon)
+                if (sides.includes('w') && state.whiteWon || sides.includes('b') && state.blackWon)
                     feastVictory();
                 else {
                     // defeat;
@@ -95,7 +97,7 @@ function connection() {
                 announcement.push("Match nul !");
             }
         }
-        if (document.getElementById("side-value").value === "*") {
+        if (isAdmin) {
             if (state.opportunity == 'w') chessboard.classList.remove("rotated");
             else chessboard.classList.add("rotated");
         }
@@ -144,19 +146,22 @@ function askFen() {
     setTimeout(() => document.getElementById('ask-fen-input').focus(), 100);
 }
 
-function displayAttemptResult(status, side) {
+function displayAttemptResult(result) {
     const chessboard = document.getElementById("chessboard");
-    document.getElementById("side-value").value = side;
-    if (status !== "ALLOWED") {
-        document.getElementById('refused-popup-text').innerText = side;
+    if (result.status !== "ALLOWED") {
+        document.getElementById('refused-popup-text').innerText = result.reason;
         document.getElementById('refused-popup').classList.add('visible');
         setTimeout(() => document.querySelector('#refused-popup .popup-option').focus(), 100);
-    } else if (side === 'b' && !Array.from(chessboard.classList).includes("rotated")) chessboard.classList.add('rotated');
-    else if (side === 'w' && Array.from(chessboard.classList).includes("rotated")) chessboard.classList.remove('rotated');
-    if (side !== '*')
-        document.getElementById('undo-button').classList.add('hidden');
-    else if (side === '*')
-        document.getElementById('undo-button').classList.remove('hidden');
+    } else {
+        sides = result.sides;
+        if (sides.includes('b') && !sides.includes('w')) chessboard.classList.add('rotated');
+        else if (sides.includes('w') && !sides.includes('b')) chessboard.classList.remove('rotated');
+        if (result.admin) {
+            document.getElementById('undo-button').classList.remove('hidden');
+            isAdmin = true;
+        } else
+            document.getElementById('undo-button').classList.add('hidden');
+    }
 }
 
 function hideAll() {
@@ -181,7 +186,7 @@ function resign() {
     setTimeout(() => document.querySelector('#confirmation-popup .popup-option').focus(), 100);
 }
 
-function validateResign(validation=false) {
+function validateResign(validation = false) {
     document.getElementById("confirmation-popup").classList.remove("visible");
     if (validation) socket?.emit("resign");
 }
@@ -207,32 +212,32 @@ function isPromotionChar(char) {
 
 window.addEventListener('keydown', e => {
     const finalKey = e.key.toLowerCase();
-    if(finalKey === '0') {
+    if (finalKey === '0') {
         window.location.open('/', '_self');
     }
-    if(finalKey === 'm') {
+    if (finalKey === 'm') {
         typed.splice(0, typed.length);
         return;
     }
-    if(!authorized.includes(finalKey)) return;
+    if (!authorized.includes(finalKey)) return;
 
     const twoLast = [typed[typed.length - 1], finalKey];
     const isSquare = isChessSquare(...twoLast);
     const isPromotion = isPromotionChar(finalKey);
-    if(isPromotion && !lastPromotion) {
+    if (isPromotion && !lastPromotion) {
         typed.splice(0, typed.length);
         lastPromotion = finalKey;
     }
     typed.push(finalKey);
 
-    if(isSquare && lastSquare) {
+    if (isSquare && lastSquare) {
         let finalPromotion = null;
-        if(lastPromotion && typed.length === 5) finalPromotion = lastPromotion;
+        if (lastPromotion && typed.length === 5) finalPromotion = lastPromotion;
         sendMove(lastSquare, twoLast.join(''), finalPromotion);
         lastSquare = '';
         lastPromotion = null;
         typed.slice(0, typed.length);
-    } else if(isSquare) lastSquare = twoLast.join('');
+    } else if (isSquare) lastSquare = twoLast.join('');
 });
 
 async function feastVictory() {
