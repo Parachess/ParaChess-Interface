@@ -150,7 +150,7 @@ export default class Game {
      * @return {boolean} 'true' if players can still join the game
      */
     isPlayable() {
-        return this.getUnassignedTeams().length === 0;
+        return this.getUnassignedTeams().length > 0;
     }
 
     /**

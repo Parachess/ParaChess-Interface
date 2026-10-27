@@ -1,7 +1,8 @@
 window.connection = connection;
 window.victoryDisplayed = false;
 let socket = null;
-let side = 'r';
+let sides = [];
+let admin = false;
 
 const fireworksContainer = document.querySelector('#fireworks');
 const fireworks = new Fireworks.Fireworks(fireworksContainer, {
@@ -19,7 +20,7 @@ function connection() {
         }
     });
 
-    socket?.on('side', (status, side) => displayAttemptResult(status, side));
+    socket?.on('access', (answer) => displayAttemptResult(answer));
     socket?.on('voice-command', handleVoiceCommand);
 
     socket?.on('boardStates', states => {
@@ -39,7 +40,7 @@ function connection() {
         if (state.gameOver) {
             if (!window.victoryDisplayed) {
                 window.victoryDisplayed = true;
-                if (side === '*' || side === 'r' && state.redWon || side === 'b' && state.blueWon)
+                if (admin || sides.includes('r') && state.redWon || sides.includes('b') && state.blueWon)
                     feastVictory();
                 else {
                     // defeat;
@@ -80,15 +81,16 @@ function resign() {
     setTimeout(() => document.querySelector('#confirmation-popup .popup-option').focus(), 100);
 }
 
-function displayAttemptResult(status, color) {
-    if (status !== "ALLOWED") {
-        document.getElementById('refused-popup-text').innerText = color;
+function displayAttemptResult(answer) {
+    if (answer.status !== "ALLOWED") {
+        document.getElementById('refused-popup-text').innerText = answer.reason;
         document.getElementById('refused-popup').classList.add('visible');
         setTimeout(() => document.querySelector('#refused-popup .popup-option').focus(), 100);
         return;
     }
-    side = color;
-    if (side !== '*')
+    sides = answer.sides;
+    admin = answer.isAdmin;
+    if (admin)
         document.getElementById('undo-button').classList.add('hidden');
 }
 

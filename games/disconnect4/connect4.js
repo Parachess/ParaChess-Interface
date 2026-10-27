@@ -18,7 +18,7 @@ export default class Connect4 extends Game {
      * @param {Array} players The user object (key: id, value : color)
      */
     constructor(players = {}) {
-        super("DisConnect 4", ['r', 'b'], player, 'r')
+        super("DisConnect 4", ['r', 'b'], 'r', players)
         this.board = new Board();
         this.positions = [this.board.export()];
         this.players = players;
@@ -34,7 +34,6 @@ export default class Connect4 extends Game {
      */
     play(player, column) {
         if (this.gameOver) return false;
-        // Check if the players a registered
         if (!this.isPlayer(player) || !this.getTeamsOfPlayer(player).includes(this.side))
             return false;
         this.update();
@@ -43,7 +42,7 @@ export default class Connect4 extends Game {
             return false;
         this.board.insert(column, this.side);
         this.side = this.getNextTeam();
-        this.historyOfMoves.push(column);
+        this.history.push(column);
         this.positions.push(this.board.export());
         this.checkForGameOver();
         return true;
@@ -55,7 +54,7 @@ export default class Connect4 extends Game {
     undo() {
         if (!this.mayUndo())
             return;
-        const last = this.historyOfMoves.pop();
+        const last = this.history.pop();
         if (last) {
             this.side = this.getPreviousTeam();
             this.board.remove(last);
@@ -85,6 +84,7 @@ export default class Connect4 extends Game {
      * Checks if 4 pawns are connected
      * 
      * @param {string} side 'r' or 'b'
+     * @returns {boolean} 'true' if 'side' wins
      */
     win(side = 'r') {
         return this.board.isWin(side);
@@ -92,6 +92,8 @@ export default class Connect4 extends Game {
 
     /**
      * Checks if all the board is full
+     * 
+     * @returns {boolean} 'true' if the board is full
      */
     draw() {
         return this.board.isFull();
@@ -137,7 +139,8 @@ export default class Connect4 extends Game {
         return {
             gameOver: this.gameOver,
             opportunity: this.side,
-            winningSides: this.winningSides,
+            redWon: this.winningSides.includes('r'),
+            blueWon: this.winningSides.includes('b'),
             reason: this.reason
         };
     }

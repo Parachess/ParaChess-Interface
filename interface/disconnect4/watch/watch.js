@@ -61,5 +61,55 @@ function hideAll() {
     document.getElementById('state-popup').classList.remove('visible');
 }
 
+async function feastVictory() {
+    setTimeout(() => document.querySelector('#state-popup .popup-option').focus(), 100);
+
+    const colors = [
+        "#FF006E",
+        "#FB5607",
+        "#FFBE0B",
+        "#00F5D4",
+        "#00BBF9",
+        "#8338EC",
+        "#FF4D6D",
+        "#FFFFFF"
+    ];
+
+    fireworks.launch(20);
+
+    setTimeout(() => {
+        confetti({
+            position: { x: window.innerWidth / 2, y: window.innerHeight },
+            count: 1000,
+            size: 3,
+            velocity: 1000,
+            fade: false,
+            colors
+        });
+    }, 600);
+
+    const cheeringSong = document.querySelector('#cheeringSong');
+    cheeringSong.volume = 0.2;
+    try {
+        cheeringSong.currentTime = 1.9
+        await cheeringSong.play();
+
+        setTimeout(() => {
+            cheeringSong.pause();
+        }, 15000);
+    } catch { }
+
+    await wait(2000);
+    fireworks.launch(20);
+    confetti({
+        position: { x: window.innerWidth / 2, y: window.innerHeight },
+        count: 500,
+        size: 2,
+        velocity: 1000,
+        fade: false,
+        colors
+    });
+}
+
 window.addEventListener('DOMContentLoaded', () => connection());
 connection();
