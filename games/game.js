@@ -29,6 +29,7 @@ export default class Game {
         this.winningSides = [];
         this.positions = [];
         this.history = [];
+        this.losingTeams = [];
         this.lastActionTime = Date.now();
     }
 
@@ -47,12 +48,13 @@ export default class Game {
      * Gives the next team from one side 
      * 
      * @param {string} initialSide the initial team (by default it's the 'side' property) 
+     * @param {boolean} skipLosingTeams skip the teams that don't play anymore
      * @returns {string} the next team
      */
-    getNextTeam(side=this.side) {
+    getNextTeam(side=this.side, skipLosingTeams=true) {
         let i = -1;
         for (let j = 0; j < this.teams.length - 1; j++) {
-            if (this.teams[j] === side) {
+            if (this.teams[j] === side && (!skipLosingTeams || !this.losingTeams.includes(this.teams[j]))) {
                 i = j;
                 break;
             }
@@ -64,12 +66,13 @@ export default class Game {
      * Gives the previous team from one side 
      * 
      * @param {string} initialSide the initial team (by default it's the 'side' property) 
+     * @param {boolean} skipLosingTeams skip the teams that don't play anymore
      * @returns {string} the previous team
      */
-    getPreviousTeam(side = this.side) {
+    getPreviousTeam(side = this.side, skipLosingTeams=true) {
         let i = -1;
         for (let j = 1; j < this.teams.length; j++) {
-            if (this.teams[j] === side) {
+            if (this.teams[j] === side, (!skipLosingTeams || !this.losingTeams.includes(this.teams[j]))) {
                 i = j;
                 break;
             }
@@ -219,5 +222,28 @@ export default class Game {
      */
     update() {
         this.lastActionTime = Date.now();
+    }
+
+    /**
+     * resign a game
+     * 
+     * @param {string} user the id of the user
+     * @param {string} side the side
+     * @returns {boolean} 'true' if the resignation succeeded
+     */
+    resign(user, side) {
+        if (!this.getTeamsOfPlayer(user).includes(side))
+            return false;
+        if (!this.losingTeams.includes(side) && this.teams.includes(side)) {
+            this.losingTeams.push(side);
+            if (this.side === side) this.side = this.getNextTeam() 
+            if (this.losingTeams.length === this.teams.length - 1) {
+                this.gameOver = true;
+                this.reason = "abandon";
+                this.winningSides = this.teams.filter(side => !this.losingTeams.contains(side));
+            }
+            return true;
+        }
+        
     }
 }

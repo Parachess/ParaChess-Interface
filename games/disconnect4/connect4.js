@@ -50,9 +50,11 @@ export default class Connect4 extends Game {
 
     /**
      * Undoes the last move played.
+     * 
+     * @param {string} user the user who tries to undo a move
      */
-    undo() {
-        if (!this.mayUndo())
+    undo(user) {
+        if (!this.mayUndo(user))
             return;
         const last = this.history.pop();
         if (last) {
@@ -143,19 +145,6 @@ export default class Connect4 extends Game {
             blueWon: this.winningSides.includes('b'),
             reason: this.reason
         };
-    }
-
-    /**
-     * resign a game
-     * 
-     * @param {string} side the side
-     */
-    resign(side) {
-        if (!side) return;
-        this.gameOver = true;
-        this.reason = "abandon";
-        if (side === 'r') this.winningSides = ['b'];
-        if (side === 'b') this.winningSides = ['r'];
     }
 
 }
