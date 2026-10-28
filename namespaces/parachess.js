@@ -15,7 +15,86 @@ function createSendEval(io, gameId) {
     };
 }
 
-function fromTextToMove(nsp, text, address) {
+/**
+ * Resigns a game a send a message to inform users
+ * 
+ * @param {*} nsp the namespace of the server
+ * @param {string} id the id of a game
+ * @param {string} ip the id of a player 
+ * @param {string} team the team that wants to resign
+ */
+function resign(nsp, id, ip, team) {
+    if (parachessGames[id].resign(ip, team))
+        nsp.to('game:' + id).emit('state', parachessGames[id].getState());
+}
+
+/**
+ * Reset a game
+ * 
+ * @param {*} nsp the namespace of the server 
+ * @param {string} id the id of the game
+ */
+function restart(nsp, id) {
+    parachessGames[id].clear();
+    parachessGames[id] = new Chess(parachessGames[id].getSwappedTeams());
+    const roomIdentifier = 'game:' + id;
+    nsp.to(roomIdentifier).emit('boardStates', parachessGames[id].getPositions());
+    nsp.to(roomIdentifier).emit('legalColumns', parachessGames[id].getLegalColumns());
+    nsp.to(roomIdentifier).emit('state', parachessGames[id].getState());
+    nsp.to(roomIdentifier).emit('resetBoard');
+    const room = io.of('/disconnect4').adapter.rooms.get('game:' + id);
+    if (!room) return;
+    room.forEach(socketId => {
+        const s = io.of('/disconnect4').sockets.get(socketId)
+        if (!s) return;
+        if (parachessGames[id].isPlayer(extractIP(s.handshake.address))) {
+            s.emit("access", parachessGames[id].buildAccessObject(s.handshake.address));
+        }
+    });
+}
+
+/**
+ * Tries to make a move
+ * 
+ * @param {*} nsp the namespace of the server
+ * @param {*} socket the particular socket attempting to move
+ * @param {string} id the id of the game
+ * @param {string} ip the id of the player
+ * @param {object} move the move object (currently: {column : Int(0-7)})
+ */
+function move(nsp, socket, id, ip, move) {
+    const legal = parachessGames[id].play(ip, Number(move?.column ?? -1));
+    if (legal) {
+        parachessGames[id].displayBoard();
+        const moves = parachessGames[id].getLegalColumns();
+        const roomIdentifier = 'game:' + id;
+        nsp.to(roomIdentifier).emit('legalColumns', moves);
+        nsp.to(roomIdentifier).emit('boardStates', parachessGames[id].getPositions());
+        nsp.to(roomIdentifier).emit('state', parachessGames[id].getState());
+    } else {
+        socket.emit('boardStates', parachessGames[id].getPositions());
+        socket.emit('state', parachessGames[id].getState());
+    }
+}
+
+/**
+ * Tries to undo a move
+ * 
+ * @param {*} nsp the namespace of the server 
+ * @param {string} id the id of a game 
+ * @param {string} ip the id of the player whishing to undo a move
+ */
+function undo(nsp, id, ip) {
+    if (parachessGames[id].undo(ip)) {
+        parachessGames[id].displayBoard();
+        const roomIdentifier = 'game:' + id;
+        nsp.to(roomIdentifier).emit('boardStates', parachessGames[id].getPositions());
+        nsp.to(roomIdentifier).emit('legalColumns', parachessGames[id].getLegalColumns());
+        nsp.to(roomIdentifier).emit('state', parachessGames[id].getState());
+    }
+}
+
+function handleTextCommand(nsp, text, address) {
     const ip = extractIP(address);
 
     if (!lastParachessUserGamesId[ip]) return;
@@ -33,19 +112,12 @@ function fromTextToMove(nsp, text, address) {
     }
 
     if (lowerCaseText.includes('abandonner')) {
-        game.resign(game.getPlayer(ip));
-        nsp.to('game:' + id).emit('state', game.getState());
+        resign(nsp, id, ip, game.getTeamsOfPlayer(ip)[0]);
         return;
     }
 
     if (lowerCaseText.includes('recommencer') || lowerCaseText.includes('rejouer')) {
-        parachessGames[id].clear();
-        parachessGames[id] = new Chess(createSendEval(ioRef, id), Chess.DEFAULT_FEN, game.swapTeams());
-        nsp.to('game:' + id).emit('boardStates', parachessGames[id].getPositions());
-        nsp.to('game:' + id).emit('legalMoves', parachessGames[id].getAllLegalMoves());
-        nsp.to('game:' + id).emit('state', parachessGames[id].getState());
-        nsp.to('game:' + id).emit('eval', parachessGames[id].getEval());
-        nsp.to('game:' + id).emit('resetBoard');
+        restart(nsp, id);
         return;
     }
     
@@ -71,25 +143,17 @@ function fromTextToMove(nsp, text, address) {
         else if (lowerCaseText[firstPieceIndex] === 'd') piece = "q";   // Queen
         else piece = "r";                                               // Rook
     }
-
-    console.log(lastParachessUserGamesId[ip] + " : " + squares[0] + "-" + squares[1] + " (" + piece + "): " + game.play(ip, squares[0], squares[1], piece));
-    game.displayBoard();
-
-    nsp.to('game:' + id).emit('boardStates', game.getPositions());
-    nsp.to('game:' + id).emit('state', game.getState());
-    nsp.to('game:' + id).emit('legalMoves', game.getAllLegalMoves());
+    move(nsp, socket, id, ip, { from: squares[0], to: squares[1], promotion: piece});
 }
 
 
 export const parachessGames = {};
 const lastParachessUserGamesId = {};
-let ioRef = null;
 
 export default function parachessNamespace(io) {
-    ioRef = io;
     const nsp = io.of('/parachess');
 
-    startListening(fromTextToMove);
+    startListening(handleTextCommand);
 
     nsp.on('connection', socket => {
         const { id } = socket.handshake.query;
@@ -109,57 +173,19 @@ export default function parachessNamespace(io) {
         socket.on('move', (from, to, promotion) => {
             if (!parachessGames[id].isPlayer(ip))
                 return;
-            const legal = parachessGames[id].play(ip, from, to, promotion ?? "none");
-            parachessGames[id].displayBoard();
-            if (legal) {
-                const moves = parachessGames[id].getAllLegalMoves();
-                nsp.to(roomIdentifier).emit('legalMoves', moves);
-                nsp.to(roomIdentifier).emit('boardStates', parachessGames[id].getPositions());
-                nsp.to(roomIdentifier).emit('state', parachessGames[id].getState());
-                nsp.to(roomIdentifier).emit('move', from, to, promotion);
-            } else {
-                socket.emit('boardStates', parachessGames[id].getPositions());
-                socket.emit('state', parachessGames[id].getState());
-            }
+            move(nsp, socket, id, ip, { from: from, to: to, promotion: promotion });
         });
 
         socket.on('resetState', () => {
             if (!parachessGames[id].isPlayer(ip))
                 return;
-            parachessGames[id].clear();
-            parachessGames[id] = new Chess(createSendEval(io, id), Chess.DEFAULT_FEN, parachessGames[id].getSwappedTeams());
-            nsp.to(roomIdentifier).emit('boardStates', parachessGames[id].getPositions());
-            nsp.to(roomIdentifier).emit('legalMoves', parachessGames[id].getAllLegalMoves());
-            nsp.to(roomIdentifier).emit('state', parachessGames[id].getState());
-            nsp.to(roomIdentifier).emit('eval', parachessGames[id].getEval());
-            nsp.to(roomIdentifier).emit('resetBoard');
-            const room = io.of('/parachess').adapter.rooms.get('game:' + id);
-            if (!room) return;
-            room.forEach(socketId => {
-                const s = io.of('/parachess').sockets.get(socketId)
-                if (!s) return;
-                if (parachessGames[id].isPlayer(extractIP(s.handshake.address))) {
-                    const teams = parachessGames[id].getTeamsOfPlayer(extractIP(s.handshake.address));
-                    const object = {
-                        status : "ALLOWED",
-                        sides : teams,
-                        admin: teams.length === parachessGames[id].teams.length,
-                        reason: "Changement de role !"
-                    }
-                    s.emit("access", object);
-                }
-            });
+            restart(nsp, id);
         });
 
         socket.on('undo', () => {
             if (!parachessGames[id].isPlayer(ip))
                 return;
-            parachessGames[id].undo(true, true, false);
-            console.log('[' + id + '] going back !');
-            parachessGames[id].displayBoard();
-            nsp.to(roomIdentifier).emit('boardStates', parachessGames[id].getPositions());
-            nsp.to(roomIdentifier).emit('legalMoves', parachessGames[id].getAllLegalMoves());
-            nsp.to(roomIdentifier).emit('state', parachessGames[id].getState());
+            undo(nsp, id, ip);
         });
 
         socket.on('fen', fen => {
@@ -175,28 +201,14 @@ export default function parachessNamespace(io) {
         });
 
         socket.on('may-play', roles => {
-            const object = {
-                status: "REFUSED",
-                sides: [],
-                admin: false,
-                reason: "La partie est déjà pleine !"
-            };
             parachessGames[id].addPlayer(ip, roles);
-            if (parachessGames[id].isPlayer(ip)) {
-                const teams = parachessGames[id].getTeamsOfPlayer(ip);
-                object.status = "ALLOWED";
-                object.sides = teams;
-                object.admin = teams.length === parachessGames[id].teams.length;
-                object.reason = "Il y a suffisamment de place pour vous !";
-            }
-            socket.emit('access', object);
+            socket.emit('access', parachessGames[id].buildAccessObject(id, ip));
         });
 
-        socket.on('resign', _ => {
+        socket.on('resign', team => {
             if (!parachessGames[id].isPlayer(ip))
                 return;
-            parachessGames[id].resign(parachessGames[id].getTeamsOfPlayer(ip)[0]);
-            nsp.to(roomIdentifier).emit('state', parachessGames[id].getState());
+            resign(nsp, id, ip, team);
         });
 
         // Receive audio flux
@@ -210,7 +222,7 @@ export default function parachessNamespace(io) {
             if (recChess.acceptWaveform(uint8)) {
                 const result = recChess.result();
                 if (result?.text) {
-                    fromTextToMove(nsp, transform(result.text, grammarChess), ip);
+                    handleTextCommand(nsp, transform(result.text, grammarChess), ip);
                 }
             }
         });

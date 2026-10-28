@@ -52,17 +52,21 @@ export default class Connect4 extends Game {
      * Undoes the last move played.
      * 
      * @param {string} user the user who tries to undo a move
+     * @param {object} _object the undo object (useless for connect 4)
+     * @return {boolean} 'true' if a move has been deleted from the history
      */
-    undo(user) {
-        if (!this.mayUndo(user))
-            return;
+    undo(user, _object) {
+        if (!super.undo(user))
+            return false;
         const last = this.history.pop();
         if (last) {
             this.side = this.getPreviousTeam();
             this.board.remove(last);
             this.positions.pop();
             this.getLegalColumns();
+            return true;
         }
+        return false;
     }
 
     /**

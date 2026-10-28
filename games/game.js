@@ -34,14 +34,14 @@ export default class Game {
     }
 
     /**
-     * Checks wether it is possible to make the game go back to the previous
-     * positions. The user must own the game in order to undo a move.
+     * Undoes the last played move. The code is different for every games
      * 
-     * @param {string} player the player id
-     * @returns {string} 'true' if the game can go back to a previous position
+     * @param {string} user the user trying to undo a move
+     * @param {object} _object data required to undo a move
+     * @returns {boolean} 'true' if the move is undone
      */
-    mayUndo(player) {
-        if (this.isPlayer(player) && this.getTeamsOfPlayer(player).length >= this.teams.length && this.history.length > 0 && !this.gameOver) return true;
+    undo(user, _object) {
+        return this.isPlayer(user) && this.getTeamsOfPlayer(user).length >= this.teams.length && this.history.length > 0 && !this.gameOver;
     }
 
     /**
@@ -191,7 +191,7 @@ export default class Game {
             const teams = this.getTeamsOfPlayer(id);
             const newTeams = [];
             teams.forEach(team => {
-                newTeams.push(this.getNextTeam(team));
+                newTeams.push(this.getNextTeam(team, false));
             });
             swappedTeams[id] = newTeams;
         });
@@ -236,7 +236,7 @@ export default class Game {
             return false;
         if (!this.losingTeams.includes(side) && this.teams.includes(side)) {
             this.losingTeams.push(side);
-            if (this.side === side) this.side = this.getNextTeam() 
+            if (this.side === side) this.side = this.getNextTeam(); 
             if (this.losingTeams.length === this.teams.length - 1) {
                 this.gameOver = true;
                 this.reason = "abandon";
@@ -245,5 +245,28 @@ export default class Game {
             return true;
         }
         
+    }
+
+    /**
+     * build an object to determine whether a player is able to play or not
+     * 
+     * @param {string} user the id of the player
+     * @returns {object} return {status: string, sides: Array[string], isAdmin: boolean, reason: string}
+     */
+    buildAccessObject(user) {
+        const object = {
+            status: "REFUSED",
+            sides: [],
+            isAdmin: false,
+            reason: "La partie est déjà remplie !"
+        }
+        if (this.isPlayer(user)) {
+            const teams = this.getTeamsOfPlayer(user);
+            object.status = "ALLOWED";
+            object.sides = teams;
+            object.isAdmin = this.teams.length === teams.length;
+            object.reason = "Il y a suffisamment de place pour vous !";
+        }
+        return object;
     }
 }

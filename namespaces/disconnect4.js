@@ -10,8 +10,8 @@ import { recPuissance4, transform, grammarPuissance4, detectMenuCommand } from '
  * @param {string} team the team that wants to resign
  */
 function resign(nsp, id, ip, team) {
-    if (game.resign(ip, team))
-        nsp.to('game:' + id).emit('state', game.getState());
+    if (disconnect4Games[id].resign(ip, team))
+        nsp.to('game:' + id).emit('state', disconnect4Games[id].getState());
 }
 
 /**
@@ -33,13 +33,13 @@ function restart(nsp, id) {
         const s = io.of('/disconnect4').sockets.get(socketId)
         if (!s) return;
         if (disconnect4Games[id].isPlayer(extractIP(s.handshake.address))) {
-            s.emit("access", buildAccessObject(id, s.handshake.address));
+            s.emit("access", disconnect4Games[id].buildAccessObject(s.handshake.address));
         }
     });
 }
 
 /**
- * tries to make a move
+ * Tries to make a move
  * 
  * @param {*} nsp the namespace of the server
  * @param {*} socket the particular socket attempting to move
@@ -49,8 +49,8 @@ function restart(nsp, id) {
  */
 function move(nsp, socket, id, ip, move) {
     const legal = disconnect4Games[id].play(ip, Number(move?.column ?? -1));
-    disconnect4Games[id].displayBoard();
     if (legal) {
+        disconnect4Games[id].displayBoard();
         const moves = disconnect4Games[id].getLegalColumns();
         const roomIdentifier = 'game:' + id;
         nsp.to(roomIdentifier).emit('legalColumns', moves);
@@ -66,41 +66,20 @@ function move(nsp, socket, id, ip, move) {
  * Tries to undo a move
  * 
  * @param {*} nsp the namespace of the server 
- * @param {string} id the id of a game 
+ * @param {string} id the id of a game
+ * @param {string} ip the id of the player whishing to undo a move
  */
-function undo(nsp, id) {
-    disconnect4Games[id].undo();
-    disconnect4Games[id].displayBoard();
-    const roomIdentifier = 'game:' + id;
-    nsp.to(roomIdentifier).emit('boardStates', disconnect4Games[id].getPositions());
-    nsp.to(roomIdentifier).emit('legalColumns', disconnect4Games[id].getLegalColumns());
-    nsp.to(roomIdentifier).emit('state', disconnect4Games[id].getState());
-}
-
-/**
- * build an object to determine whether a player is able to play or nor
- * 
- * @param {string} id the id of the game 
- * @param {string} ip the id of the player
- * @returns {object} return {status: string, sides: Array[string], isAdmin: boolean, reason: string}
- */
-function buildAccessObject(id, ip) {
-    const object = {
-        status: "REFUSED",
-        sides: [],
-        isAdmin: false,
-        reason: "La partie est déjà remplie !"
-    }
-    if (disconnect4Games[id].isPlayer(ip)) {
-        const teams = disconnect4Games[id].getTeamsOfPlayer(ip);
-        object.status = "ALLOWED";
-        object.sides = teams;
-        object.isAdmin = disconnect4Games[id].teams.length === teams.length;
-        object.reason = "Il y a suffisamment de place pour vous !";
+function undo(nsp, id, ip) {
+    if (disconnect4Games[id].undo(ip)) {
+        disconnect4Games[id].displayBoard();
+        const roomIdentifier = 'game:' + id;
+        nsp.to(roomIdentifier).emit('boardStates', disconnect4Games[id].getPositions());
+        nsp.to(roomIdentifier).emit('legalColumns', disconnect4Games[id].getLegalColumns());
+        nsp.to(roomIdentifier).emit('state', disconnect4Games[id].getState());
     }
 }
 
-function fromTextToMove(nsp, text, address) {
+function handleTextCommand(nsp, text, address) {
     const ip = extractIP(address);
     if (!lastDisconnect4UserGamesId[ip]) return;
     const id = lastDisconnect4UserGamesId[ip];
@@ -141,7 +120,7 @@ const lastDisconnect4UserGamesId = {};
 export default function disconnect4Namespace(io) {
     const nsp = io.of('/disconnect4');
 
-    //startListening(fromTextToMove);
+    //startListening(handleTextCommand);
 
     nsp.on('connection', socket => {
         const { id } = socket.handshake.query;
@@ -172,18 +151,18 @@ export default function disconnect4Namespace(io) {
         socket.on('undo', () => {
             if (!disconnect4Games[id].isPlayer(ip))
                 return;
-            undo(nsp, id);
+            undo(nsp, id, ip);
         });
 
         socket.on('may-play', roles => {
             disconnect4Games[id].addPlayer(ip, roles);
-            socket.emit('access', buildAccessObject(id, ip));
+            socket.emit('access', disconnect4Games[id].buildAccessObject(ip));
         });
 
-        socket.on('resign', _ => {
+        socket.on('resign', team => {
             if (!disconnect4Games[id].isPlayer(ip))
                 return;
-            resign(nsp, id, ip, game.getTeamsOfPlayer(ip)[0]);
+            resign(nsp, id, ip, team);
         });
 
         // Receive audio flux
@@ -197,7 +176,7 @@ export default function disconnect4Namespace(io) {
             if (recPuissance4.acceptWaveform(uint8)) {
                 const result = recPuissance4.result();
                 if (result?.text) {
-                    fromTextToMove(nsp, transform(result.text, grammarPuissance4), ip);
+                    handleTextCommand(nsp, transform(result.text, grammarPuissance4), ip);
                 }
             }
         });

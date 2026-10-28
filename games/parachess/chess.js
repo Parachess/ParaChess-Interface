@@ -399,15 +399,15 @@ export class Chess extends Game {
     /**
      * Undoes the last move played.
      * 
-     * @param {boolean} evalPosition evaluate the game after removing the last move
-     * @param {boolean} removePosition remove the position from the fen code
-     * @param {boolean} force force the removing of the last move (useful when checking if a move is legal)
+     * @param {string} the id of the user trying to undo a move (default is "none")
+     * @param {object} _object the parameters {evalPosition boolean, removePosition boolean, force: boolean} every value is false by default
+     * @return {boolean} 'true' if a move has been removed from the history
      */
-    undo(evalPosition=false, removePosition=false, force = false) {
-        if (!force && !this.mayUndo())
-            return;
+    undo(user="none", { evalPosition=false, removePosition=false, force = false }) {
+        if (!force && !super.undo(user))
+            return false;
         const move = this.history.pop();
-        if (!move) return;
+        if (!move) return false;
         if (removePosition) {
             this.fenPiecesHistory?.pop();
             this.positions?.pop();
@@ -436,7 +436,7 @@ export class Chess extends Game {
                 this.board.set('f8', null);
             }
             if (evalPosition) this.evalPosition();
-            return;
+            return true;
         }
 
         if (action & Actions.Q_CASTLE) {
@@ -452,7 +452,7 @@ export class Chess extends Game {
                 this.board.set('d8', null);
             }
             if (evalPosition) this.evalPosition();
-            return;
+            return true;
         }
 
         const movedPiece = this.board.get(to);
@@ -464,6 +464,7 @@ export class Chess extends Game {
         else if (move.action & Actions.EP_CAPTURE) this.board.set(to[0] + from[1], new Pawn(this.getPreviousTeam(movedPiece.color)));
         if (move.action & Actions.PROMOTION) this.board.set(from, new Pawn(movedPiece.color));
         if (evalPosition) this.evalPosition();
+        return true;
     }
 
     /**
@@ -496,7 +497,7 @@ export class Chess extends Game {
             this.move(move);
             this.simulating = false;
             if (!this.isCheck(prevSide)) legal.push(move);
-            this.undo(false, false, true);
+            this.undo("none", { force: true });
         }
         return legal;
     }
@@ -676,7 +677,7 @@ export class Chess extends Game {
     getState(reload = false) {
         if (reload) {
             this.getAllLegalMoves(this.enPassant, this.side);
-            this.getAllLegalMoves(this.enPassant, this.getNextTeam());
+            this.getAllLegalMoves(this.enPassant, this.getNextTeam(this.side, true));
         }
 
         this.checkForGameOver();
@@ -803,19 +804,6 @@ export class Chess extends Game {
             });
         });
         return pawns === 0 && rooks === 0 && queens === 0 && ((bishops <= 2 && knights === 0) || (knights <= 2 && bishops === 0))
-    }
-
-    /**
-     * resign a game
-     * 
-     * @param {string} side the side
-     */
-    resign(side) {
-        if (!side) return;
-        this.gameOver = true;
-        this.reason = "abandon";
-        if (side === 'w') this.winningSides = ['b'];
-        if (side === 'b') this.winningSides = ['w'];
     }
 
 }

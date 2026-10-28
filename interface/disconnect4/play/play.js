@@ -116,7 +116,7 @@ function resign() {
 
 function validateResign(validation = false) {
     document.getElementById("confirmation-popup").classList.remove("visible");
-    if (validation) socket?.emit("resign");
+    if (validation) socket?.emit("resign", sides[0]);
 }
 
 async function feastVictory() {
