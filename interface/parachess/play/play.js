@@ -156,7 +156,7 @@ function displayAttemptResult(result) {
         sides = result.sides;
         if (sides.includes('b') && !sides.includes('w')) chessboard.classList.add('rotated');
         else if (sides.includes('w') && !sides.includes('b')) chessboard.classList.remove('rotated');
-        if (result.admin) {
+        if (result.isAdmin) {
             document.getElementById('undo-button').classList.remove('hidden');
             isAdmin = true;
         } else

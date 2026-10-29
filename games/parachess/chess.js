@@ -189,8 +189,7 @@ export class Chess extends Game {
      * @returns {boolean} true if the move was played, false otherwise
      */
     play(player, from, to, promotion = 'q') {
-        if (this.gameOver) return false;
-        if (!this.isPlayer(player)|| !this.getTeamsOfPlayer(player).includes(this.side))
+        if (this.gameOver || !this.isPlayer(player)|| !this.getTeamsOfPlayer(player).includes(this.side))
             return false;
         this.getAllLegalMoves();
         const moveOptions = this.processMoveOptions(from, to, promotion);
@@ -251,8 +250,8 @@ export class Chess extends Game {
             if (this.longCastling(this.side)) {
                 if (this.side === 'w') this.updateCastlingRights(from, to, true, false);
                 else this.updateCastlingRights(from, to, false, true);
-                this.side = this.getNextTeam();
                 this.history.push({ from: (this.side === "w" ? "e1" : "e8"), to: (this.side === "w" ? "c1" : "c8"), action: Actions.Q_CASTLE, castling: { ...this.castling }, enPassant: null });
+                this.side = this.getNextTeam();
                 if (!this.simulating) {
                     this.checkForGameOver();
                 }
@@ -265,8 +264,8 @@ export class Chess extends Game {
             if (this.shortCastling(this.side)) {
                 if (this.side === 'w') this.updateCastlingRights(from, to, true, false);
                 else this.updateCastlingRights(from, to, false, true);
-                this.side = this.getNextTeam();
                 this.history.push({ from: (this.side === "w" ? "e1" : "e8"), to: (this.side === "w" ? "g1" : "g8"), action: Actions.K_CASTLE, castling: { ...this.castling }, enPassant: null });
+                this.side = this.getNextTeam();
                 if (!this.simulating) {
                     this.checkForGameOver();
                 }
@@ -284,18 +283,15 @@ export class Chess extends Game {
      */
     move({ from, to, action, promotion }) {
         const move = { from, to, action };
-
         if (this.tryCastling({ from, to, action, promotion })) return true;
 
         if (!Board.isValidSquare(from) || !this.board.isOccupied(from)) return false;
-
+        
         const piece = this.board.get(from);
         const fromColor = this.board.get(from).color;
-
         if (fromColor !== this.side) return false;
-
         this.board.set(from, null);
-
+        
         if (this.board.isOccupied(to) && this.board.get(to).color !== fromColor) {
             const capturedPiece = this.board.get(to);
             this.capturedPieces.push(capturedPiece);
@@ -403,7 +399,7 @@ export class Chess extends Game {
      * @param {object} _object the parameters {evalPosition boolean, removePosition boolean, force: boolean} every value is false by default
      * @return {boolean} 'true' if a move has been removed from the history
      */
-    undo(user="none", { evalPosition=false, removePosition=false, force = false }) {
+    undo(user="none", { evalPosition=false, removePosition=false, force = false } = {}) {
         if (!force && !super.undo(user))
             return false;
         const move = this.history.pop();
@@ -435,6 +431,7 @@ export class Chess extends Game {
                 this.board.set('h8', new Rook('b'));
                 this.board.set('f8', null);
             }
+            this.side = this.getPreviousTeam();
             if (evalPosition) this.evalPosition();
             return true;
         }
@@ -451,6 +448,7 @@ export class Chess extends Game {
                 this.board.set('a8', new Rook('b'));
                 this.board.set('d8', null);
             }
+            this.side = this.getPreviousTeam();
             if (evalPosition) this.evalPosition();
             return true;
         }
@@ -488,16 +486,30 @@ export class Chess extends Game {
      */
     getLegalMoves(pos, enPassant) {
         const legal = [];
-        if (!Board.isValidSquare(pos)) return [];
-
-        const pseudoLegalMoves = this.board.getPseudoLegalMoves(pos, enPassant);
+        if (!Board.isValidSquare(pos)) return legal;
+        if (!this.board.isOccupied(pos)) return legal;
+        const piece = this.board.get(pos);
+        const side = piece.color;
+        const pseudoLegalMoves =
+            this.board.getPseudoLegalMoves(pos, enPassant);
         for (const move of pseudoLegalMoves) {
-            const prevSide = this.side;
-            this.simulating = true;
-            this.move(move);
-            this.simulating = false;
-            if (!this.isCheck(prevSide)) legal.push(move);
-            this.undo("none", { force: true });
+            const previousSide = this.side;
+            const previousSimulating = this.simulating;
+            const previousHistoryLength = this.history.length;
+            try {
+                this.side = side;
+                this.simulating = true;
+                const success = this.move(move);
+                if (success && !this.isCheck(side)) {
+                    legal.push(move);
+                }
+            } finally {
+                if (this.history.length > previousHistoryLength) {
+                    this.undo("none", { force: true });
+                }
+                this.side = previousSide;
+                this.simulating = previousSimulating;
+            }
         }
         return legal;
     }
@@ -763,8 +775,10 @@ export class Chess extends Game {
 
     /**
      * executed when a new eval is completed
+     * 
+     * @param {*} move the best move/score
      */
-    onEval() {
+    onEval(move) {
     }
 
     /**

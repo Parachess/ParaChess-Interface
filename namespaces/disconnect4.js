@@ -27,13 +27,14 @@ function restart(nsp, id) {
     nsp.to(roomIdentifier).emit('legalColumns', disconnect4Games[id].getLegalColumns());
     nsp.to(roomIdentifier).emit('state', disconnect4Games[id].getState());
     nsp.to(roomIdentifier).emit('resetBoard');
-    const room = io.of('/disconnect4').adapter.rooms.get('game:' + id);
+    const room = nsp.adapter.rooms.get('game:' + id);
     if (!room) return;
     room.forEach(socketId => {
-        const s = io.of('/disconnect4').sockets.get(socketId)
+        const s = nsp.sockets.get(socketId)
         if (!s) return;
-        if (disconnect4Games[id].isPlayer(extractIP(s.handshake.address))) {
-            s.emit("access", disconnect4Games[id].buildAccessObject(s.handshake.address));
+        const ip = extractIP(s.handshake.headers['x-real-ip'] ?? s.handshake.address);
+        if (disconnect4Games[id].isPlayer(ip)) {
+            s.emit("access", disconnect4Games[id].buildAccessObject(ip));
         }
     });
 }

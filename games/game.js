@@ -63,7 +63,7 @@ export default class Game {
     }
 
     /**
-     * Gives the previous team from one side 
+     * Gives the team that should have played before another team
      * 
      * @param {string} initialSide the initial team (by default it's the 'side' property) 
      * @param {boolean} skipLosingTeams skip the teams that don't play anymore
@@ -71,13 +71,13 @@ export default class Game {
      */
     getPreviousTeam(side = this.side, skipLosingTeams=true) {
         let i = -1;
-        for (let j = 1; j < this.teams.length; j++) {
-            if (this.teams[j] === side, (!skipLosingTeams || !this.losingTeams.includes(this.teams[j]))) {
+        for (let j = 0; j < this.teams.length; j++) {
+            if (this.teams[j] === side && (!skipLosingTeams || !this.losingTeams.includes(this.teams[j]))) {
                 i = j;
                 break;
             }
         }
-        return i === -1 ? this.teams[this.teams.length - 1] : this.teams[i - 1];
+        return i <= 0 ? this.teams[this.teams.length - 1] : this.teams[i - 1];
     }
 
     /**
@@ -240,7 +240,7 @@ export default class Game {
             if (this.losingTeams.length === this.teams.length - 1) {
                 this.gameOver = true;
                 this.reason = "abandon";
-                this.winningSides = this.teams.filter(side => !this.losingTeams.contains(side));
+                this.winningSides = this.teams.filter(side => !this.losingTeams.includes(side));
             }
             return true;
         }

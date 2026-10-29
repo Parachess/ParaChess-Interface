@@ -2,7 +2,7 @@ window.connection = connection;
 window.victoryDisplayed = false;
 let socket = null;
 let sides = [];
-let admin = false;
+let isAdmin = false;
 
 const fireworksContainer = document.querySelector('#fireworks');
 const fireworks = new Fireworks.Fireworks(fireworksContainer, {
@@ -40,7 +40,7 @@ function connection() {
         if (state.gameOver) {
             if (!window.victoryDisplayed) {
                 window.victoryDisplayed = true;
-                if (admin || sides.includes('r') && state.redWon || sides.includes('b') && state.blueWon)
+                if (isAdmin || sides.includes('r') && state.redWon || sides.includes('b') && state.blueWon)
                     feastVictory();
                 else {
                     // defeat;
@@ -89,8 +89,10 @@ function displayAttemptResult(answer) {
         return;
     }
     sides = answer.sides;
-    admin = answer.isAdmin;
-    if (admin)
+    isAdmin = answer.isAdmin;
+    if (isAdmin)
+        document.getElementById('undo-button').classList.remove('hidden');
+    else
         document.getElementById('undo-button').classList.add('hidden');
 }
 
