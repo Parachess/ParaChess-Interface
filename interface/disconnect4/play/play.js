@@ -30,10 +30,6 @@ function connection() {
         createButtonGrid();
     });
 
-    socket?.on('legalColumns', columns => {
-        legalColumns = columns;
-    });
-
     socket?.on('state', state => {
         let announcement = [];
         displaySideColor(state.opportunity)

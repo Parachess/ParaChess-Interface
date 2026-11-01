@@ -24,7 +24,6 @@ function restart(nsp, id) {
     disconnect4Games[id] = new Connect4(disconnect4Games[id].getSwappedTeams());
     const roomIdentifier = 'game:' + id;
     nsp.to(roomIdentifier).emit('boardStates', disconnect4Games[id].getPositions());
-    nsp.to(roomIdentifier).emit('legalColumns', disconnect4Games[id].getLegalColumns());
     nsp.to(roomIdentifier).emit('state', disconnect4Games[id].getState());
     nsp.to(roomIdentifier).emit('resetBoard');
     const room = nsp.adapter.rooms.get('game:' + id);
@@ -52,9 +51,7 @@ function move(nsp, socket, id, ip, move) {
     const legal = disconnect4Games[id].play(ip, Number(move?.column ?? -1));
     if (legal) {
         disconnect4Games[id].displayBoard();
-        const moves = disconnect4Games[id].getLegalColumns();
         const roomIdentifier = 'game:' + id;
-        nsp.to(roomIdentifier).emit('legalColumns', moves);
         nsp.to(roomIdentifier).emit('boardStates', disconnect4Games[id].getPositions());
         nsp.to(roomIdentifier).emit('state', disconnect4Games[id].getState());
     } else {
@@ -75,7 +72,6 @@ function undo(nsp, id, ip) {
         disconnect4Games[id].displayBoard();
         const roomIdentifier = 'game:' + id;
         nsp.to(roomIdentifier).emit('boardStates', disconnect4Games[id].getPositions());
-        nsp.to(roomIdentifier).emit('legalColumns', disconnect4Games[id].getLegalColumns());
         nsp.to(roomIdentifier).emit('state', disconnect4Games[id].getState());
     }
 }
@@ -134,7 +130,6 @@ export default function disconnect4Namespace(io) {
 
         socket.join(roomIdentifier);
         socket.emit('boardStates', disconnect4Games[id].getPositions());
-        socket.emit('legalColumns', disconnect4Games[id].getLegalColumns());
         socket.emit('state', disconnect4Games[id].getState());
 
         socket.on('move', (column) => {

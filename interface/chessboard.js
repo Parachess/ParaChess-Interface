@@ -140,14 +140,15 @@ document.addEventListener("mouseup", e => {
 });
 
 document.addEventListener('keydown', e => {
-    const square = e.target.closest(".square");
-    if (!square) return;
-
     if (e.key === "Enter" || e.key === " ") {
+        const square = e.target.closest(".square");
+        if (!square) return;
         e.preventDefault();
         e.stopPropagation();
         handleSquareKeyboard(square);
     } else if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
+        const square = e.target.closest(".square");
+        if (!square) return;
         e.preventDefault();
         e.stopPropagation();
         const pos = square.dataset.pos;
@@ -184,6 +185,18 @@ document.addEventListener('keydown', e => {
                 }
             }
         }
+    } else if (["a", "A", "r", "R"].includes(e.key)) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (e.key === "a")
+            positionsIndex = positionsIndex === positions.length - 1 ? positionsIndex : positionsIndex + 1;
+        else if (e.key === "A")
+            positionsIndex = positions.length - 1;
+        else if (e.key === "r")
+            positionsIndex = positionsIndex === 0 ? 0 : positionsIndex - 1;
+        else
+            positionsIndex = 0;
+        setChessBoard();
     }
 });
 

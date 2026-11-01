@@ -4,7 +4,6 @@ const dictCouleursEmojis = { 'r': '🔴', 'b': '🔵' };
 let positionsIndex = 0;
 let positions = [Array(6).fill(null).map(() => Array(7).fill(null))];
 let color = 'blue';
-let legalColumns = [1, 2, 3, 4, 5, 6, 7];
 
 function getBaliseCaseLibre(colonneChoisie, ligneChoisie) {
     return document.getElementById('ligne_' + ligneChoisie + '_col_' + colonneChoisie);
@@ -30,7 +29,7 @@ function createButtonGrid() {
         const btn = document.createElement('button');
         btn.innerText = String(i);
         btn.id = "btn_" + i;
-        if (!legalColumns.includes(i)) {
+        if (positions[positionsIndex][0][i - 1] === 'r' || positions[positionsIndex][0][i - 1] === 'b') {
             btn.classList.add("illegal");
             btn.disabled = true;
         }
@@ -95,6 +94,21 @@ window.addEventListener('keydown', e => {
             const nouveauBoutonFocus = document.getElementById("btn_" + (parseInt(actuelBoutonFocus.innerText) + 1));
             if (nouveauBoutonFocus) nouveauBoutonFocus.focus();
         }
+    } else if (["a", "A", "r", "R"].includes(e.key)) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (e.key === "a")
+            positionsIndex = positionsIndex === positions.length - 1 ? positionsIndex : positionsIndex + 1;
+        else if (e.key === "A")
+            positionsIndex = positions.length - 1;
+        else if (e.key === "r")
+            positionsIndex = positionsIndex === 0 ? 0 : positionsIndex - 1;
+        else
+            positionsIndex = 0;
+        createBoardGrid();
+        createButtonGrid();
+    } else {
+        console.log("'" + e.key + "'", positionsIndex)
     }
 });
 
