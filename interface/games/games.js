@@ -82,16 +82,42 @@ window.onload = async _ => {
         rulesButton.href = "/regles/?g=" + gameURL + "&from=" + encodeURIComponent(window.location.pathname + window.location.search);
     }
     loadGameInfo(gameURL);
-    const games = await getGames();
-    const gamesList = document.getElementById('game-list');
-    if (games.length === 0) {
+    const gamesObject = await getGames();
+    const otherGamesList = document.getElementById('other-games-list');
+    const registeredGamesList = document.getElementById('registered-games-list');
+    if (gamesObject.status !== "ok") {
+        displayUnknownNamePopup(gamesObject.status);
+        return; 
+    }
+    if (gamesObject.registeredGames.length === 0) {
         const p = document.createElement("p");
-        p.style.textAlign = "center"
-        p.style.marginTop = "40px"
-        p.innerText = "Aucune partie n'est actuellement en cours";
-        gamesList.replaceWith(p);
+        p.style.textAlign = "center";
+        p.style.marginTop = "40px";
+        p.innerText = "Vous ne jouer à aucune partie.";
+        registeredGamesList.replaceWith(p);
     } else {
-        games.forEach(game => {
+        gamesObject.registeredGames.forEach(game => {
+            const container = document.createElement("li");
+            const p = document.createElement('p');
+            const text = document.createElement('span');
+            text.innerText = "Partie " + game.name;
+            p.appendChild(text);
+            const play = document.createElement('a');
+            play.href = "/" + gameURLAddress + "/jouer?g=" + game.name;
+            play.innerText = "Jouer";
+            p.appendChild(play);
+            container.appendChild(p);
+            registeredGamesList.appendChild(container);
+        });
+    }
+    if (gamesObject.otherGames.length === 0) {
+        const p = document.createElement("p");
+        p.style.textAlign = "center";
+        p.style.marginTop = "40px";
+        p.innerText = "Aucune partie n'est actuellement en cours.";
+        otherGamesList.replaceWith(p);
+    } else {
+        gamesObject.otherGames.forEach(game => {
             const container = document.createElement('li');
             const p = document.createElement('p');
             const text = document.createElement('span');
@@ -100,7 +126,7 @@ window.onload = async _ => {
             if (game.playable) {
                 const play = document.createElement('a');
                 play.href = "/" + gameURLAddress + "/jouer?g=" + game.name;
-                play.innerText = "Jouer"
+                play.innerText = "Jouer";
                 p.appendChild(play);
             } else {
                 const play = document.createElement('span');
@@ -113,7 +139,7 @@ window.onload = async _ => {
             watch.innerText = "Regarder";
             p.appendChild(watch);
             container.appendChild(p);
-            gamesList.appendChild(container);
+            otherGamesList.appendChild(container);
         });
     }
     window.createGame = createGame;

@@ -31,18 +31,20 @@ h2 {
     font-weight: bold;
 }
 
-#left ul#game-list {
+#left ul#registered-games-list,
+#left ul#other-games-list {
     font-family: Inter;
     font-size: 15px;
 }
 
-#left ul#game-list li p a {
+#left ul#registered-games-list li p a,
+#left ul#other-games-list li p a {
     color: black;
     text-decoration: underline;
     margin: 0 10px 0 10px;
 }
 
-#left ul#game-list li p span.unplayable {
+#left ul#other-games-list li p span.unplayable {
     color: rgb(83, 83, 83);
     text-decoration: line-through;
     margin: 0 10px 0 10px;
@@ -184,7 +186,8 @@ button#create.modern-button, button#auto-create.modern-button, #form a.modern-bu
     }
 
 
-    #left ul#game-list {
+    #left ul#registered-games-list,
+    #left ul#other-games-list {
         font-size: 0.8rem;
         margin-top: 6px;
     }
