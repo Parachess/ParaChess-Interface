@@ -14,13 +14,14 @@
 }
 
 #left {
+    border-left: 1px solid rgba(0, 32.5, 47.5);
     height: 100%;
-    overflow-y: scroll;
+    text-align: center;
 }
 
 #right {
-    border-left: 1px solid rgba(0, 32.5, 47.5);
     height: 100%;
+    overflow-y: scroll;
 }
 
 h2 {
@@ -31,20 +32,20 @@ h2 {
     font-weight: bold;
 }
 
-#left ul#registered-games-list,
-#left ul#other-games-list {
+#right ul#registered-games-list,
+#right ul#other-games-list {
     font-family: Inter;
     font-size: 15px;
 }
 
-#left ul#registered-games-list li p a,
-#left ul#other-games-list li p a {
+#right ul#registered-games-list li p a,
+#right ul#other-games-list li p a {
     color: black;
     text-decoration: underline;
     margin: 0 10px 0 10px;
 }
 
-#left ul#other-games-list li p span.unplayable {
+#right ul#other-games-list li p span.unplayable {
     color: rgb(83, 83, 83);
     text-decoration: line-through;
     margin: 0 10px 0 10px;
@@ -59,7 +60,7 @@ button#create.modern-button, button#auto-create.modern-button, #form a.modern-bu
     max-width: 250px;
 }
 
-.modern-button img{
+.modern-button img {
 
     width: 24px;
     height: 24px;
@@ -106,13 +107,13 @@ button#create.modern-button, button#auto-create.modern-button, #form a.modern-bu
         overflow-y: visible;
     }
 
-    #right {
+    #left {
         border-left: none;
         border-bottom: 1px solid rgba(0, 32.5, 47.5);
         padding: 10px 12px 12px;
     }
 
-    #left {
+    #right {
         border-top: none;
         padding: 10px 12px;
         max-height: none;
@@ -186,8 +187,8 @@ button#create.modern-button, button#auto-create.modern-button, #form a.modern-bu
     }
 
 
-    #left ul#registered-games-list,
-    #left ul#other-games-list {
+    #right ul#registered-games-list,
+    #right ul#other-games-list {
         font-size: 0.8rem;
         margin-top: 6px;
     }

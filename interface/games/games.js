@@ -43,10 +43,14 @@ function goToMenu() {
 
 async function isValidNewId(newId) {
     const games = await getGames();
-   for(var game of games) {
+   for(var game of games.registeredGames) {
     if (newId.toLowerCase() === game.name.toLowerCase())
         return false;
    }
+    for (var game of games.otherGames) {
+        if (newId.toLowerCase() === game.name.toLowerCase())
+            return false;
+    }
     return newId !== null && newId !== undefined && newId !== "";
 }
 

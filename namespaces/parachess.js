@@ -194,7 +194,7 @@ export default function parachessNamespace(io) {
             if (!parachessGames[id].isPlayer(ip))
                 return;
             parachessGames[id].clear();
-            parachessGames[id] = new Chess(createSendEval(nsp, id), fen);
+            parachessGames[id] = new Chess(createSendEval(nsp, id), fen, parachessGames[id].players);
             console.log('[!] Forcing \"' + id + "\" to position : \"" + fen + "\"");
             nsp.to(roomIdentifier).emit('boardStates', parachessGames[id].getPositions());
             nsp.to(roomIdentifier).emit('state', parachessGames[id].getState());
