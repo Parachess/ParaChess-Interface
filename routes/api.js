@@ -79,7 +79,7 @@ export default function() {
             Object.keys(games[i].games).forEach(game => {
                 jsonList.push({
                     name: game,
-                    playable: games[i].games[game].isPlayable()
+                    playable: games[i].games[game].isPlayable(extractIP(req.headers['x-real-ip'] ?? req.socket.address().address))
                 });
             });
             break;
@@ -108,4 +108,24 @@ export default function() {
     });
 
     return router;
+}
+
+/**
+ * extract an IP from a complex address
+ * 
+ * @param {string} address the address
+ * @returns {string} the IP
+ */
+function extractIP(address) {
+    if (!address) return null;
+    address = address.replace(/^\[|\]$/g, '');
+    if (address.includes(':')) {
+        if (/^\d+\.\d+\.\d+\.\d+:\d+$/.test(address)) {
+            address = address.split(':')[0];
+        }
+    }
+    if (address.startsWith('::ffff:')) {
+        address = address.substring(7);
+    }
+    return address;
 }

@@ -150,10 +150,11 @@ export default class Game {
     /**
      * Checks whether a game is playable (if unassigned teams exists)
      * 
-     * @return {boolean} 'true' if players can still join the game
+     * @param {string} id the id of a user (may be null)
+     * @returns {boolean} 'true' if players can still join the game
      */
-    isPlayable() {
-        return this.getUnassignedTeams().length > 0;
+    isPlayable(id=null) {
+        return this.getUnassignedTeams().length > 0 || (id && this.isPlayer(id));
     }
 
     /**
