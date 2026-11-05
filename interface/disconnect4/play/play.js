@@ -57,11 +57,6 @@ function resetGame() {
     socket?.emit('resetState');
 }
 
-function resign() {
-    document.getElementById("confirmation-popup").classList.add("visible");
-    setTimeout(() => document.querySelector('#confirmation-popup .popup-option').focus(), 100);
-}
-
 function displayAttemptResult(status, side) {
     if (status !== "ALLOWED") {
         document.getElementById('refused-popup-text').innerText = side;
@@ -98,4 +93,6 @@ function validateResign(validation = false) {
     if (validation) socket?.emit("resign");
 }
 
-window.addEventListener('DOMContentLoaded', () => connection());
+document.addEventListener("DOMContentLoaded", () => {
+    connection();
+});

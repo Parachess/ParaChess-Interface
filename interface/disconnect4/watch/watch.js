@@ -50,5 +50,6 @@ function hideAll() {
     document.getElementById('state-popup').classList.remove('visible');
 }
 
-window.addEventListener('DOMContentLoaded', () => connection());
-connection();
+document.addEventListener("DOMContentLoaded", () => {
+    connection();
+});

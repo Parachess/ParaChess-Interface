@@ -13,7 +13,6 @@
 </head>
 <body>
     <div id="head-tracker"></div>
-    <div id="face-detection-popup" class="popup">
         <div class="popup-body">
             <h3 id="face-detection-title">
                 Détection du visage
@@ -139,7 +138,7 @@
     <video id="webcam" autoplay playsinline></video>
     <script src="/public/connect4board.js"></script>
     <script src="/disconnect4/jouer/play.js"></script>
-    <script src="/public/voice-commands.js"></script>
+    <script type="module" src="/public/voice-commands.js"></script>
     <script src="/public/head-tracking.js" type="module"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {

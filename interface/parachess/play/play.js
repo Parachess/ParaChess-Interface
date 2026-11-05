@@ -216,3 +216,7 @@ window.addEventListener('keydown', e => {
         typed.slice(0, typed.length);
     } else if(isSquare) lastSquare = twoLast.join('');
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+    connection();
+});

@@ -1,120 +1,216 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Portail des Jeux - ParaChess & DisConnect 4</title>
     <link rel="stylesheet" href="/public/style.css" />
-    <link rel="stylesheet" href="/public/portal.css">
+    <link rel="stylesheet" href="/public/portal.css" />
     <link rel="icon" href="/public/assets/favicon.ico" />
-    <script src="https://cdn.socket.io/4.8.3/socket.io.min.js"
-        integrity="sha384-kzavj5fiMwLKzzD1f8S7TeoVIEi7uKHvbTA3ueZkrzYq75pNQUiUi6Dy98Q3fxb0"
-        crossorigin="anonymous"></script>
-</head>
-<body data-voice-page="index">
+    <script
+      src="https://cdn.socket.io/4.8.3/socket.io.min.js"
+      integrity="sha384-kzavj5fiMwLKzzD1f8S7TeoVIEi7uKHvbTA3ueZkrzYq75pNQUiUi6Dy98Q3fxb0"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body data-voice-page="index">
     <!-- Head Tracking Elements (from old index) -->
     <div id="head-tracker"></div>
     <div id="face-detection-popup" class="popup">
-        <div class="popup-body">
-            <h3 id="face-detection-title">
-                Détection du visage
-            </h3>
-            <div class="inline-options">
-                <button id="activate-face-detection" class="popup-option" onclick="activateFacialDetection();">
-                    Activer</button>
-                <button id="deactivate-face-detection" class="popup-option" onclick="deactivateFacialDetection();">
-                    Désactiver</button>
-            </div>
-            <p>Sensibilité : <span id="sensibility-value">XX</span> %</p>
-            <input type="range" min="0" max="100" id="sensibility-range" value="17" />
-            <p>Durée d'un clin d'œil : <span id="blink-value">XX</span> s</p>
-            <input type="range" min="0" max="1" id="blink-range" value=".25" step="0.1" />
-            <div class="inline-options">
-                <button onclick="toDefaultParameters();" class="popup-option">Retour aux paramètres par défaut</button>
-                <button onclick="closeDetectionPopup();" class="popup-option">Confirmer</button>
-            </div>
+      <div class="popup-body">
+        <h3 id="face-detection-title">Détection du visage</h3>
+        <div class="inline-options">
+          <button
+            id="activate-face-detection"
+            class="popup-option"
+            onclick="activateFacialDetection()"
+          >
+            Activer
+          </button>
+          <button
+            id="deactivate-face-detection"
+            class="popup-option"
+            onclick="deactivateFacialDetection()"
+          >
+            Désactiver
+          </button>
         </div>
-        <div class="popupBackground"></div>
+        <p>Sensibilité : <span id="sensibility-value">XX</span> %</p>
+        <input
+          type="range"
+          min="0"
+          max="100"
+          id="sensibility-range"
+          value="17"
+        />
+        <p>Durée d'un clin d'œil : <span id="blink-value">XX</span> s</p>
+        <input
+          type="range"
+          min="0"
+          max="1"
+          id="blink-range"
+          value=".25"
+          step="0.1"
+        />
+        <div class="inline-options">
+          <button onclick="toDefaultParameters()" class="popup-option">
+            Retour aux paramètres par défaut
+          </button>
+          <button onclick="closeDetectionPopup()" class="popup-option">
+            Confirmer
+          </button>
+        </div>
+      </div>
+      <div class="popupBackground"></div>
     </div>
 
     <!-- Toggle Facial Button -->
-    <button id="toggle-facial-button" class="facial-active" aria-label="Activer/Désactiver le suivi du visage" onclick="displayFacialDetectionPopup(event);">
-                <img id="toggle-face-button-image" src="/public/assets/eye-open.svg" alt="🔴" />
-            </button>
-    <button id="toggle-vocal-button" class="vocal-active" aria-label="Activer/Désactiver la commande vocale" onclick="toggleVocalMode(event);">
-        <img id="toggle-vocal-button-image" src="/public/assets/mic-on.svg" alt="🎙️" />
+    <button
+      id="toggle-facial-button"
+      class="facial-active"
+      aria-label="Activer/Désactiver le suivi du visage"
+      onclick="displayFacialDetectionPopup(event)"
+    >
+      <img
+        id="toggle-face-button-image"
+        src="/public/assets/eye-open.svg"
+        alt="🔴"
+      />
     </button>
-    <a href="/aide/" id="help-button" aria-label="Voir les différents moyens de contrôler ParaGames">
-        <img id="help-image" src="/public/assets/help.png" alt="Contrôles" />
-            <div class="voice-command-hint-button">
-                <img src="/public/assets/parler_blanc.png" alt="Parler">
-                <span>"aide"</span>
-             </div>   
+    <button
+      id="toggle-vocal-button"
+      class="vocal-active"
+      aria-label="Activer/Désactiver la commande vocale"
+      onclick="toggleVocalMode(event)"
+    >
+      <img
+        id="toggle-vocal-button-image"
+        src="/public/assets/mic-on.svg"
+        alt="🎙️"
+      />
+    </button>
+    <a
+      href="/aide/"
+      id="help-button"
+      aria-label="Voir les différents moyens de contrôler ParaGames"
+    >
+      <img id="help-image" src="/public/assets/help.png" alt="Contrôles" />
+      <div class="voice-command-hint-button">
+        <img src="/public/assets/parler_blanc.png" alt="Parler" />
+        <span>"aide"</span>
+      </div>
     </a>
-<img class="background" src="/public/assets/background.svg" alt="" />
-<div class="portal-header">
-    <div class="portal-header-inner">
+    <img class="background" src="/public/assets/background.svg" alt="" />
+    <div class="portal-header">
+      <div class="portal-header-inner">
         <a href="/" class="logo-link">
-            <img id="logo" src="/public/assets/paragames.svg" alt="Logo ParaGames" />
+          <img
+            id="logo"
+            src="/public/assets/paragames.svg"
+            alt="Logo ParaGames"
+          />
         </a>
         <div class="portal-header-text">
-            <h1>Choisissez votre Jeu</h1>
-            <p>Jouez avec vos yeux, votre voix, votre clavier, ou votre souris.<br /><br /></p>
+          <h1>Choisissez votre Jeu</h1>
+          <p>
+            Jouez avec vos yeux, votre voix, votre clavier, ou votre souris.<br /><br />
+          </p>
         </div>
+      </div>
     </div>
-</div>
     <div class="cards-container">
-        <a href="/jeux/?g=parachess" class="game-card parachess" tabindex="0">
-            <div class="mini-board-wrapper">
-                <div class="mini-chess-board">
-                    <div>♜</div><div class="dark-cell">♞</div><div>♝</div><div class="dark-cell">♛</div>
-                    <div class="dark-cell">♟</div><div>♟</div><div class="dark-cell">♟</div><div>♟</div>
-                    <div></div><div class="dark-cell"></div><div></div><div class="dark-cell"></div>
-                    <div class="dark-cell"></div><div></div><div class="dark-cell"></div><div></div>
-                </div>
-            </div>
-            <h2 class="game-title">ParaChess</h2>
-            <div class="voice-command-hint">
-                <img src="/public/assets/parler_blanc.png" alt="Parler">
-                <span>"échecs"</span>
-            </div>
-        </a>
+      <a href="/jeux/?g=parachess" class="game-card parachess" tabindex="0">
+        <div class="mini-board-wrapper">
+          <div class="mini-chess-board">
+            <div>♜</div>
+            <div class="dark-cell">♞</div>
+            <div>♝</div>
+            <div class="dark-cell">♛</div>
+            <div class="dark-cell">♟</div>
+            <div>♟</div>
+            <div class="dark-cell">♟</div>
+            <div>♟</div>
+            <div></div>
+            <div class="dark-cell"></div>
+            <div></div>
+            <div class="dark-cell"></div>
+            <div class="dark-cell"></div>
+            <div></div>
+            <div class="dark-cell"></div>
+            <div></div>
+          </div>
+        </div>
+        <h2 class="game-title">ParaChess</h2>
+        <div class="voice-command-hint">
+          <img src="/public/assets/parler_blanc.png" alt="Parler" />
+          <span>"échecs"</span>
+        </div>
+      </a>
 
-        <a href="/jeux/?g=disconnect4" class="game-card disconnect" tabindex="0">
-            <div class="mini-board-wrapper">
-                <div class="mini-connect-board">
-                    <div></div><div></div><div></div><div></div><div></div>
-                    <div></div><div></div><div class="red-chip"></div><div></div><div></div>
-                    <div></div><div class="blue-chip"></div><div class="red-chip"></div><div></div><div></div>
-                    <div></div><div class="red-chip"></div><div class="blue-chip"></div><div class="blue-chip"></div><div></div>
-                </div>
-            </div>
-            <h2 class="game-title">DisConnect 4</h2>
-            <div class="voice-command-hint">
-                <img src="/public/assets/parler_blanc.png" alt="Parler">
-                <span>"puissance 4"</span>
-            </div>
-        </a>
+      <a href="/jeux/?g=disconnect4" class="game-card disconnect" tabindex="0">
+        <div class="mini-board-wrapper">
+          <div class="mini-connect-board">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div class="red-chip"></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div class="blue-chip"></div>
+            <div class="red-chip"></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div class="red-chip"></div>
+            <div class="blue-chip"></div>
+            <div class="blue-chip"></div>
+            <div></div>
+          </div>
+        </div>
+        <h2 class="game-title">DisConnect 4</h2>
+        <div class="voice-command-hint">
+          <img src="/public/assets/parler_blanc.png" alt="Parler" />
+          <span>"puissance 4"</span>
+        </div>
+      </a>
     </div>
 
     <div class="portal-footer">
-        <a href="/a-propos/" class="footer-link voice-footer-link">
-            <img src="/public/assets/parler_beige.png" alt="Parler" class="voice-only">
-            <span class="footer-text">Qui sommes-nous ?</span>
-        </a>
-        <span class="footer-separator">•</span>
-        <a href="/credits/" class="footer-link voice-footer-link">
-            <img src="/public/assets/parler_beige.png" alt="Parler" class="voice-only">
-            <span class="footer-text">Crédits</span>
-        </a>
-        <span class="footer-separator">•</span>
-        <a href="/mentions-legales/" class="footer-link voice-footer-link">
-            <img src="/public/assets/parler_beige.png" alt="Parler" class="voice-only">
-            <span class="footer-text">Mentions légales</span>
-        </a>
+      <a href="/a-propos/" class="footer-link voice-footer-link">
+        <img
+          src="/public/assets/parler_beige.png"
+          alt="Parler"
+          class="voice-only"
+        />
+        <span class="footer-text">Qui sommes-nous ?</span>
+      </a>
+      <span class="footer-separator">•</span>
+      <a href="/credits/" class="footer-link voice-footer-link">
+        <img
+          src="/public/assets/parler_beige.png"
+          alt="Parler"
+          class="voice-only"
+        />
+        <span class="footer-text">Crédits</span>
+      </a>
+      <span class="footer-separator">•</span>
+      <a href="/mentions-legales/" class="footer-link voice-footer-link">
+        <img
+          src="/public/assets/parler_beige.png"
+          alt="Parler"
+          class="voice-only"
+        />
+        <span class="footer-text">Mentions légales</span>
+      </a>
     </div>
 
     <video id="webcam" autoplay playsinline></video>
     <script src="/public/head-tracking.js" type="module"></script>
-    <script src="/public/voice-commands.js"></script>
-</body>
+    <script type="module" src="/public/voice-commands.js"></script>
+  </body>
+</html>

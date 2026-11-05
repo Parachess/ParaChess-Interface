@@ -1,166 +1,305 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-
-<head>
+  <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-        ParaGames | Aide
-    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ParaGames | Aide</title>
     <link rel="stylesheet" href="/public/style.css" />
     <link rel="icon" href="/public/assets/favicon.ico" />
-    <script src="https://cdn.socket.io/4.8.3/socket.io.min.js"
-        integrity="sha384-kzavj5fiMwLKzzD1f8S7TeoVIEi7uKHvbTA3ueZkrzYq75pNQUiUi6Dy98Q3fxb0"
-        crossorigin="anonymous"></script>
-</head>
-<script>
+    <script
+      src="https://cdn.socket.io/4.8.3/socket.io.min.js"
+      integrity="sha384-kzavj5fiMwLKzzD1f8S7TeoVIEi7uKHvbTA3ueZkrzYq75pNQUiUi6Dy98Q3fxb0"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <script>
     const keyPressed = {};
     let i = 0;
-    window.addEventListener('keydown', e => {
-            keyPressed[e.key] = true;
+    window.addEventListener("keydown", (e) => {
+      keyPressed[e.key] = true;
 
-            if (keyPressed['Control'] && keyPressed['Alt']) {
-                if (e.key === 'c') {
-                    if (i === 0){
-                        i = 1;
-                        activateFacialDetection();
-                    }
-                    else{
-                        i = 0;
-                        deactivateFacialDetection();
-                    }
-                }
-                else if (e.key === 'r') {
-                    window.open(window.location.origin, '_self');
-                } 
-            }
-        });
+      if (keyPressed["Control"] && keyPressed["Alt"]) {
+        if (e.key === "c") {
+          if (i === 0) {
+            i = 1;
+            activateFacialDetection();
+          } else {
+            i = 0;
+            deactivateFacialDetection();
+          }
+        } else if (e.key === "r") {
+          window.open(window.location.origin, "_self");
+        }
+      }
+    });
 
-        window.addEventListener('keyup', e => {
-            delete keyPressed[e.key];
-        });      
-</script>
-<body data-voice-page="games">
+    window.addEventListener("keyup", (e) => {
+      delete keyPressed[e.key];
+    });
+  </script>
+  <body data-voice-page="games">
     <div id="head-tracker"></div>
     <div id="face-detection-popup" class="popup">
-        <div class="popup-body">
-            <h3 id="face-detection-title">
-                Détection du visage
-            </h3>
-            <div class="inline-options">
-                <button id="activate-face-detection" class="popup-option" onclick="activateFacialDetection();">
-                    Activer</button>
-                <button id="deactivate-face-detection" class="popup-option" onclick="deactivateFacialDetection();">
-                    Désactiver</button>
-            </div>
-            <p>Sensibilité : <span id="sensibility-value">XX</span> %</p>
-            <input type="range" min="0" max="100" id="sensibility-range" value="17" />
-            <p>Durée d'un clin d'œil : <span id="blink-value">XX</span> s</p>
-            <input type="range" min="0" max="1" id="blink-range" value=".25" step="0.1" />
-            <div class="inline-options">
-                <button onclick="toDefaultParameters();" class="popup-option">Retour aux paramètres par défaut</button>
-                <button onclick="closeDetectionPopup();" class="popup-option">Confirmer</button>
-            </div>
+      <div class="popup-body">
+        <h3 id="face-detection-title">Détection du visage</h3>
+        <div class="inline-options">
+          <button
+            id="activate-face-detection"
+            class="popup-option"
+            onclick="activateFacialDetection()"
+          >
+            Activer
+          </button>
+          <button
+            id="deactivate-face-detection"
+            class="popup-option"
+            onclick="deactivateFacialDetection()"
+          >
+            Désactiver
+          </button>
         </div>
-        <div class="popupBackground"></div>
+        <p>Sensibilité : <span id="sensibility-value">XX</span> %</p>
+        <input
+          type="range"
+          min="0"
+          max="100"
+          id="sensibility-range"
+          value="17"
+        />
+        <p>Durée d'un clin d'œil : <span id="blink-value">XX</span> s</p>
+        <input
+          type="range"
+          min="0"
+          max="1"
+          id="blink-range"
+          value=".25"
+          step="0.1"
+        />
+        <div class="inline-options">
+          <button onclick="toDefaultParameters()" class="popup-option">
+            Retour aux paramètres par défaut
+          </button>
+          <button onclick="closeDetectionPopup()" class="popup-option">
+            Confirmer
+          </button>
+        </div>
+      </div>
+      <div class="popupBackground"></div>
     </div>
     <div id="content">
-        <div id="header">
-            <a href="/" id="return" aria-label="Retourner au menu">
-                <img src="/public/assets/return.svg" alt="return" />
-                <div class="voice-command-hint-button">
-                    <img src="/public/assets/parler_blanc.png" alt="Parler">
-                    <span>"retour"</span>
-                </div>
-            </a>
-            <a href="/">
-                <img id="logo" src="/public/assets/paragames.svg" alt="Logo ParaGames" />
-            </a>
-            <button id="toggle-facial-button" class="facial-active" aria-label="Activer/Désactiver le suivi du visage"
-                onclick="displayFacialDetectionPopup(event);">
-                <img id="toggle-face-button-image" src="/public/assets/eye-open.svg" alt="🔴" />
-            </button>
-            <button id="toggle-vocal-button" class="vocal-active" aria-label="Activer/Désactiver la commande vocale"
-                onclick="toggleVocalMode(event);">
-                <img id="toggle-vocal-button-image" src="/public/assets/mic-on.svg" alt="🎙️" />
-            </button>
-        </div>
-        <img class="background" src="/public/assets/background.svg" alt="" />
+      <div id="header">
+        <a href="/" id="return" aria-label="Retourner au menu">
+          <img src="/public/assets/return.svg" alt="return" />
+          <div class="voice-command-hint-button">
+            <img src="/public/assets/parler_blanc.png" alt="Parler" />
+            <span>"retour"</span>
+          </div>
+        </a>
+        <a href="/">
+          <img
+            id="logo"
+            src="/public/assets/paragames.svg"
+            alt="Logo ParaGames"
+          />
+        </a>
+        <button
+          id="toggle-facial-button"
+          class="facial-active"
+          aria-label="Activer/Désactiver le suivi du visage"
+          onclick="displayFacialDetectionPopup(event)"
+        >
+          <img
+            id="toggle-face-button-image"
+            src="/public/assets/eye-open.svg"
+            alt="🔴"
+          />
+        </button>
+        <button
+          id="toggle-vocal-button"
+          class="vocal-active"
+          aria-label="Activer/Désactiver la commande vocale"
+          onclick="toggleVocalMode(event)"
+        >
+          <img
+            id="toggle-vocal-button-image"
+            src="/public/assets/mic-on.svg"
+            alt="🎙️"
+          />
+        </button>
+      </div>
+      <img class="background" src="/public/assets/background.svg" alt="" />
 
+      <div class="panel">
+        <h1>Aide</h1>
 
-        <div class="panel">
+        <h3>Comment utiliser ParaGames ?</h3>
+        <p>
+          ParaGames propose quatres modes de contrôle, utilisables séparément ou
+          en combinaison:
+        </p>
 
-            <h1>Aide</h1>
+        <ul>
+          <li><strong>Souris / écran tactile</strong></li>
+          <li>
+            <strong>Reconnaissance faciale</strong> : bougez la tête pour
+            déplacer le curseur rouge, et clignez des yeux pour cliquer. La
+            sensibilité peut être ajustée dans les paramètres.
+          </li>
+          <li>
+            <strong>Clavier</strong> : utilisez les touches du clavier
+            (tabulation, flèches, entrée et espace) pour naviguer et cliquer.
+          </li>
+          <li>
+            <strong>Reconnaissance vocale</strong> : utilisez des commandes
+            vocales pour interagir avec le jeu.
+          </li>
+        </ul>
 
-            <h3>Comment utiliser ParaGames ?</h3>
-            <p>
-                ParaGames propose quatres modes de contrôle, utilisables séparément ou en combinaison:
-            <ul>
-                <li><strong>Souris / écran tactile</strong></li>
-                <li><strong>Reconnaissance faciale</strong> : bougez la tête pour déplacer le curseur rouge, et clignez
-                    des yeux pour cliquer. La sensibilité peut être ajustée dans les paramètres.</li>
-                <li><strong>Clavier</strong> : utilisez les touches du clavier (tabulation, flèches, entrée et espace) pour naviguer et cliquer.</li>
-                <li><strong>Reconnaissance vocale</strong> : utilisez des commandes vocales pour interagir avec le jeu.</li>
+        <h3>Commandes vocales disponibles</h3>
+        <p>Ces commandes fonctionnent sur toutes les pages du site :</p>
+        <ul>
+          <li>
+            <strong>« Retour »</strong> : revient à la page précédemment
+            consultée.
+          </li>
+          <li><strong>« Revenir »</strong> : rétablit la page suivante.</li>
+          <li>
+            <strong>« Quitter » / « Accueil »</strong> : revient directement au
+            menu principal.
+          </li>
+          <li><strong>« Crédits »</strong> : ouvre la page des crédits.</li>
+          <li>
+            <strong>« Qui sommes-nous ? »</strong> : ouvre la page de
+            présentation du projet.
+          </li>
+          <li>
+            <strong>« Aide »</strong> : ouvre cette page d'aide générale, depuis
+            n'importe quelle page.
+          </li>
+          <li>
+            <strong>« Règles »</strong> : ouvre la page des règles du jeu en
+            cours (uniquement disponible sur les pages de jeu : sélection de
+            partie, jeu, visionnage).
+          </li>
+          <li>
+            <strong>« Mentions légales »</strong> : ouvre la page des mentions
+            légales.
+          </li>
+          <li><strong>« Échecs »</strong> : ouvre la page de jeu ParaChess.</li>
+          <li>
+            <strong>« Puissance 4 »</strong> : ouvre la page de jeu DisConnect
+            4.
+          </li>
+          <li>
+            <strong>« Activer / Désactiver caméra »</strong> : active /
+            désactive la reconnaissance faciale.
+          </li>
+          <li>
+            <strong>« Activer / Désactiver micro »</strong> : active / désactive
+            la reconnaissance vocale.
+          </li>
+        </ul>
+        <p>
+          Le bouton micro en haut de l'écran permet à tout moment d'activer ou
+          de désactiver l'écoute des commandes vocales. Attention : même en
+          position « désactivé », le micro reste physiquement allumé et continue
+          d'écouter en arrière-plan — seule la commande
+          <strong>« Activer micro »</strong> est encore prise en compte, toutes
+          les autres sont ignorées. Cela permet de réactiver la commande vocale
+          par la voix sans devoir toucher un bouton.
+        </p>
+        <p>
+          Sur la page de <strong>création de partie</strong> (ParaChess ou
+          DisConnect 4) :
+        </p>
+        <ul>
+          <li>
+            <strong>« Créer automatiquement »</strong> : crée immédiatement une
+            nouvelle partie avec un nom généré automatiquement, sans avoir
+            besoin de saisir de nom.
+          </li>
+          <li>
+            <strong>« Un ordinateur »</strong> : passe en mode « jouer à 1
+            ordinateur ».
+          </li>
+          <li>
+            <strong>« Deux ordinateurs »</strong> : passe en mode « jouer à 2
+            ordinateurs ».
+          </li>
+        </ul>
 
-            </ul>
+        <p>
+          Pendant une partie de <strong>ParaChess</strong>, des commandes
+          supplémentaires sont disponibles :
+        </p>
+        <ul>
+          <li>
+            <strong>Nom d'une case</strong> (ex. « e2 e4 ») : déplace une pièce
+            d'une case à une autre.
+          </li>
+          <li>
+            <strong>Nom d'une pièce</strong> (« tour », « cavalier », « fou », «
+            dame ») : précise la pièce à jouer lors d'une promotion.
+          </li>
+          <li><strong>« Abandonner »</strong> : abandonne la partie.</li>
+          <li>
+            <strong>« Recommencer » / « Rejouer »</strong> : recommence la
+            partie depuis le début.
+          </li>
+          <li>
+            <strong>« Activer / Désactiver coordonnées »</strong> : affiche /
+            masque les coordonnées des cases sur l'échiquier.
+          </li>
+          <li>
+            <strong>« Non » / « Annuler »</strong> : annule la commande en
+            cours.
+          </li>
+        </ul>
 
-            <h3>Commandes vocales disponibles</h3>
-            <p>Ces commandes fonctionnent sur toutes les pages du site :</p>
-            <ul>
-                <li><strong>« Retour »</strong> : revient à la page précédemment consultée.</li>
-                <li><strong>« Revenir »</strong> : rétablit la page suivante.</li>
-                <li><strong>« Quitter » / « Accueil »</strong> : revient directement au menu principal.</li>
-                <li><strong>« Crédits »</strong> : ouvre la page des crédits.</li>
-                <li><strong>« Qui sommes-nous ? »</strong> : ouvre la page de présentation du projet.</li>
-                <li><strong>« Aide »</strong> : ouvre cette page d'aide générale, depuis n'importe quelle page.</li>
-                <li><strong>« Règles »</strong> : ouvre la page des règles du jeu en cours (uniquement disponible sur les pages de jeu : sélection de partie, jeu, visionnage).</li>
-                <li><strong>« Mentions légales »</strong> : ouvre la page des mentions légales.</li>
-                <li><strong>« Échecs »</strong> : ouvre la page de jeu ParaChess.</li>
-                <li><strong>« Puissance 4 »</strong> : ouvre la page de jeu DisConnect 4.</li>
-                <li><strong>« Activer / Désactiver caméra »</strong> : active / désactive la reconnaissance faciale.</li>
-                <li><strong>« Activer / Désactiver micro »</strong> : active / désactive la reconnaissance vocale.</li>
-            </ul>
-            <p>Le bouton micro en haut de l'écran permet à tout moment d'activer ou de désactiver l'écoute des commandes vocales. Attention : même en position « désactivé », le micro reste physiquement allumé et continue d'écouter en arrière-plan — seule la commande <strong>« Activer micro »</strong> est encore prise en compte, toutes les autres sont ignorées. Cela permet de réactiver la commande vocale par la voix sans devoir toucher un bouton.</p>
-            <p>Sur la page de <strong>création de partie</strong> (ParaChess ou DisConnect 4) :</p>
-            <ul>
-                <li><strong>« Créer automatiquement »</strong> : crée immédiatement une nouvelle partie avec un nom généré automatiquement, sans avoir besoin de saisir de nom.</li>
-                <li><strong>« Un ordinateur »</strong> : passe en mode « jouer à 1 ordinateur ».</li>
-                <li><strong>« Deux ordinateurs »</strong> : passe en mode « jouer à 2 ordinateurs ».</li>
-            </ul>
+        <p>
+          Pendant une partie de <strong>DisConnect 4</strong>, des commandes
+          supplémentaires sont disponibles :
+        </p>
+        <ul>
+          <li>
+            <strong>« Colonne » suivi d'un chiffre allant de 1 à 7</strong> (ex.
+            « colonne 4 ») : joue un pion dans la colonne indiquée.
+          </li>
+          <li><strong>« Abandonner »</strong> : abandonne la partie.</li>
+          <li>
+            <strong>« Recommencer » / « Rejouer »</strong> : recommence la
+            partie depuis le début.
+          </li>
+          <li>
+            <strong>« Non » / « Annuler »</strong> : annule la commande en
+            cours.
+          </li>
+        </ul>
 
-            <p>Pendant une partie de <strong>ParaChess</strong>, des commandes supplémentaires sont disponibles :</p>
-            <ul>
-                <li><strong>Nom d'une case</strong> (ex. « e2 e4 ») : déplace une pièce d'une case à une autre.</li>
-                <li><strong>Nom d'une pièce</strong> (« tour », « cavalier », « fou », « dame ») : précise la pièce à jouer lors d'une promotion.</li>
-                <li><strong>« Abandonner »</strong> : abandonne la partie.</li>
-                <li><strong>« Recommencer » / « Rejouer »</strong> : recommence la partie depuis le début.</li>
-                <li><strong>« Activer / Désactiver coordonnées »</strong> : affiche / masque les coordonnées des cases sur l'échiquier.</li>
-                <li><strong>« Non » / « Annuler »</strong> : annule la commande en cours.</li>
-            </ul>
-
-            <p>Pendant une partie de <strong>DisConnect 4</strong>, des commandes supplémentaires sont disponibles :</p>
-            <ul>
-                <li><strong>« Colonne » suivi d'un chiffre allant de 1 à 7</strong> (ex. « colonne 4 ») : joue un pion dans la colonne indiquée.</li>
-                <li><strong>« Abandonner »</strong> : abandonne la partie.</li>
-                <li><strong>« Recommencer » / « Rejouer »</strong> : recommence la partie depuis le début.</li>
-                <li><strong>« Non » / « Annuler »</strong> : annule la commande en cours.</li>
-            </ul>
-
-            <h3>Reconnaissance faciale</h3>
-            <p>
-                Le bouton œil en haut de l'écran permet d'activer ou de désactiver le suivi du visage à tout moment, et d'ouvrir les réglages :
-            </p>
-            <ul>
-                <li><strong>Sensibilité</strong> : ajuste la vitesse de déplacement du curseur rouge en fonction du mouvement de la tête.</li>
-                <li><strong>Durée d'un clin d'œil</strong> : ajuste le temps de fermeture d'un œil nécessaire pour déclencher un clic.</li>
-            </ul>
-            <p>Un bouton permet de rétablir les valeurs par défaut de ces réglages à tout moment.</p>
-        </div>
+        <h3>Reconnaissance faciale</h3>
+        <p>
+          Le bouton œil en haut de l'écran permet d'activer ou de désactiver le
+          suivi du visage à tout moment, et d'ouvrir les réglages :
+        </p>
+        <ul>
+          <li>
+            <strong>Sensibilité</strong> : ajuste la vitesse de déplacement du
+            curseur rouge en fonction du mouvement de la tête.
+          </li>
+          <li>
+            <strong>Durée d'un clin d'œil</strong> : ajuste le temps de
+            fermeture d'un œil nécessaire pour déclencher un clic.
+          </li>
+        </ul>
+        <p>
+          Un bouton permet de rétablir les valeurs par défaut de ces réglages à
+          tout moment.
+        </p>
+      </div>
     </div>
 
     <video id="webcam" autoplay playsinline></video>
     <script src="/public/head-tracking.js" type="module"></script>
-    <script src="/public/voice-commands.js"></script>
-</body>
-
+    <script type="module" src="/public/voice-commands.js"></script>
+  </body>
 </html>

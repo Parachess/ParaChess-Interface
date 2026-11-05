@@ -1,204 +1,283 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>ParaGames | Jouer</title>
-        <link rel="stylesheet" href="/public/style.css" />
-        <link rel="stylesheet" href="/public/games/games.css" />
-        <link rel="icon" href="/public/assets/favicon.ico" />
-        </head>
-    <script src="https://cdn.socket.io/4.8.3/socket.io.min.js"
-        integrity="sha384-kzavj5fiMwLKzzD1f8S7TeoVIEi7uKHvbTA3ueZkrzYq75pNQUiUi6Dy98Q3fxb0"
-        crossorigin="anonymous"></script>
-    <script>
-        const socket = io();
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ParaGames | Jouer</title>
+    <link rel="stylesheet" href="/public/style.css" />
+    <link rel="stylesheet" href="/public/games/games.css" />
+    <link rel="icon" href="/public/assets/favicon.ico" />
+  </head>
+  <script
+    src="https://cdn.socket.io/4.8.3/socket.io.min.js"
+    integrity="sha384-kzavj5fiMwLKzzD1f8S7TeoVIEi7uKHvbTA3ueZkrzYq75pNQUiUi6Dy98Q3fxb0"
+    crossorigin="anonymous"
+  ></script>
+  <script>
+    const socket = io();
 
-        const displayer = document.getElementById('displayer');
-        const actions = document.getElementById('actions');
-        const authorized = 'abcdefgh12345678nqrb';
-        const typed = [];
+    const displayer = document.getElementById("displayer");
+    const actions = document.getElementById("actions");
+    const authorized = "abcdefgh12345678nqrb";
+    const typed = [];
 
-        function isChessSquare(...chars) {
-            const letters = authorized.slice(0, 8);
-            if(letters.includes(chars[0]) && Number.isInteger(Number(chars[1])) && chars[1] >= 1 && chars[1] <= 8) return true;
-            return false;
-        }
+    function isChessSquare(...chars) {
+      const letters = authorized.slice(0, 8);
+      if (
+        letters.includes(chars[0]) &&
+        Number.isInteger(Number(chars[1])) &&
+        chars[1] >= 1 &&
+        chars[1] <= 8
+      )
+        return true;
+      return false;
+    }
 
-        function isPromotion(char) {
-            return 'nqrb'.includes(char);
-        }
+    function isPromotion(char) {
+      return "nqrb".includes(char);
+    }
 
-        window.addEventListener('keydown', e => {
-            const finalKey = e.key.toLowerCase();
-            if(finalKey === 'm') {
-                typed.splice(0, typed.length);
-                displayer.textContent = '';
-                return;
-            }
-            if(!authorized.includes(finalKey)) return;
-            displayer.textContent += finalKey;
+    window.addEventListener("keydown", (e) => {
+      const finalKey = e.key.toLowerCase();
+      if (finalKey === "m") {
+        typed.splice(0, typed.length);
+        displayer.textContent = "";
+        return;
+      }
+      if (!authorized.includes(finalKey)) return;
+      displayer.textContent += finalKey;
 
-            const twoLast = [typed[typed.length - 1], finalKey];
-            const isSquare = isChessSquare(...twoLast);
-            typed.push(finalKey);
+      const twoLast = [typed[typed.length - 1], finalKey];
+      const isSquare = isChessSquare(...twoLast);
+      typed.push(finalKey);
 
-            if(isSquare) actions.textContent += twoLast.join('') + ' ';
-            if(isPromotion(finalKey)) actions.textContent += finalKey + ' ';
-        });
-    </script>
-    <body data-voice-page="games">
-        <div id="head-tracker"></div>
-        <div id="face-detection-popup" class="popup">
-            <div class="popup-body">
-                <h3 id="face-detection-title">
-                    Détection du visage
-                </h3>
-                <div class="inline-options">
-                    <button id="activate-face-detection" class="popup-option" onclick="activateFacialDetection();">
-                        Activer</button>
-                    <button id="deactivate-face-detection" class="popup-option" onclick="deactivateFacialDetection();">
-                        Désactiver</button>
-                </div>
-                <p>Sensibilité : <span id="sensibility-value">XX</span> %</p>
-                <input type="range" min="0" max="100" id="sensibility-range" value="17" />
-                <p>Durée d'un clin d'œil : <span id="blink-value">XX</span> s</p>
-                <input type="range" min="0" max="1" id="blink-range" value=".25" step="0.1" />
-                <div class="inline-options">
-                    <button onclick="toDefaultParameters();" class="popup-option">Retour aux paramètres par défaut</button>
-                    <button onclick="closeDetectionPopup();" class="popup-option">Confirmer</button>
-                </div>
-            </div>
-            <div class="popupBackground"></div>
+      if (isSquare) actions.textContent += twoLast.join("") + " ";
+      if (isPromotion(finalKey)) actions.textContent += finalKey + " ";
+    });
+  </script>
+  <body data-voice-page="games">
+    <div id="head-tracker"></div>
+    <div id="face-detection-popup" class="popup">
+      <div class="popup-body">
+        <h3 id="face-detection-title">Détection du visage</h3>
+        <div class="inline-options">
+          <button
+            id="activate-face-detection"
+            class="popup-option"
+            onclick="activateFacialDetection()"
+          >
+            Activer
+          </button>
+          <button
+            id="deactivate-face-detection"
+            class="popup-option"
+            onclick="deactivateFacialDetection()"
+          >
+            Désactiver
+          </button>
         </div>
-        <div id="wrong-id-popup" class="popup">
-            <div class="popup-body">
-                <h3>
-                    Nom incorrect
-                </h3>
-                <p>
-                    Le nom est déjà réservé ou invalide
-                </p>
-                <div class="inline-options">
-                    <button class="popup-option" onclick="closePopups();">Fermer</button>
-                </div>
-            </div>
-            <div class="popupBackground"></div>
+        <p>Sensibilité : <span id="sensibility-value">XX</span> %</p>
+        <input
+          type="range"
+          min="0"
+          max="100"
+          id="sensibility-range"
+          value="17"
+        />
+        <p>Durée d'un clin d'œil : <span id="blink-value">XX</span> s</p>
+        <input
+          type="range"
+          min="0"
+          max="1"
+          id="blink-range"
+          value=".25"
+          step="0.1"
+        />
+        <div class="inline-options">
+          <button onclick="toDefaultParameters()" class="popup-option">
+            Retour aux paramètres par défaut
+          </button>
+          <button onclick="closeDetectionPopup()" class="popup-option">
+            Confirmer
+          </button>
         </div>
-        <div id="wait-popup" class="popup">
-            <div class="popup-body">
-                <h3>
-                    Attendez un peu !
-                </h3>
-                <p>
-                    Nous sommes en train de créer votre partie, vous allez être redirigé.
-                </p>
-                <div class="inline-options">
-                    <button class="popup-option" onclick="closePopups();">Fermer</button>
-                </div>
-            </div>
-            <div class="popupBackground"></div>
+      </div>
+      <div class="popupBackground"></div>
+    </div>
+    <div id="wrong-id-popup" class="popup">
+      <div class="popup-body">
+        <h3>Nom incorrect</h3>
+        <p>Le nom est déjà réservé ou invalide</p>
+        <div class="inline-options">
+          <button class="popup-option" onclick="closePopups()">Fermer</button>
         </div>
-        <div id="unknown-game-popup" class="popup">
-            <div class="popup-body">
-                <h3>
-                    Une erreur est survenue !
-                </h3>
-                <p id="unknown-game-message">Rien à signaler</p>
-                <div class="inline-options">
-                    <button class="popup-option" onclick="goToMenu();">Menu principal</button>
-                </div>
-            </div>
-            <div class="popupBackground"></div>
+      </div>
+      <div class="popupBackground"></div>
+    </div>
+    <div id="wait-popup" class="popup">
+      <div class="popup-body">
+        <h3>Attendez un peu !</h3>
+        <p>
+          Nous sommes en train de créer votre partie, vous allez être redirigé.
+        </p>
+        <div class="inline-options">
+          <button class="popup-option" onclick="closePopups()">Fermer</button>
         </div>
-        <div id="content">
-            <div id="header">
-                <a href="/" id="return" aria-label="Retourner au menu">
-                    <img src="/public/assets/return.svg" alt="return" />
-                    <div class="voice-command-hint-button">
-                        <img src="/public/assets/parler_blanc.png" alt="Parler">
-                        <span>"retour"</span>
-                    </div>
-                </a>
-                <a href="/">
-                    <img id="logo" src="/public/assets/paragames.svg" alt="Logo ParaGames" />
-                </a>
-                <button id="toggle-facial-button" class="facial-active" aria-label="Activer/Désactiver le suivi du visage" onclick="displayFacialDetectionPopup(event);">
-                    <img id="toggle-face-button-image" src="/public/assets/eye-open.svg" alt="🔴" />
-                </button>
-                <button id="toggle-vocal-button" class="vocal-active" aria-label="Activer/Désactiver la commande vocale" onclick="toggleVocalMode(event);">
-                    <img id="toggle-vocal-button-image" src="/public/assets/mic-on.svg" alt="🎙️" />
-                </button>
-                <a href="/rules/" id="rules-button" aria-label="Voir les règles du jeu">
-                    <img id="rules-image" src="/public/assets/rules.png" alt="Règles" />
-                    <div class="voice-command-hint-button">
-                        <img src="/public/assets/parler_blanc.png" alt="Parler">
-                        <span>"règles"</span>
-                    </div>
-                 </a>
-            </div>
-            <img class="background" src="/public/assets/background.svg" alt="" />
-            
-            <div id="separate">
-                <div class="panel" id="right">
-                    <h2>
-                        <div id="logo-button-1" class="logo-button"></div>
-                        Créer une nouvelle partie
-                    </h2>
-                    <br />
-                    <br />
-                    <div id="form">
-                        <label for="playWithSomeone" class="switch" style="align-self: center;">
-                            <span class="switch-label">Jouer à <span id="number-of-computer">1</span> ordinateur<span id="computer-s"></span></span>
-                            <input type="checkbox" class="toggle-checkbox" id="play-with-someone" aria-label="Jouer seul ou à plusieurs." onclick="switchComputer();" />
-                        </label>
-                        <br />
-                        <br />
-                        <button id="auto-create" aria-label="Créer automatiquement la partie" class="modern-button" onclick="createGameAutomatically();">
-                            <span class="auto-create-active">
-                                <img src="/public/assets/parler_blanc.png" alt="Parler">
-                                "Créer automatiquement"
-                            </span>
-                            <span class="auto-create-inactive">
-                                Créer automatiquement
-                            </span>
-                        </button>
-                        <br />
-                        <div class="divider"></div>
-                        <br />
-                        <label for="id">
-                            Nom de la partie :
-                        </label>
-                        <input id="id" name="id" type="text" selected placeholder="Nom de la partie" />
-                        <br />
-                        <br />
-                        <div id="fen-form">
-                            <label for="fen-code">
-                                Code FEN (optionnel) :
-                            </label>
-                            <input id="fen-code" name="fen" type="text" placeholder="Position initiale" />
-                            <br />
-                            <br />
-                        </div>
-                        <button id="create" aria-label="Créer la partie" class="modern-button" onclick="createGame();" select>Créer</button>
-                    </div>
-                </div>
-                <div class="panel" id="left">
-                    <h2>
-                        <div id="logo-button-2" class="logo-button"></div>
-                        Rejoindre une partie existante
-                    </h2>
-                    <br />
-                    <ul id="game-list">
-            
-                    </ul>
-                </div>
-                <br />
-            </div>
+      </div>
+      <div class="popupBackground"></div>
+    </div>
+    <div id="unknown-game-popup" class="popup">
+      <div class="popup-body">
+        <h3>Une erreur est survenue !</h3>
+        <p id="unknown-game-message">Rien à signaler</p>
+        <div class="inline-options">
+          <button class="popup-option" onclick="goToMenu()">
+            Menu principal
+          </button>
         </div>
-        <video id="webcam" autoplay playsinline></video>
-        <script src="/public/games/games.js" type="module"></script>
-        <script src="/public/head-tracking.js" type="module"></script>
-        <script src="/public/voice-commands.js"></script>
-    </body>
+      </div>
+      <div class="popupBackground"></div>
+    </div>
+    <div id="content">
+      <div id="header">
+        <a href="/" id="return" aria-label="Retourner au menu">
+          <img src="/public/assets/return.svg" alt="return" />
+          <div class="voice-command-hint-button">
+            <img src="/public/assets/parler_blanc.png" alt="Parler" />
+            <span>"retour"</span>
+          </div>
+        </a>
+        <a href="/">
+          <img
+            id="logo"
+            src="/public/assets/paragames.svg"
+            alt="Logo ParaGames"
+          />
+        </a>
+        <button
+          id="toggle-facial-button"
+          class="facial-active"
+          aria-label="Activer/Désactiver le suivi du visage"
+          onclick="displayFacialDetectionPopup(event)"
+        >
+          <img
+            id="toggle-face-button-image"
+            src="/public/assets/eye-open.svg"
+            alt="🔴"
+          />
+        </button>
+        <button
+          id="toggle-vocal-button"
+          class="vocal-active"
+          aria-label="Activer/Désactiver la commande vocale"
+          onclick="toggleVocalMode(event)"
+        >
+          <img
+            id="toggle-vocal-button-image"
+            src="/public/assets/mic-on.svg"
+            alt="🎙️"
+          />
+        </button>
+        <a href="/rules/" id="rules-button" aria-label="Voir les règles du jeu">
+          <img id="rules-image" src="/public/assets/rules.png" alt="Règles" />
+          <div class="voice-command-hint-button">
+            <img src="/public/assets/parler_blanc.png" alt="Parler" />
+            <span>"règles"</span>
+          </div>
+        </a>
+      </div>
+      <img class="background" src="/public/assets/background.svg" alt="" />
+
+      <div id="separate">
+        <div class="panel" id="right">
+          <h2>
+            <div id="logo-button-1" class="logo-button"></div>
+            Créer une nouvelle partie
+          </h2>
+          <br />
+          <br />
+          <div id="form">
+            <label
+              for="playWithSomeone"
+              class="switch"
+              style="align-self: center"
+            >
+              <span class="switch-label"
+                >Jouer à <span id="number-of-computer">1</span> ordinateur<span
+                  id="computer-s"
+                ></span
+              ></span>
+              <input
+                type="checkbox"
+                class="toggle-checkbox"
+                id="play-with-someone"
+                aria-label="Jouer seul ou à plusieurs."
+                onclick="switchComputer()"
+              />
+            </label>
+            <br />
+            <br />
+            <button
+              id="auto-create"
+              aria-label="Créer automatiquement la partie"
+              class="modern-button"
+              onclick="createGameAutomatically()"
+            >
+              <span class="auto-create-active">
+                <img src="/public/assets/parler_blanc.png" alt="Parler" />
+                "Créer automatiquement"
+              </span>
+              <span class="auto-create-inactive"> Créer automatiquement </span>
+            </button>
+            <br />
+            <div class="divider"></div>
+            <br />
+            <label for="id"> Nom de la partie : </label>
+            <input
+              id="id"
+              name="id"
+              type="text"
+              selected
+              placeholder="Nom de la partie"
+            />
+            <br />
+            <br />
+            <div id="fen-form">
+              <label for="fen-code"> Code FEN (optionnel) : </label>
+              <input
+                id="fen-code"
+                name="fen"
+                type="text"
+                placeholder="Position initiale"
+              />
+              <br />
+              <br />
+            </div>
+            <button
+              id="create"
+              aria-label="Créer la partie"
+              class="modern-button"
+              onclick="createGame()"
+              select
+            >
+              Créer
+            </button>
+          </div>
+        </div>
+        <div class="panel" id="left">
+          <h2>
+            <div id="logo-button-2" class="logo-button"></div>
+            Rejoindre une partie existante
+          </h2>
+          <br />
+          <ul id="game-list"></ul>
+        </div>
+        <br />
+      </div>
+    </div>
+    <video id="webcam" autoplay playsinline></video>
+    <script src="/public/games/games.js" type="module"></script>
+    <script src="/public/head-tracking.js" type="module"></script>
+    <script type="module" src="/public/voice-commands.js"></script>
+  </body>
 </html>
