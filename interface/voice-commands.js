@@ -190,7 +190,7 @@ function goBackForward(command) {
             case 'micro-off':
                 if (vocalMode) toggleVocalMode();
                 break;
-            case 'un-ordinateur': {
+            case 'un-ecran': {
                 const cb = document.getElementById('play-with-someone');
                 if (cb && cb.checked && typeof window.switchComputer === 'function') {
                     cb.checked = false;
@@ -198,7 +198,7 @@ function goBackForward(command) {
                 }
                 break;
             }
-            case 'deux-ordinateurs': {
+            case 'deux-ecrans': {
                 const cb = document.getElementById('play-with-someone');
                 if (cb && !cb.checked && typeof window.switchComputer === 'function') {
                     cb.checked = true;

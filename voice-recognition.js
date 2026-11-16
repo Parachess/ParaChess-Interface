@@ -28,8 +28,8 @@ const alphabetHomophones = {
 };
 
 const chiffresHomophones = {
-    "1": ["un", "hein", "une"],
-    "2": ["deux", "de"],
+    "1": ["un", "hein", "une", "d'un"],
+    "2": ["deux", "de", "deu", "d'eux"],
     "3": ["trois"],
     "4": ["quatre"],
     "5": ["cinq"],
@@ -42,11 +42,15 @@ const puissance4Homophones = {
     "colonne" : ["colonnes", "colonne", 'cologne']
 };
 
+const screenHomophones = {
+    "écran": ["écran", "écrans", "ecran", "ecrans"]
+};
+
 const vocMenu = ["[unk]", "menu", "retour", "quitter", "revenir", "accueil",
     "crédits", "propos", "sommes", "nous", "règle", "règles", "aide", "mentions", "légales",
     "échecs", "puissance", "coordonnées", "caméra", "micro",
     "activer", "désactiver", "créer", "automatiquement", "partie",
-    "ordinateur", "ordinateurs"];
+    "jouer", "écran", "écrans", "ecran", "ecrans"];
 const vocPuissance4 = ["colonne"];
 const pieces = ["tour", "cavalier", "fou", "dame", "pion", "roi"];
 const ordre = ["abandonner", "recommencer", "rejouer", "non", "annuler"];
@@ -56,6 +60,7 @@ const reverseMap = {};
 Object.entries(alphabetHomophones).forEach(([letter, syns]) => syns.forEach(s => reverseMap[s] = letter));
 Object.entries(chiffresHomophones).forEach(([digit, syns]) => syns.forEach(s => reverseMap[s] = digit));
 Object.entries(puissance4Homophones).forEach(([word, syns]) => syns.forEach(s => reverseMap[s] = word));
+Object.entries(screenHomophones).forEach(([word, syns]) => syns.forEach(s => reverseMap[s] = word));
 
 const grammarChess = [...pieces, ...ordre, ...ignore, ...vocMenu];
 
@@ -72,7 +77,16 @@ Object.values(alphabetHomophones).forEach(letterSyns => {
 Object.values(alphabetHomophones).forEach(syns => grammarChess.push(...syns));
 Object.values(chiffresHomophones).forEach(syns => grammarChess.push(...syns));
 
-grammarChess.push("puissance quatre", "un ordinateur", "deux ordinateurs");
+const screenPhrases = [
+    "un écran", "un ecran", "une écran", "une ecran",
+    "deux écrans", "deux ecran", "deux ecrans", "deu ecran", "deu ecrans", "de écrans", "de ecran",
+    "jouer à un écran", "jouer à un ecran", "jouer à une écran",
+    "jouer à deux écrans", "jouer à deux ecran", "jouer à deux ecrans", "jouer à deu ecran", "jouer à deu ecrans", "jouer à de écrans",
+    "jouer un écran", "jouer deux écrans", "jouer un ecran", "jouer deux ecran",
+    "jouer à un", "jouer à deux", "jouer à deu", "jouer à une"
+];
+
+grammarChess.push("puissance quatre", ...screenPhrases);
 
 const grammarPuissance4 = [...ordre, ...vocMenu, ...vocPuissance4];
 const chiffresPuissance4 = ["1", "2", "3", "4", "5", "6", "7"];
@@ -88,7 +102,7 @@ puissance4Homophones["colonne"].forEach(colSyn => {
 Object.values(chiffresHomophones).forEach(syns => grammarPuissance4.push(...syns));
 Object.values(puissance4Homophones).forEach(syns => grammarPuissance4.push(...syns));
 
-grammarPuissance4.push("puissance quatre", "un ordinateur", "deux ordinateurs");
+grammarPuissance4.push("puissance quatre", ...screenPhrases);
 
 export { grammarChess, grammarPuissance4 };
 
@@ -158,9 +172,15 @@ export function detectMenuCommand(text) {
         if (words.includes("désactiver")) return "coordonnees-off";
         if (words.includes("activer")) return "coordonnees-on";
     }
-    if (words.includes("ordinateur") || words.includes("ordinateurs")) {
-        if (words.includes("1")) return "un-ordinateur";
-        if (words.includes("2")) return "deux-ordinateurs";
+
+    const hasScreen = words.some(w => ["écran", "écrans", "ecran", "ecrans"].includes(w));
+    const hasJouer = words.includes("jouer");
+    const hasOne = words.some(w => ["1", "un", "une"].includes(w));
+    const hasTwo = words.some(w => ["2", "deux", "de", "deu"].includes(w));
+
+    if (hasScreen && hasJouer) {
+        if (hasOne) return "un-ecran";
+        if (hasTwo) return "deux-ecrans";
     }
     if (words.includes("créer") && (words.includes("automatiquement") || words.includes("partie"))) return "creer-partie";
     if (words.includes("aide")) return "aide";
