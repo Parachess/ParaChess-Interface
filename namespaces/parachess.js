@@ -75,7 +75,7 @@ function move(nsp, socket, id, ip, move) {
         nsp.to(roomIdentifier).emit('state', parachessGames[id].getState());
         
         if(legal.storageSpot) {
-            nsp.to(roomIdentifier).emit('move', to, legal.storageSpot);
+            nsp.to(roomIdentifier).emit('move', move.to, legal.storageSpot);
         }
 
         nsp.to(roomIdentifier).emit('move', move.from, move.to, move.promotion); // NE PAS SUPPRIMER : NÉCESSAIRE POUR L'ÉCHIQUIER PHYSIQUE
