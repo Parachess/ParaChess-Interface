@@ -52,7 +52,71 @@ h2 {
 }
 
 #right #form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     text-align: center;
+    width: 100%;
+}
+
+.creation-mode-auto,
+.creation-mode-custom {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.creation-mode-custom label {
+    display: block;
+    font-family: Inter, system-ui, sans-serif;
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+}
+
+#id,
+#fen-code {
+    width: 250px;
+    max-width: 100%;
+    box-sizing: border-box;
+    font-size: 0.9rem;
+    padding: 8px 12px;
+    margin-bottom: 12px;
+    border: 1.5px solid #d1d5db;
+    border-radius: 8px;
+    outline: none;
+    background: #ffffff;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#id:focus,
+#fen-code:focus {
+    border-color: #0097db;
+    box-shadow: 0 0 0 3px rgba(0, 151, 219, 0.2);
+}
+
+.text-divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    max-width: 250px;
+    margin: 12px auto;
+}
+
+.text-divider::before,
+.text-divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.text-divider span {
+    padding: 0 10px;
+    font-family: Inter, system-ui, sans-serif;
+    font-size: 13px;
+    color: #666;
+    font-weight: 500;
 }
 
 button#create.modern-button, button#auto-create.modern-button, #form a.modern-button {
@@ -78,9 +142,10 @@ button#create.modern-button, button#auto-create.modern-button, #form a.modern-bu
 
 .divider {
     width: 100%;
+    max-width: 320px;
     height: 1px;
     background: rgba(0, 0, 0, 0.15);
-    margin: 1rem 0;
+    margin: 0.75rem auto;
 }
 @media (max-width: 800px) {
     #logo {
@@ -151,6 +216,10 @@ button#create.modern-button, button#auto-create.modern-button, #form a.modern-bu
         display: flex;
         flex-direction: column;
         align-items: center;
+    }
+
+    .text-divider {
+        margin: 6px auto;
     }
 
     .switch {

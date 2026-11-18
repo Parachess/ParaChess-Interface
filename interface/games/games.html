@@ -145,42 +145,38 @@
                         <div id="logo-button-1" class="logo-button"></div>
                         Créer une nouvelle partie
                     </h2>
-                    <br />
-                    <br />
                     <div id="form">
-                        <label for="playWithSomeone" class="switch" style="align-self: center;">
-                            <span class="switch-label">Jouer à <span id="number-of-computer">1</span> écran<span id="computer-s"></span></span>
-                            <input type="checkbox" class="toggle-checkbox" id="play-with-someone" aria-label="Jouer seul ou à plusieurs." onclick="switchComputer();" />
-                        </label>
-                        <br />
-                        <br />
-                        <button id="auto-create" aria-label="Créer automatiquement la partie" class="modern-button" onclick="createGameAutomatically();">
-                            <span class="auto-create-active">
-                                <img src="/public/assets/parler_blanc.png" alt="Parler">
-                                "Créer automatiquement"
-                            </span>
-                            <span class="auto-create-inactive">
-                                Créer automatiquement
-                            </span>
-                        </button>
-                        <br />
-                        <div class="divider"></div>
-                        <br />
-                        <label for="id">
-                            Nom de la partie :
-                        </label>
-                        <input id="id" name="id" type="text" selected placeholder="Nom de la partie" />
-                        <br />
-                        <br />
-                        <div id="fen-form">
-                            <label for="fen-code">
-                                Code FEN (optionnel) :
+                            <label for="play-with-someone" class="switch" style ="padding: 12px;">
+                                <span class="switch-label">Jouer à <span id="number-of-computer">1</span> écran<span id="computer-s"></span></span>
+                                <input type="checkbox" class="toggle-checkbox" id="play-with-someone" aria-label="Jouer seul ou à plusieurs." onclick="switchComputer();" />
                             </label>
-                            <input id="fen-code" name="fen" type="text" placeholder="Position initiale" />
-                            <br />
-                            <br />
+
+                        <div class="divider"></div>
+
+                        <div class="creation-mode-auto">
+                            <button id="auto-create" aria-label="Créer automatiquement la partie" class="modern-button" onclick="createGameAutomatically();">
+                                <span class="auto-create-active">
+                                    <img src="/public/assets/parler_blanc.png" alt="Parler">
+                                    "Créer automatiquement"
+                                </span>
+                                <span class="auto-create-inactive">
+                                    Créer automatiquement
+                                </span>
+                            </button>
                         </div>
-                        <button id="create" aria-label="Créer la partie" class="modern-button" onclick="createGame();" select>Créer</button>
+
+                        <div class="text-divider"><span>ou</span></div>
+
+                        <div class="creation-mode-custom">
+                            <input id="id" name="id" type="text" selected placeholder="Nom de la partie" />
+                            <div id="fen-form">
+                                <label for="fen-code">
+                                    Code FEN (optionnel) :
+                                </label>
+                                <input id="fen-code" name="fen" type="text" placeholder="Position initiale" />
+                            </div>
+                            <button id="create" aria-label="Créer la partie" class="modern-button" onclick="createGame();" select>Créer</button>
+                        </div>
                     </div>
                 </div>
                 <div class="panel" id="right">
