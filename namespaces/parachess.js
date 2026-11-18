@@ -73,6 +73,7 @@ function move(nsp, socket, id, ip, move) {
         nsp.to(roomIdentifier).emit('legalMoves', parachessGames[id].getAllLegalMoves());
         nsp.to(roomIdentifier).emit('boardStates', parachessGames[id].getPositions());
         nsp.to(roomIdentifier).emit('state', parachessGames[id].getState());
+        nsp.to(roomIdentifier).emit('move', move.from, move.to, move.promotion); // NE PAS SUPPRIMER : NÉCESSAIRE POUR L'ÉCHIQUIER PHYSIQUE
     } else {
         socket.emit('boardStates', parachessGames[id].getPositions());
         socket.emit('state', parachessGames[id].getState());
