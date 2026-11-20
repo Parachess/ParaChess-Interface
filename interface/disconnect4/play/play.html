@@ -13,6 +13,7 @@
 </head>
 <body>
     <div id="head-tracker"></div>
+    <div id="face-detection-popup" class="popup">
         <div class="popup-body">
             <h3 id="face-detection-title">
                 Détection du visage
@@ -97,7 +98,7 @@
                 onclick="toggleVocalMode(event);">
                 <img id="toggle-vocal-button-image" src="/public/assets/mic-on.svg" alt="🎙️" />
             </button>
-            <a href="/rules/?g=disconnect4" id="rules-button" aria-label="Voir les règles du jeu">
+            <a href="/regles/?g=disconnect4" id="rules-button" aria-label="Voir les règles du jeu">
                 <img id="rules-image" src="/public/assets/rules.png" alt="Règles" />
                 <div class="voice-command-hint-button">
                     <img src="/public/assets/parler_blanc.png" alt="Parler">
@@ -126,7 +127,11 @@
                             <span>Recommencer la partie</span>
                         </button>
                         <button id="undo-button" class="modern-button btn-danger" aria-label="Annuler le dernier coup" onclick="undo();">
-                            Annuler le coup
+                            Revenir au coup précédent
+                            <div class="voice-command-hint-button">
+                                <img src="/public/assets/parler_blanc.png" alt="Parler">
+                                <span>"coup précédent"</span>
+                            </div>
                         </button>
                         <button class="modern-button btn-danger" aria-label="Abandonner la partie" onclick="resign();">
                             Abandonner la partie

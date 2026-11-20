@@ -46,7 +46,7 @@ const vocMenu = ["menu", "retour", "quitter", "revenir", "accueil",
     "crédits", "propos", "sommes", "nous", "règle", "règles", "aide", "mentions", "légales",
     "échecs", "puissance", "coordonnées", "caméra", "micro",
     "activer", "désactiver", "créer", "automatiquement", "partie",
-    "ordinateur", "ordinateurs"];
+    "ordinateur", "ordinateurs", "coup", "précédent"];
 const vocPuissance4 = ["colonne"];
 const pieces = ["tour", "cavalier", "fou", "dame", "pion", "roi"];
 const ordre = ["abandonner", "recommencer", "rejouer", "non", "annuler"];
@@ -72,7 +72,7 @@ Object.values(alphabetHomophones).forEach(letterSyns => {
 Object.values(alphabetHomophones).forEach(syns => grammarChess.push(...syns));
 Object.values(chiffresHomophones).forEach(syns => grammarChess.push(...syns));
 
-grammarChess.push("puissance quatre", "un ordinateur", "deux ordinateurs");
+grammarChess.push("puissance quatre", "un ordinateur", "deux ordinateurs","coup précédent");
 
 const grammarPuissance4 = [...ordre, ...vocMenu, ...vocPuissance4];
 const chiffresPuissance4 = ["1", "2", "3", "4", "5", "6", "7"];
@@ -88,7 +88,7 @@ puissance4Homophones["colonne"].forEach(colSyn => {
 Object.values(chiffresHomophones).forEach(syns => grammarPuissance4.push(...syns));
 Object.values(puissance4Homophones).forEach(syns => grammarPuissance4.push(...syns));
 
-grammarPuissance4.push("puissance quatre", "un ordinateur", "deux ordinateurs");
+grammarPuissance4.push("puissance quatre", "un ordinateur", "deux ordinateurs","coup précédent");
 
 export { grammarChess, grammarPuissance4 };
 
@@ -141,6 +141,7 @@ export function transform(text) {
 
 export function detectMenuCommand(text) {
     const words = text.split(" ");
+    if (words.includes("précédent")) return "coup-precedent";
     if (words.includes("crédits")) return "credits";
     if (words.includes("mention") || words.includes("légal") || words.includes("mentions") || words.includes("légales")) return "mentions-legales";
     if (words.includes("propos") || words.includes("sommes") || words.includes("nous")) return "a-propos";
@@ -167,7 +168,6 @@ export function detectMenuCommand(text) {
     if (words.includes("règle") || words.includes("règles")) return "regles";
     if (words.includes("quitter")) return "quitter";
     if (words.includes("accueil")) return "accueil";
-    if (words.includes("revenir")) return "revenir";
     if (words.includes("retour") || words.includes("menu")) return "retour";
 
     return null;

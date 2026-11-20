@@ -15,6 +15,16 @@ function createSendEval(io, gameId) {
     };
 }
 
+function undoOnce(nsp, id, game) {
+    if (game.gameOver || !game.history.length || game.history.length === game.undoneAt) return;
+    game.undo(true, true);
+    game.undoneAt = game.history.length;
+    game.displayBoard();
+    nsp.to('game:' + id).emit('boardStates', game.getPositions());
+    nsp.to('game:' + id).emit('legalMoves', game.getAllLegalMoves());
+    nsp.to('game:' + id).emit('state', game.getState());
+}
+
 function fromTextToMove(nsp, text, address) {
     const ip = extractIP(address);
 
@@ -27,6 +37,12 @@ function fromTextToMove(nsp, text, address) {
     const lowerCaseText = text.toLowerCase();
 
     const menuCommand = detectMenuCommand(lowerCaseText);
+
+    if (menuCommand === 'coup-precedent') {
+        undoOnce(nsp, id, game);
+        return;
+    }
+
     if (menuCommand) {
         nsp.to('game:' + id).emit('voice-command', menuCommand);
         return;
@@ -144,14 +160,8 @@ export default function parachessNamespace(io) {
         });
 
         socket.on('undo', () => {
-            if (!parachessGames[id].isPlayer(ip) || parachessGames[id].getPlayer(ip) !== '*')
-                return;
-            parachessGames[id].undo(true, true);
-            console.log('[' + id + '] going back !');
-            parachessGames[id].displayBoard();
-            nsp.to(roomIdentifier).emit('boardStates', parachessGames[id].getPositions());
-            nsp.to(roomIdentifier).emit('legalMoves', parachessGames[id].getAllLegalMoves());
-            nsp.to(roomIdentifier).emit('state', parachessGames[id].getState());
+            const game = parachessGames[id];
+            if (game.isPlayer(ip)) undoOnce(nsp, id, game);
         });
 
         socket.on('fen', fen => {

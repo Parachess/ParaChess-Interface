@@ -15,7 +15,7 @@ function connection() {
     
     socket?.on('side', (status, side) => displayAttemptResult(status, side));
 
-    socket?.on('voice-command', handleVoiceCommand);
+    socket?.on('voice-command', cmd => window.handleVoiceCommand?.(cmd));
 
     socket?.on('boardStates', states => {
         positionsIndex = states.length - 1;
@@ -135,10 +135,7 @@ function displayAttemptResult(status, side) {
         setTimeout(() => document.querySelector('#refused-popup .popup-option').focus(), 100);
     } else if (side === 'b' && !Array.from(chessboard.classList).includes("rotated")) chessboard.classList.add('rotated');
     else if (side === 'w' && Array.from(chessboard.classList).includes("rotated")) chessboard.classList.remove('rotated');
-    if (side !== '*')
-        document.getElementById('undo-button').classList.add('hidden');
-    else if (side === '*')
-        document.getElementById('undo-button').classList.remove('hidden');
+    document.getElementById('undo-button').classList.toggle('hidden', status !== "ALLOWED");
 }
 
 function hideAll() {

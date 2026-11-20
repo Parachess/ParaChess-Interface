@@ -1,6 +1,16 @@
 import Connect4 from '../games/disconnect4/connect4.js';
 import { recPuissance4, transform, grammarPuissance4, detectMenuCommand } from '../voice-recognition.js';
 
+function undoOnce(nsp, id, game) {
+    if (game.gameOver || !game.insertions.length || game.insertions.length === game.undoneAt) return;
+    game.undo();
+    game.undoneAt = game.insertions.length;
+    game.displayBoard();
+    nsp.to('game:' + id).emit('boardStates', game.getPositions());
+    nsp.to('game:' + id).emit('legalColumns', game.getLegalColumns());
+    nsp.to('game:' + id).emit('state', game.getState());
+}
+
 function fromTextToMove(nsp, text, address) {
     const ip = extractIP(address);
     if (!lastDisconnect4UserGamesId[ip]) return;
@@ -12,6 +22,12 @@ function fromTextToMove(nsp, text, address) {
     const lowerCaseText = text.toLowerCase();
 
     const menuCommand = detectMenuCommand(lowerCaseText);
+
+    if (menuCommand === 'coup-precedent') {
+        undoOnce(nsp, id, game);
+        return;
+    }
+
     if (menuCommand) {
         nsp.to('game:' + id).emit('voice-command', menuCommand);
         return;
@@ -85,6 +101,11 @@ export default function disconnect4Namespace(io) {
             }
         });
 
+        socket.on('undo', () => {
+            const game = disconnect4Games[id];
+            if (game.isPlayer(ip)) undoOnce(nsp, id, game);
+        });
+
         socket.on('resetState', () => {
             if (!disconnect4Games[id].isPlayer(ip))
                 return;
@@ -101,17 +122,6 @@ export default function disconnect4Namespace(io) {
                     s.emit("side", "ALLOWED", disconnect4Games[id].getPlayer(extractIP(s.handshake.address)));
                 }
             });
-        });
-
-        socket.on('undo', () => {
-            if (!disconnect4Games[id].isPlayer(ip) || disconnect4Games[id].getPlayer(ip) !== '*')
-                return;
-            disconnect4Games[id].undo();
-            console.log('[' + id + '] going back !');
-            disconnect4Games[id].displayBoard();
-            nsp.to(roomIdentifier).emit('boardStates', disconnect4Games[id].getPositions());
-            nsp.to(roomIdentifier).emit('legalColumns', disconnect4Games[id].getLegalColumns());
-            nsp.to(roomIdentifier).emit('state', disconnect4Games[id].getState());
         });
 
         socket.on('may-play', roles => {
