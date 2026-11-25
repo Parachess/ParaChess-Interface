@@ -19,7 +19,7 @@ const games = [
         name: "DiscConnect 4",
         url: "disconnect4",
         char1: '🔴',
-        char2: '🔵',
+        char2: '🟡',
         askFen: false,
         maxHours: CONNECT4_MAX_HOURS,
         games: disconnect4Games

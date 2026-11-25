@@ -1,5 +1,5 @@
-const dictCouleurs = { 'r': 'rouge', 'b': 'bleu' };
-const dictCouleursEmojis = { 'r': '🔴', 'b': '🔵' };
+const dictCouleurs = { 'r': 'rouge', 'b': 'jaune' };
+const dictCouleursEmojis = { 'r': '🔴', 'b': '🟡' };
 
 let positionsIndex = 0;
 let positions = [Array(6).fill(null).map(() => Array(7).fill(null))];
@@ -56,8 +56,8 @@ function createBoardGrid() {
         for (let j = 1; j < 8; j++) {
             let td = document.createElement('td');
             td.id = 'ligne_' + i + '_col_' + j;
-            if (positions[positionsIndex][i - 1][j - 1] === 'r') td.style.backgroundColor = 'red';
-            else if (positions[positionsIndex][i - 1][j - 1] === 'b') td.style.backgroundColor = 'blue';
+            if (positions[positionsIndex][i - 1][j - 1] === 'r') td.style.backgroundColor = '#e53e3e';
+            else if (positions[positionsIndex][i - 1][j - 1] === 'b') td.style.backgroundColor = ' #e9c46a';
             else  {
                 td.onclick = (_) => pushPawn(j);
                 td.style.cursor = 'pointer';

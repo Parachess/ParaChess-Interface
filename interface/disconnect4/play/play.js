@@ -46,8 +46,8 @@ function connection() {
                 showState("Les rouges ont gagné par " + state.reason + " .");
                 announcement.push("Alignement de 4 pions ! Les rouges gagnent.");
             } else if (state.blueWon) {
-                showState("Les bleus ont gagné par " + state.reason + ".");
-                announcement.push("Alignement de 4 pions ! Les bleus gagnent.");
+                showState("Les jaunes ont gagné par " + state.reason + ".");
+                announcement.push("Alignement de 4 pions ! Les jaunes gagnent.");
             } else {
                 showState("Égalité par " + state.reason);
                 announcement.push("Match nul par " + state.reason + "!");
