@@ -1,3 +1,8 @@
+import { getPrefs, setPref } from './cookies.js'
+
+const prefs = getPrefs();
+const micWasOff = prefs.mic === 'off';
+
 /*******************************************************************************/
 /** Détermine sur quelle page on est pour savoir quel bloc utiliser plus bas. **/
 /*******************************************************************************/
@@ -88,6 +93,7 @@ function goBackForward(command) {
         const button = document.getElementById('toggle-vocal-button');
         if (vocalMode) {
             vocalMode = false;
+            setPref('mic', 'off');
             if (button) button.classList.remove('vocal-active');
             document.body.classList.remove('vocal-active');
             if (image) {
@@ -96,6 +102,7 @@ function goBackForward(command) {
             }
         } else {
             vocalMode = true;
+            setPref('mic', 'on');
             if (image) {
                 image.src = '/public/assets/mic-on.svg';
                 image.alt = '🎙️';
@@ -134,7 +141,7 @@ function goBackForward(command) {
         }
     }
  
-    startVoiceMenu();
+    if (micWasOff) toggleVocalMode(); else startVoiceMenu();
 })();
 
 /*******************/
@@ -214,6 +221,7 @@ function goBackForward(command) {
         const button = document.getElementById('toggle-vocal-button');
         if (vocalMode) {
             vocalMode = false;
+            setPref('mic', 'off');
             if (button) button.classList.remove('vocal-active');
             document.body.classList.remove('vocal-active');
             if (image) {
@@ -222,6 +230,7 @@ function goBackForward(command) {
             }
         } else {
             vocalMode = true;
+            setPref('mic', 'on');
             if (image) {
                 image.src = '/public/assets/mic-on.svg';
                 image.alt = '🎙️';
@@ -260,7 +269,7 @@ function goBackForward(command) {
         }
     }
  
-    startVoiceMenu();
+    if (micWasOff) toggleVocalMode(); else startVoiceMenu();
 })();
 
 /******************************/
@@ -330,7 +339,7 @@ function goBackForward(command) {
     window.handleVoiceCommand = handleVoiceCommand;
 
     document.addEventListener("DOMContentLoaded", () => {
-        startRec();
+        if (micWasOff) toggleVocalMode(); else startRec();
     });
 
     /**
@@ -340,12 +349,14 @@ function goBackForward(command) {
         const image = document.getElementById('toggle-vocal-button-image');
         if (vocalMode) {
             vocalMode = false;
+            setPref('mic', 'off');
             document.getElementById("toggle-vocal-button").classList.remove("vocal-active");
             document.body.classList.remove("vocal-active");
             image.src = "/public/assets/mic-off.svg";
             image.alt = "🔇";
         } else {
             vocalMode = true;
+            setPref('mic', 'on');
             image.src = "/public/assets/mic-on.svg";
             document.getElementById("toggle-vocal-button").classList.add("vocal-active");
             document.body.classList.add("vocal-active");
@@ -454,17 +465,20 @@ function goBackForward(command) {
 
     document.addEventListener("DOMContentLoaded", (e) => {
         startRec();
+        if (micWasOff) toggleVocalMode();
     });
 
     function toggleVocalMode() {
         const image = document.getElementById('toggle-vocal-button-image');
         if (vocalMode) {
             vocalMode = false;
+            setPref('mic', 'off');
             document.getElementById("toggle-vocal-button").classList.remove("vocal-active");
             image.src = "/public/assets/mic-off.svg";
             image.alt = "🔇";
         } else {
             vocalMode = true;
+            setPref('mic', 'on');
             image.src = "/public/assets/mic-on.svg";
             document.getElementById("toggle-vocal-button").classList.add("vocal-active");
             image.alt = "🎙️";
@@ -549,7 +563,9 @@ function goBackForward(command) {
     }
     window.handleVoiceCommand = handleVoiceCommand;
 
-    startRec();
+    document.addEventListener("DOMContentLoaded", () => {
+        if (micWasOff) toggleVocalMode(); else startRec();
+    });
 
     /**
      * Activate / Desactivate microphone
@@ -558,12 +574,14 @@ function goBackForward(command) {
         const image = document.getElementById('toggle-vocal-button-image');
         if (vocalMode) {
             vocalMode = false;
+            setPref('mic', 'off');
             document.getElementById("toggle-vocal-button").classList.remove("vocal-active");
             document.body.classList.remove("vocal-active");
             image.src = "/public/assets/mic-off.svg";
             image.alt = "🔇";
         } else {
             vocalMode = true;
+            setPref('mic', 'on');
             image.src = "/public/assets/mic-on.svg";
             document.getElementById("toggle-vocal-button").classList.add("vocal-active");
             document.body.classList.add("vocal-active");
@@ -659,17 +677,23 @@ function goBackForward(command) {
         const image = document.getElementById('toggle-vocal-button-image');
         if (vocalMode) {
             vocalMode = false;
+            setPref('mic', 'off');
             document.getElementById("toggle-vocal-button").classList.remove("vocal-active");
             image.src = "/public/assets/mic-off.svg";
             image.alt = "🔇";
         } else {
             vocalMode = true;
+            setPref('mic', 'on');
             image.src = "/public/assets/mic-on.svg";
             document.getElementById("toggle-vocal-button").classList.add("vocal-active");
             image.alt = "🎙️";
         }
     }
     window.toggleVocalMode = toggleVocalMode;
+    
+    document.addEventListener("DOMContentLoaded", () => {
+        if (micWasOff) toggleVocalMode();
+    });
 
     (async function startRec() {
         try {

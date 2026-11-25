@@ -1,6 +1,7 @@
 import Connect4 from '../games/disconnect4/connect4.js';
 import { recPuissance4, transform, grammarPuissance4, detectMenuCommand } from '../voice-recognition.js';
 
+<<<<<<< HEAD
 /**
  * Resigns a game a send a message to inform users
  * 
@@ -77,6 +78,19 @@ function undo(nsp, id, ip) {
 }
 
 function handleTextCommand(nsp, text, address) {
+=======
+function undoOnce(nsp, id, game) {
+    if (game.gameOver || !game.insertions.length || game.insertions.length === game.undoneAt) return;
+    game.undo();
+    game.undoneAt = game.insertions.length;
+    game.displayBoard();
+    nsp.to('game:' + id).emit('boardStates', game.getPositions());
+    nsp.to('game:' + id).emit('legalColumns', game.getLegalColumns());
+    nsp.to('game:' + id).emit('state', game.getState());
+}
+
+function fromTextToMove(nsp, text, address) {
+>>>>>>> mailis
     const ip = extractIP(address);
     if (!lastDisconnect4UserGamesId[ip]) return;
     const id = lastDisconnect4UserGamesId[ip];
@@ -87,6 +101,12 @@ function handleTextCommand(nsp, text, address) {
     const lowerCaseText = text.toLowerCase();
 
     const menuCommand = detectMenuCommand(lowerCaseText);
+
+    if (menuCommand === 'coup-precedent') {
+        undoOnce(nsp, id, game);
+        return;
+    }
+
     if (menuCommand) {
         nsp.to('game:' + id).emit('voice-command', menuCommand);
         return;
@@ -138,18 +158,26 @@ export default function disconnect4Namespace(io) {
             move(nsp, socket, id, ip, { column : column });
         });
 
+        socket.on('undo', () => {
+            const game = disconnect4Games[id];
+            if (game.isPlayer(ip)) undoOnce(nsp, id, game);
+        });
+
         socket.on('resetState', () => {
             if (!disconnect4Games[id].isPlayer(ip))
                 return;
             restart(nsp, id, ip);
         });
 
+<<<<<<< HEAD
         socket.on('undo', () => {
             if (!disconnect4Games[id].isPlayer(ip))
                 return;
             undo(nsp, id, ip);
         });
 
+=======
+>>>>>>> mailis
         socket.on('may-play', roles => {
             disconnect4Games[id].addPlayer(ip, roles);
             socket.emit('access', disconnect4Games[id].buildAccessObject(ip));

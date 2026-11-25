@@ -50,7 +50,11 @@ const vocMenu = ["[unk]", "menu", "retour", "quitter", "revenir", "accueil",
     "crédits", "propos", "sommes", "nous", "règle", "règles", "aide", "mentions", "légales",
     "échecs", "puissance", "coordonnées", "caméra", "micro",
     "activer", "désactiver", "créer", "automatiquement", "partie",
+<<<<<<< HEAD
     "jouer", "écran", "écrans", "ecran", "ecrans"];
+=======
+    "ordinateur", "ordinateurs", "coup", "précédent"];
+>>>>>>> mailis
 const vocPuissance4 = ["colonne"];
 const pieces = ["tour", "cavalier", "fou", "dame", "pion", "roi"];
 const ordre = ["abandonner", "recommencer", "rejouer", "non", "annuler"];
@@ -77,6 +81,7 @@ Object.values(alphabetHomophones).forEach(letterSyns => {
 Object.values(alphabetHomophones).forEach(syns => grammarChess.push(...syns));
 Object.values(chiffresHomophones).forEach(syns => grammarChess.push(...syns));
 
+<<<<<<< HEAD
 const screenPhrases = [
     "un écran", "un ecran", "une écran", "une ecran",
     "deux écrans", "deux ecran", "deux ecrans", "deu ecran", "deu ecrans", "de écrans", "de ecran",
@@ -87,6 +92,9 @@ const screenPhrases = [
 ];
 
 grammarChess.push("puissance quatre", ...screenPhrases);
+=======
+grammarChess.push("puissance quatre", "un ordinateur", "deux ordinateurs","coup précédent");
+>>>>>>> mailis
 
 const grammarPuissance4 = [...ordre, ...vocMenu, ...vocPuissance4];
 const chiffresPuissance4 = ["1", "2", "3", "4", "5", "6", "7"];
@@ -102,7 +110,11 @@ puissance4Homophones["colonne"].forEach(colSyn => {
 Object.values(chiffresHomophones).forEach(syns => grammarPuissance4.push(...syns));
 Object.values(puissance4Homophones).forEach(syns => grammarPuissance4.push(...syns));
 
+<<<<<<< HEAD
 grammarPuissance4.push("puissance quatre", ...screenPhrases);
+=======
+grammarPuissance4.push("puissance quatre", "un ordinateur", "deux ordinateurs","coup précédent");
+>>>>>>> mailis
 
 export { grammarChess, grammarPuissance4 };
 
@@ -155,6 +167,7 @@ export function transform(text) {
 
 export function detectMenuCommand(text) {
     const words = text.split(" ");
+    if (words.includes("précédent")) return "coup-precedent";
     if (words.includes("crédits")) return "credits";
     if (words.includes("mention") || words.includes("légal") || words.includes("mentions") || words.includes("légales")) return "mentions-legales";
     if (words.includes("propos") || words.includes("sommes") || words.includes("nous")) return "a-propos";
@@ -187,7 +200,6 @@ export function detectMenuCommand(text) {
     if (words.includes("règle") || words.includes("règles")) return "regles";
     if (words.includes("quitter")) return "quitter";
     if (words.includes("accueil")) return "accueil";
-    if (words.includes("revenir")) return "revenir";
     if (words.includes("retour") || words.includes("menu")) return "retour";
 
     return null;

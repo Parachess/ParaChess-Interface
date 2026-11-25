@@ -1,104 +1,155 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ParaGames | Mentions Légales</title>
     <link rel="stylesheet" href="/public/style.css" />
     <link rel="icon" href="/public/assets/favicon.ico" />
-    <script src="https://cdn.socket.io/4.8.3/socket.io.min.js"
-        integrity="sha384-kzavj5fiMwLKzzD1f8S7TeoVIEi7uKHvbTA3ueZkrzYq75pNQUiUi6Dy98Q3fxb0"
-        crossorigin="anonymous"></script>
-</head>
-<script>
+    <script
+      src="https://cdn.socket.io/4.8.3/socket.io.min.js"
+      integrity="sha384-kzavj5fiMwLKzzD1f8S7TeoVIEi7uKHvbTA3ueZkrzYq75pNQUiUi6Dy98Q3fxb0"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <script>
     const keyPressed = {};
     let i = 0;
-    window.addEventListener('keydown', e => {
-            keyPressed[e.key] = true;
+    window.addEventListener("keydown", (e) => {
+      keyPressed[e.key] = true;
 
-            if (keyPressed['Control'] && keyPressed['Alt']) {
-                if (e.key === 'c') {
-                    if (i === 0){
-                        i = 1;
-                        activateFacialDetection();
-                    }
-                    else{
-                        i = 0;
-                        deactivateFacialDetection();
-                    }
-                } 
-                else if (e.key === 'r') {
-                    window.open(window.location.origin, '_self');
-                } 
-            }
-        });
+      if (keyPressed["Control"] && keyPressed["Alt"]) {
+        if (e.key === "c") {
+          if (i === 0) {
+            i = 1;
+            activateFacialDetection();
+          } else {
+            i = 0;
+            deactivateFacialDetection();
+          }
+        } else if (e.key === "r") {
+          window.open(window.location.origin, "_self");
+        }
+      }
+    });
 
-        window.addEventListener('keyup', e => {
-            delete keyPressed[e.key];
-        });      
-</script>
-<body data-voice-page="mentions-legales">
+    window.addEventListener("keyup", (e) => {
+      delete keyPressed[e.key];
+    });
+  </script>
+  <body data-voice-page="mentions-legales">
     <div id="head-tracker"></div>
     <div id="face-detection-popup" class="popup">
-        <div class="popup-body">
-            <h3 id="face-detection-title">
-                Détection du visage
-            </h3>
-            <div class="inline-options">
-                <button id="activate-face-detection" class="popup-option" onclick="activateFacialDetection();">
-                    Activer</button>
-                <button id="deactivate-face-detection" class="popup-option" onclick="deactivateFacialDetection();">
-                    Désactiver</button>
-            </div>
-            <p>Sensibilité : <span id="sensibility-value">XX</span> %</p>
-            <input type="range" min="0" max="100" id="sensibility-range" value="17" />
-            <p>Durée d'un clin d'œil : <span id="blink-value">XX</span> s</p>
-            <input type="range" min="0" max="1" id="blink-range" value=".25" step="0.1" />
-            <div class="inline-options">
-                <button onclick="toDefaultParameters();" class="popup-option">Retour aux paramètres par défaut</button>
-                <button onclick="closeDetectionPopup();" class="popup-option">Confirmer</button>
-            </div>
+      <div class="popup-body">
+        <h3 id="face-detection-title">Détection du visage</h3>
+        <div class="inline-options">
+          <button
+            id="activate-face-detection"
+            class="popup-option"
+            onclick="activateFacialDetection()"
+          >
+            Activer
+          </button>
+          <button
+            id="deactivate-face-detection"
+            class="popup-option"
+            onclick="deactivateFacialDetection()"
+          >
+            Désactiver
+          </button>
         </div>
-        <div class="popupBackground"></div>
+        <p>Sensibilité : <span id="sensibility-value">XX</span> %</p>
+        <input
+          type="range"
+          min="0"
+          max="100"
+          id="sensibility-range"
+          value="17"
+        />
+        <p>Durée d'un clin d'œil : <span id="blink-value">XX</span> s</p>
+        <input
+          type="range"
+          min="0"
+          max="1"
+          id="blink-range"
+          value=".25"
+          step="0.1"
+        />
+        <div class="inline-options">
+          <button onclick="toDefaultParameters()" class="popup-option">
+            Retour aux paramètres par défaut
+          </button>
+          <button onclick="closeDetectionPopup()" class="popup-option">
+            Confirmer
+          </button>
+        </div>
+      </div>
+      <div class="popupBackground"></div>
     </div>
     <div id="content">
-        <div id="header">
-            <a href="/" id="return" aria-label="Retourner au menu"><img src="/public/assets/return.svg" alt="return" />
-            <div class="voice-command-hint-button">
-                    <img src="/public/assets/parler_blanc.png" alt="Parler">
-                    <span>"retour"</span>
-            </div>
-            </a>
-            <a href="/"><img id="logo" src="/public/assets/paragames.svg" alt="Logo ParaGames" /></a>
-            <button id="toggle-facial-button" class="facial-active" aria-label="Activer/Désactiver le suivi du visage"
-                onclick="displayFacialDetectionPopup(event);">
-                <img id="toggle-face-button-image" src="/public/assets/eye-open.svg" alt="🔴" />
-            </button>
-            <button id="toggle-vocal-button" class="vocal-active" aria-label="Activer/Désactiver la commande vocale"
-                onclick="toggleVocalMode(event);">
-                <img id="toggle-vocal-button-image" src="/public/assets/mic-on.svg" alt="🎙️" />
-            </button>
-        </div>
-        <img class="background" src="/public/assets/background.svg" alt="" />
-        <div class="panel">
-            <h1>Mentions Légales</h1>
-            <div id="text">
-                <h3>1. Éditeur du site</h3>
-                <p>Le site <i>ParaChess</i> est édité dans le cadre d'un projet étudiant à Polytech Nantes.</p>
-                <p>Établissement : Polytech Nantes<br>
-                Adresse : Rue Christian Pauc, 44300 Nantes, France</p>
+      <div id="header">
+        <a href="/" id="return" aria-label="Retourner au menu"
+          ><img src="/public/assets/return.svg" alt="return" />
+          <div class="voice-command-hint-button">
+            <img src="/public/assets/parler_blanc.png" alt="Parler" />
+            <span>"retour"</span>
+          </div>
+        </a>
+        <a href="/"
+          ><img
+            id="logo"
+            src="/public/assets/paragames.svg"
+            alt="Logo ParaGames"
+        /></a>
+        <button
+          id="toggle-facial-button"
+          class="facial-active"
+          aria-label="Activer/Désactiver le suivi du visage"
+          onclick="displayFacialDetectionPopup(event)"
+        >
+          <img
+            id="toggle-face-button-image"
+            src="/public/assets/eye-open.svg"
+            alt="🔴"
+          />
+        </button>
+        <button
+          id="toggle-vocal-button"
+          class="vocal-active"
+          aria-label="Activer/Désactiver la commande vocale"
+          onclick="toggleVocalMode(event)"
+        >
+          <img
+            id="toggle-vocal-button-image"
+            src="/public/assets/mic-on.svg"
+            alt="🎙️"
+          />
+        </button>
+      </div>
+      <img class="background" src="/public/assets/background.svg" alt="" />
+      <div class="panel">
+        <h1>Mentions Légales</h1>
+        <div id="text">
+          <h3>1. Éditeur du site</h3>
+          <p>
+            Le site <i>ParaChess</i> est édité dans le cadre d'un projet
+            étudiant à Polytech Nantes.
+          </p>
+          <p>
+            Établissement : Polytech Nantes<br />
+            Adresse : Rue Christian Pauc, 44300 Nantes, France
+          </p>
 
-                <h3>2. Hébergement</h3>
+          <h3>2. Hébergement</h3>
 
-                <h3>3. Propriété intellectuelle</h3>
-                
-                <h3>4. Données personnelles et confidentialité</h3>
-            </div>
+          <h3>3. Propriété intellectuelle</h3>
+
+          <h3>4. Données personnelles et confidentialité</h3>
         </div>
+      </div>
     </div>
     <video id="webcam" autoplay playsinline></video>
     <script src="/public/head-tracking.js" type="module"></script>
-    <script src="/public/voice-commands.js"></script>
-</body>
+    <script type="module" src="/public/voice-commands.js"></script>
+  </body>
 </html>

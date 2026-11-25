@@ -1,4 +1,5 @@
 import { FaceLandmarker, FilesetResolver } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.8";
+import { getPrefs, setPref } from './cookies.js'
 
 const video = document.getElementById("webcam");
 const gazeDot = document.getElementById("head-tracker");
@@ -18,8 +19,9 @@ let cameraGuess = true;
  * Si x est le nombre d'image de moyennage (smoothingFactor) et y la sensibilité (%), nous utilisons
  * y = 100 - 2x en supposant qu'il n'y ait pas plus de 50 images pour moyenner.
  */
-let smoothingFactor = localStorage.getItem("facialDetectionSmoothing") !== null ? parseFloat(localStorage.getItem("facialDetectionSmoothing")) : 8;
-let blinkThreshold = localStorage.getItem("facialDetectionBlink") !== null ? parseFloat(localStorage.getItem("facialDetectionBlink")) : 0.25;
+const prefs = getPrefs();
+let smoothingFactor = prefs.facialSmoothing ?? 8;
+let blinkThreshold = prefs.facialBlink ?? 0.25;
 let setupDone = false;
 
 const rangeSmoothingFactor = document.getElementById("sensibility-range");
@@ -34,8 +36,10 @@ function updateToggleSwitch(checked) {
 function toggleFacialDetection(checkbox) {
     if (checkbox.checked) {
         activateFacialDetection();
+        setPref('cam', 'on');
     } else {
         deactivateFacialDetection();
+        setPref('cam', 'off');
     }
 }
 
@@ -140,7 +144,7 @@ function activateFacialDetection() {
     image.src = "/public/assets/eye-open.svg";
     image.alt = "🔴";
     cameraGuess = true;
-    localStorage.setItem("facialDetectionEnabled", "true");
+    setPref("facialEnabled", true);
     updateToggleSwitch(true);
     restartPrediction();
 }
@@ -158,7 +162,7 @@ function deactivateFacialDetection() {
         image.src = "/public/assets/eye-closed.svg";
         image.alt = "⚫";
         cameraGuess = false;
-        localStorage.setItem("facialDetectionEnabled", "false");
+        setPref("facialEnabled", false);
         predictionRunning = false;
         updateToggleSwitch(false);
         gazeDot.classList.remove("active");
@@ -297,9 +301,9 @@ function toDefaultParameters() {
     rangeSmoothingFactor.style.setProperty('--range-pct', (rangeSmoothingFactor.value / rangeSmoothingFactor.max) * 100 + '%');
     rangeBlinkDuration.style.setProperty('--range-pct', (rangeBlinkDuration.value / rangeBlinkDuration.max) * 100 + '%');
     
-    localStorage.removeItem("facialDetectionSmoothing");
-    localStorage.removeItem("facialDetectionBlink");
-    
+    setPref("facialSmoothing", 8);
+    setPref("facialBlink", 0.25);
+
     closeDetectionPopup();
 }
 
@@ -310,7 +314,7 @@ window.addEventListener("DOMContentLoaded", () => {
     rangeSmoothingFactor.onchange = e => {
         document.getElementById("sensibility-value").innerText = rangeSmoothingFactor.value;
         smoothingFactor = (rangeSmoothingFactor.max - rangeSmoothingFactor.value) / 2;
-        localStorage.setItem("facialDetectionSmoothing", smoothingFactor);
+        setPref("facialSmoothing", smoothingFactor);
         while (positionHistoryX.length > smoothingFactor) {
             positionHistoryX.shift();
         }
@@ -323,8 +327,8 @@ window.addEventListener("DOMContentLoaded", () => {
     document.getElementById("blink-value").innerText = blinkThreshold;
     rangeBlinkDuration.onchange = e => {
         document.getElementById("blink-value").innerText = rangeBlinkDuration.value;
-        blinkThreshold = rangeBlinkDuration.value;
-        localStorage.setItem("facialDetectionBlink", blinkThreshold);
+        blinkThreshold = parseFloat(rangeBlinkDuration.value);
+        setPref("facialBlink", blinkThreshold);
         const pct = (rangeBlinkDuration.value / rangeBlinkDuration.max) * 100;
         rangeBlinkDuration.style.setProperty('--range-pct', pct + '%');
     };
@@ -337,8 +341,8 @@ window.addEventListener("DOMContentLoaded", () => {
     window.toDefaultParameters = toDefaultParameters;
     window.toggleFacialDetection = toggleFacialDetection;
     
-    const savedCameraGuess = localStorage.getItem("facialDetectionEnabled");
-    if (savedCameraGuess === "false") {
+    const prefs = getPrefs();
+    if (prefs.facialEnabled === false) {
         const button = document.getElementById("toggle-facial-button");
         const image = document.getElementById('toggle-face-button-image');
         if (button && image) {

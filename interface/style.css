@@ -544,6 +544,7 @@ div.center {
 }
 
 .modern-button {
+  position: relative;
   font-family: Inter, system-ui, sans-serif;
   font-size: 14px;
   font-weight: 600;

@@ -243,7 +243,11 @@
                     Importer une position
                 </button>
                 <button id="undo-button" class="modern-button btn-danger" aria-label="Annuler le dernier coup" onclick="undo();">
-                    Annuler le coup
+                    Revenir au coup précédent
+                    <div class="voice-command-hint-button">
+                        <img src="/public/assets/parler_blanc.png" alt="Parler">
+                        <span>"coup précédent"</span>
+                    </div>
                 </button>
                 <button class="modern-button btn-danger" aria-label="Abandonner la partie" onclick="resign();">
                     Abandonner la partie
@@ -254,7 +258,7 @@
     </div>
     <video id="webcam" autoplay playsinline></video>
     <script src="/parachess/jouer/play.js"></script>
-    <script src="/public/voice-commands.js"></script>
+    <script type="module" src="/public/voice-commands.js"></script>
     <script src="/public/chessboard.js"></script>
     <script src="/public/head-tracking.js" type="module"></script>
 </body>
