@@ -4,6 +4,7 @@
  */
 
 import Board from "./board.js";
+import Game from "../game.js";
 import { Bishop, Pawn, Queen, King, Knight, Rook } from './piece.js';
 import Actions from './actions.js';
 import { spawn } from 'child_process';
@@ -18,12 +19,7 @@ export const PROMOTIONS_PIECES_NAME = ["tour", "cavalier", "fou", "dame"];
  * The Chess class allows manipulation of the chessboard
  * according to the official chess rules.
  */
-export class Chess {
-
-    /**
-     * List of users allowed to play on any game.
-     */
-    static SUPER_USERS = ["PARACHESS"];
+export class Chess extends Game {
 
     /**
      * The initial position's FEN code
@@ -45,10 +41,10 @@ export class Chess {
      * 
      * @param {*} onEval Method called when the position is newly calculated
      * @param {string} fen Initial position in FEN notation
-     * @param {array} players The user object (key: id, value: color)
+     * @param {array} players a dictionary of players (key=user id, value = array of teams)
      */
     constructor(onEval, fen = Chess.DEFAULT_FEN, players = {}) {
-        this.history = [];
+        super("ParaChess", ['w', 'b'], 'w', players);
         this.initialFen = fen;
         this.capturedPieces = [];
         this.board = new Board(fen.split(" ")[0]);
@@ -65,16 +61,14 @@ export class Chess {
         };
         this.gameOver = false;
         this.reason = "";
-        this.whiteWon = false;
-        this.blackWon = false;
+        this.winningSides = [];
         this.getAllLegalMoves();
         this.fenPiecesHistory = [];
-        this.players = players;
         this.eval = this.evalPosition();
         this.onEval = onEval;
         this.engine = spawn("stockfish");
         this.lastEval = null;
-        this.lastMoveTime = Date.now();
+        this.eatenStorage = {};
         this.engine.stdout.on("data", (data) => {
 
             const text = data.toString();
@@ -133,7 +127,7 @@ export class Chess {
         };
         const splitted = fen?.split(" ");
         if (splitted.length <= 1) return def;
-        const castling = splitted[2];
+        const castling = splitted[2] ?? "KkQq";
         let Q = false;
         let K = false;
         let q = false;
@@ -186,6 +180,23 @@ export class Chess {
         return Number(splitted[5]);
     }
 
+    getAvailableStorageSpace() {
+        for(const letter of 'abcdefgh') {
+            const square = `${letter}9`;
+            if (this.eatenStorage[square]) continue;
+
+            return square;
+        }
+    }
+
+    storePiece(piece) {
+        const spot = this.getAvailableStorageSpace();
+
+        this.eatenStorage[spot] = piece;
+
+        return spot;
+    }
+
     /**
      * Attempts to play a move.
      * 
@@ -196,9 +207,7 @@ export class Chess {
      * @returns {boolean} true if the move was played, false otherwise
      */
     play(player, from, to, promotion = 'q') {
-        if (this.gameOver) return false;
-        // Check if the players a registered
-        if (!Chess.SUPER_USERS.includes(player) && (!this.players[player] || (this.players[player] !== '*' && this.players[player] !== this.side)))
+        if (this.gameOver || !this.isPlayer(player)|| !this.getTeamsOfPlayer(player).includes(this.side))
             return false;
         this.getAllLegalMoves();
         const moveOptions = this.processMoveOptions(from, to, promotion);
@@ -211,6 +220,13 @@ export class Chess {
             to,
             ...moveOptions
         })) return false;
+        
+        const pieceEaten = moveOptions.action & Actions.CAPTURE || moveOptions.action & Actions.EP_CAPTURE;
+        let storageSpot = null;
+        if(pieceEaten) {
+            storageSpot = this.storePiece('temp');
+        }
+
         this.fiftyMove({ piece: this.board.get(to), action: moveOptions.action });
         this.fullMoveNumber += 1;
         const fen = this.board.toFen();
@@ -220,7 +236,7 @@ export class Chess {
         this.engine?.stdin.write('move ' + from + to + "\n");
         this.evalPosition();
         this.positions.push(this.board.export());
-        return true;
+        return { success: true, pieceEaten, storageSpot };
     }
 
     /**
@@ -259,8 +275,8 @@ export class Chess {
             if (this.longCastling(this.side)) {
                 if (this.side === 'w') this.updateCastlingRights(from, to, true, false);
                 else this.updateCastlingRights(from, to, false, true);
-                this.side = this.oppositeSide();
                 this.history.push({ from: (this.side === "w" ? "e1" : "e8"), to: (this.side === "w" ? "c1" : "c8"), action: Actions.Q_CASTLE, castling: { ...this.castling }, enPassant: null });
+                this.side = this.getNextTeam();
                 if (!this.simulating) {
                     this.checkForGameOver();
                 }
@@ -273,8 +289,8 @@ export class Chess {
             if (this.shortCastling(this.side)) {
                 if (this.side === 'w') this.updateCastlingRights(from, to, true, false);
                 else this.updateCastlingRights(from, to, false, true);
-                this.side = this.oppositeSide();
                 this.history.push({ from: (this.side === "w" ? "e1" : "e8"), to: (this.side === "w" ? "g1" : "g8"), action: Actions.K_CASTLE, castling: { ...this.castling }, enPassant: null });
+                this.side = this.getNextTeam();
                 if (!this.simulating) {
                     this.checkForGameOver();
                 }
@@ -292,18 +308,15 @@ export class Chess {
      */
     move({ from, to, action, promotion }) {
         const move = { from, to, action };
-
         if (this.tryCastling({ from, to, action, promotion })) return true;
 
         if (!Board.isValidSquare(from) || !this.board.isOccupied(from)) return false;
-
+        
         const piece = this.board.get(from);
         const fromColor = this.board.get(from).color;
-
         if (fromColor !== this.side) return false;
-
         this.board.set(from, null);
-
+        
         if (this.board.isOccupied(to) && this.board.get(to).color !== fromColor) {
             const capturedPiece = this.board.get(to);
             this.capturedPieces.push(capturedPiece);
@@ -323,7 +336,7 @@ export class Chess {
         }
 
         this.board.set(to, piece);
-        this.side = this.oppositeSide();
+        this.side = this.getNextTeam();
 
         if (action & Actions.PROMOTION) {
             if (!promotion || (promotion.toLowerCase() !== 'b' && promotion.toLowerCase() !== 'n' && promotion.toLowerCase() !== 'r' && promotion.toLowerCase() !== 'q'))
@@ -407,14 +420,15 @@ export class Chess {
     /**
      * Undoes the last move played.
      * 
-     * @param {boolean} evalPosition evaluate the game after removing the last move
-     * @param {boolean} removePosition remove the position from the fen code
+     * @param {string} the id of the user trying to undo a move (default is "none")
+     * @param {object} _object the parameters {evalPosition boolean, removePosition boolean, force: boolean} every value is false by default
+     * @return {boolean} 'true' if a move has been removed from the history
      */
-    undo(evalPosition=false, removePosition=false) {
-        if (this.gameOver)
-            return;
+    undo(user="none", { evalPosition=false, removePosition=false, force = false } = {}) {
+        if (!force && !super.undo(user))
+            return false;
         const move = this.history.pop();
-        if (!move) return;
+        if (!move) return false;
         if (removePosition) {
             this.fenPiecesHistory?.pop();
             this.positions?.pop();
@@ -442,8 +456,9 @@ export class Chess {
                 this.board.set('h8', new Rook('b'));
                 this.board.set('f8', null);
             }
+            this.side = this.getPreviousTeam();
             if (evalPosition) this.evalPosition();
-            return;
+            return true;
         }
 
         if (action & Actions.Q_CASTLE) {
@@ -458,21 +473,21 @@ export class Chess {
                 this.board.set('a8', new Rook('b'));
                 this.board.set('d8', null);
             }
+            this.side = this.getPreviousTeam();
             if (evalPosition) this.evalPosition();
-            return;
+            return true;
         }
 
         const movedPiece = this.board.get(to);
 
         this.board.set(from, movedPiece);
         this.board.set(to, null);
-
-        this.side = this.oppositeSide();
-
+        this.side = this.getPreviousTeam();
         if (move.action & Actions.CAPTURE) this.board.set(to, move.captured);
-        else if (move.action & Actions.EP_CAPTURE) this.board.set(to[0] + from[1], new Pawn(Chess.oppositeSide(movedPiece.color)));
+        else if (move.action & Actions.EP_CAPTURE) this.board.set(to[0] + from[1], new Pawn(this.getPreviousTeam(movedPiece.color)));
         if (move.action & Actions.PROMOTION) this.board.set(from, new Pawn(movedPiece.color));
         if (evalPosition) this.evalPosition();
+        return true;
     }
 
     /**
@@ -484,7 +499,7 @@ export class Chess {
      */
     isCheck(side = this.side) {
         const kingSquare = this.board.getKingSquare(side);
-        return this.board.isControlled(kingSquare, Chess.oppositeSide(side));
+        return this.board.isControlled(kingSquare, this.getNextTeam(side));
     }
 
     /**
@@ -496,16 +511,30 @@ export class Chess {
      */
     getLegalMoves(pos, enPassant) {
         const legal = [];
-        if (!Board.isValidSquare(pos)) return [];
-
-        const pseudoLegalMoves = this.board.getPseudoLegalMoves(pos, enPassant);
+        if (!Board.isValidSquare(pos)) return legal;
+        if (!this.board.isOccupied(pos)) return legal;
+        const piece = this.board.get(pos);
+        const side = piece.color;
+        const pseudoLegalMoves =
+            this.board.getPseudoLegalMoves(pos, enPassant);
         for (const move of pseudoLegalMoves) {
-            const prevSide = this.side;
-            this.simulating = true;
-            this.move(move);
-            this.simulating = false;
-            if (!this.isCheck(prevSide)) legal.push(move);
-            this.undo();
+            const previousSide = this.side;
+            const previousSimulating = this.simulating;
+            const previousHistoryLength = this.history.length;
+            try {
+                this.side = side;
+                this.simulating = true;
+                const success = this.move(move);
+                if (success && !this.isCheck(side)) {
+                    legal.push(move);
+                }
+            } finally {
+                if (this.history.length > previousHistoryLength) {
+                    this.undo("none", { force: true });
+                }
+                this.side = previousSide;
+                this.simulating = previousSimulating;
+            }
         }
         return legal;
     }
@@ -522,9 +551,8 @@ export class Chess {
         const squares = Board.getAllSquares();
         let moves = [];
         for (const square of squares) {
-            if (this.board.isOccupied(square) && this.board.get(square).color === side) {
+            if (this.board.isOccupied(square) && this.board.get(square).color === side)
                 moves.push(...this.getLegalMoves(square, enPassant));
-            }
         }
         if (this.checkShortCastling(side)) moves.push({ from: (side === "w" ? "e1" : "e8"), to: (side === "w" ? "g1" : "g8"), action: Actions.MOVE | Actions.K_CASTLE });
         if (this.checkLongCastling(side)) moves.push({ from: (side === "w" ? "e1" : "e8"), to: (side === "w" ? "c1" : "c8"), action: Actions.MOVE | Actions.Q_CASTLE });
@@ -594,8 +622,8 @@ export class Chess {
         if (this.isCheck(side)) {
             return false;
         }
-        return (side === 'w' && this.castling.whiteKingCastle && !this.board.isOccupied('g1') && !this.board.isOccupied('f1') && !this.board.isControlled('f1', this.oppositeSide(side)) && !this.board.isControlled('g1', this.oppositeSide(side))) ||
-            (side === 'b' && this.castling.blackKingCastle && !this.board.isOccupied('g8') && !this.board.isOccupied('f8') && !this.board.isControlled('f8', this.oppositeSide(side)) && !this.board.isControlled('g8', this.oppositeSide(side)));
+        return (side === 'w' && this.castling.whiteKingCastle && !this.board.isOccupied('g1') && !this.board.isOccupied('f1') && !this.board.isControlled('f1', this.getNextTeam(side)) && !this.board.isControlled('g1', this.getNextTeam(side))) ||
+            (side === 'b' && this.castling.blackKingCastle && !this.board.isOccupied('g8') && !this.board.isOccupied('f8') && !this.board.isControlled('f8', this.getNextTeam(side)) && !this.board.isControlled('g8', this.getNextTeam(side)));
     }
 
     /**
@@ -608,8 +636,8 @@ export class Chess {
         if (this.isCheck(side)) {
             return false;
         }
-        return (side === 'w' && this.castling.whiteQueenCastle && !this.board.isOccupied('b1') && !this.board.isOccupied('c1') && !this.board.isOccupied('d1') && !this.board.isControlled('c1', this.oppositeSide(side)) && !this.board.isControlled('d1', this.oppositeSide(side))) ||
-            (side === 'b' && this.castling.blackQueenCastle && !this.board.isOccupied('b8') && !this.board.isOccupied('c8') && !this.board.isOccupied('d8') && !this.board.isControlled('c8', this.oppositeSide(side)) && !this.board.isControlled('d8', this.oppositeSide(side)));
+        return (side === 'w' && this.castling.whiteQueenCastle && !this.board.isOccupied('b1') && !this.board.isOccupied('c1') && !this.board.isOccupied('d1') && !this.board.isControlled('c1', this.getNextTeam(side)) && !this.board.isControlled('d1', this.getNextTeam(side))) ||
+            (side === 'b' && this.castling.blackQueenCastle && !this.board.isOccupied('b8') && !this.board.isOccupied('c8') && !this.board.isOccupied('d8') && !this.board.isControlled('c8', this.getNextTeam(side)) && !this.board.isControlled('d8', this.getNextTeam(side)));
     }
 
     /**
@@ -617,26 +645,6 @@ export class Chess {
      */
     displayBoard() {
         console.log(this.board.toString());
-    }
-
-    /**
-     * Returns the opposite side of the current player.
-     * 
-     * @returns {string} 'w' or 'b'
-     */
-    oppositeSide() {
-        return Chess.oppositeSide(this.side);
-    }
-
-    /**
-     * Returns the opposite side of the given side.
-     * Defaults to white if the input is invalid.
-     * 
-     * @param {string} side
-     * @returns {string} 'w' or 'b'
-     */
-    static oppositeSide(side) {
-        return side === 'w' ? 'b' : 'w';
     }
 
     /**
@@ -666,14 +674,14 @@ export class Chess {
         if (this.gameOver) return;
         this.getAllLegalMoves(this.enPassant, this.side);
         if (this.checkmate('w')) {
-            this.blackWon = true;
             this.gameOver = true;
+            this.winningSides = ['b'];
             this.reason = "échec et mat";
             return;
         }
         if (this.checkmate('b')) {
-            this.whiteWon = true;
             this.gameOver = true;
+            this.winningSides = ['w'];
             this.reason = "échec et mat";
         }
         if (this.stalemate(this.side)) {
@@ -706,15 +714,15 @@ export class Chess {
     getState(reload = false) {
         if (reload) {
             this.getAllLegalMoves(this.enPassant, this.side);
-            this.getAllLegalMoves(this.enPassant, this.oppositeSide());
+            this.getAllLegalMoves(this.enPassant, this.getNextTeam(this.side, true));
         }
 
         this.checkForGameOver();
         return {
             gameOver: this.gameOver,
             opportunity: this.side,
-            whiteWon: this.whiteWon,
-            blackWon: this.blackWon,
+            whiteWon: this.winningSides.includes('w'),
+            blackWon: this.winningSides.includes('b'),
             reason: this.reason,
             whiteKingCheck: (this.isCheck('w') ? this.board.getKingSquare('w') : 'null'),
             blackKingCheck: (this.isCheck('b') ? this.board.getKingSquare('b') : 'null')
@@ -774,89 +782,6 @@ export class Chess {
     }
 
     /**
-     * Attempt to add a player to the game
-     * 
-     * @param {string} player the player id
-     * @param {int} roles the number of roles that the player will have
-     * @return {boolean} true if the player can play, false otherwise
-     */
-    addPlayer(player, roles) {
-        if (Chess.SUPER_USERS.includes(player)) return true;
-        if (Object.keys(this.players).includes(player)) return true;
-        if (!this.isPlayable()) return false;
-        if (Object.keys(this.players).length === 0 && roles > 1) {
-            this.players[player] = '*';
-            return true;
-        }  else if ([0, 1].includes(Object.keys(this.players).length)) {
-            this.players[player] = Object.keys(this.players).length === 0 ? 'w' : 'b';
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * return true if new players are accepted
-     * 
-     * @returns {boolean} true if new players can be accepted
-     */
-    isPlayable() {
-        if (this.getPlayers().filter(player => player.color === '*').length > 0) return false;
-        return Object.keys(this.getPlayers()).length <= 1;
-    }
-
-    /**
-     * get the list of players and their permissions
-     * 
-     * @return {array} a list of player
-     */
-    getPlayers() {
-        const players = [];
-        Object.keys(this.players).forEach(player => {
-            players.push({ player: player.valueOf(), color: this.players[player].valueOf() });
-        });
-        return players;
-    }
-
-    /**
-     * get the color of a player
-     * 
-     * @param {string} player the player id
-     * @return {string|false} the color of a player or false if he doesn't exist
-     */
-    getPlayer(player) {
-        return this.players[player] ?? false;
-    }
-
-    /**
-     * invert the user colors and return the user object
-     * 
-     * @return {*} a new user object
-     */
-    getInvertedUser() {
-        const users = JSON.parse(JSON.stringify(this.players));
-        Object.keys(users).forEach(key => {
-            if (users[key] === 'w') users[key] = 'b';
-            else if (users[key] === 'b') users[key] = 'w';
-        });
-        return users
-    }
-
-    /**
-     * know if an id is registered as a player
-     * 
-     * @param {string} id the purported player's id
-     * @return {boolean} true if id is registered
-     */
-    isPlayer(id) {
-        let isAPlayer = false;
-        this.getPlayers().forEach(player => {
-            if (player.player === id)
-                isAPlayer = true;
-        });
-        return isAPlayer;
-    }
-
-    /**
      * evaluate the game
      */
     evalPosition() {
@@ -875,8 +800,10 @@ export class Chess {
 
     /**
      * executed when a new eval is completed
+     * 
+     * @param {*} move the best move/score
      */
-    onEval() {
+    onEval(move) {
     }
 
     /**
@@ -885,13 +812,6 @@ export class Chess {
     clear() {
         this.engine.stdin.write('stop\n');
         this.engine.stdin.write('quit\n');
-    }
-
-    /**
-     * export all the past & current board position
-     */
-    getPositions() {
-        return this.positions;
     }
 
     /**
@@ -923,19 +843,6 @@ export class Chess {
             });
         });
         return pawns === 0 && rooks === 0 && queens === 0 && ((bishops <= 2 && knights === 0) || (knights <= 2 && bishops === 0))
-    }
-
-    /**
-     * resign a game
-     * 
-     * @param {string} side the side
-     */
-    resign(side) {
-        if (!side) return;
-        this.gameOver = true;
-        this.reason = "abandon";
-        if (side === 'w') this.blackWon = true;
-        if (side === 'b') this.whiteWon = true;
     }
 
 }

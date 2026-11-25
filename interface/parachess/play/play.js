@@ -1,10 +1,19 @@
 window.connection = connection;
+window.victoryDisplayed = false;
 let socket = null;
 let legalMoves = [];
+let isAdmin = false;
+let sides = [];
+
+const fireworksContainer = document.querySelector('#fireworks');
+const fireworks = new Fireworks.Fireworks(fireworksContainer, {
+    explosion: 10
+});
+const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 function connection() {
     const search = new URLSearchParams(window.location.search);
-    if(!search.has('g')) return;
+    if (!search.has('g')) return;
 
     socket = io('/parachess', {
         query: {
@@ -12,9 +21,12 @@ function connection() {
         },
         transports: ["websocket"]
     });
-    
-    socket?.on('side', (status, side) => displayAttemptResult(status, side));
-    socket?.on('voice-command', handleVoiceCommand);
+
+    socket?.on('access', result => displayAttemptResult(result));
+
+    socket?.on('voice-command', cmd => window.handleVoiceCommand?.(cmd));
+
+    socket?.on('resetBoard', () => window.victoryDisplayed = false);
 
     socket?.on('boardStates', states => {
         positionsIndex = states.length - 1;
@@ -24,7 +36,7 @@ function connection() {
 
     socket?.on('move', (from, to) => {
         const moveHighlightedSquares = Array.from(document.getElementsByClassName('moveHighlighted'));
-        for(const square of moveHighlightedSquares) {
+        for (const square of moveHighlightedSquares) {
             square.classList.remove('moveHighlighted');
         }
 
@@ -64,7 +76,16 @@ function connection() {
             document.getElementById("side").classList.remove("white-turn");
             announcement.push("Trait au noir.");
         }
+
         if (state.gameOver) {
+            if (!window.victoryDisplayed) {
+                window.victoryDisplayed = true;
+                if (sides.includes('w') && state.whiteWon || sides.includes('b') && state.blackWon)
+                    feastVictory();
+                else {
+                    // defeat;
+                }
+            }
             if (state.whiteWon) {
                 showState("Les blancs ont gagné par " + state.reason + ".");
                 announcement.push("Échec et mat ! Les blancs gagnent.");
@@ -76,7 +97,7 @@ function connection() {
                 announcement.push("Match nul !");
             }
         }
-        if (document.getElementById("side-value").value === "*") {
+        if (isAdmin) {
             if (state.opportunity == 'w') chessboard.classList.remove("rotated");
             else chessboard.classList.add("rotated");
         }
@@ -125,20 +146,22 @@ function askFen() {
     setTimeout(() => document.getElementById('ask-fen-input').focus(), 100);
 }
 
-function displayAttemptResult(status, side) {
+function displayAttemptResult(result) {
     const chessboard = document.getElementById("chessboard");
-    document.getElementById("side-value").value = side;
-    if (status !== "ALLOWED") {
-        document.getElementById('refused-popup-text').innerText = side;
+    if (result.status !== "ALLOWED") {
+        document.getElementById('refused-popup-text').innerText = result.reason;
         document.getElementById('refused-popup').classList.add('visible');
         setTimeout(() => document.querySelector('#refused-popup .popup-option').focus(), 100);
-    } else if (side === 'b' && !Array.from(chessboard.classList).includes("rotated")) chessboard.classList.add('rotated');
-    else if (side === 'w' && Array.from(chessboard.classList).includes("rotated")) chessboard.classList.remove('rotated');
-    if (side !== '*')
-        document.getElementById('undo-button').classList.add('hidden');
-    else if (side === '*')
-        document.getElementById('undo-button').classList.remove('hidden');
-    document.getElementById('undo-button').classList.toggle('hidden', status !== "ALLOWED");
+    } else {
+        sides = result.sides;
+        if (sides.includes('b') && !sides.includes('w')) chessboard.classList.add('rotated');
+        else if (sides.includes('w') && !sides.includes('b')) chessboard.classList.remove('rotated');
+        if (result.isAdmin) {
+            document.getElementById('undo-button').classList.remove('hidden');
+            isAdmin = true;
+        } else
+            document.getElementById('undo-button').classList.add('hidden');
+    }
 }
 
 function hideAll() {
@@ -151,7 +174,7 @@ function hideAll() {
 
 function watch() {
     const search = new URLSearchParams(window.location.search);
-    window.open('/regarder/?g=' + search.get('g'), '_self');
+    window.open('/parachess/regarder/?g=' + search.get('g'), '_self');
 }
 
 function undo() {
@@ -163,9 +186,9 @@ function resign() {
     setTimeout(() => document.querySelector('#confirmation-popup .popup-option').focus(), 100);
 }
 
-function validateResign(validation=false) {
+function validateResign(validation = false) {
     document.getElementById("confirmation-popup").classList.remove("visible");
-    if (validation) socket?.emit("resign");
+    if (validation) socket?.emit("resign", sides[0]);
 }
 
 document.getElementById('showCoordinates').onchange = showCoordinates;
@@ -189,34 +212,87 @@ function isPromotionChar(char) {
 
 window.addEventListener('keydown', e => {
     const finalKey = e.key.toLowerCase();
-    if(finalKey === '0') {
+    if (finalKey === '0') {
         window.location.open('/', '_self');
     }
-    if(finalKey === 'm') {
+    if (finalKey === 'm') {
         typed.splice(0, typed.length);
         return;
     }
-    if(!authorized.includes(finalKey)) return;
+    if (!authorized.includes(finalKey)) return;
 
     const twoLast = [typed[typed.length - 1], finalKey];
     const isSquare = isChessSquare(...twoLast);
     const isPromotion = isPromotionChar(finalKey);
-    if(isPromotion && !lastPromotion) {
+    if (isPromotion && !lastPromotion) {
         typed.splice(0, typed.length);
         lastPromotion = finalKey;
     }
     typed.push(finalKey);
 
-    if(isSquare && lastSquare) {
+    if (isSquare && lastSquare) {
         let finalPromotion = null;
-        if(lastPromotion && typed.length === 5) finalPromotion = lastPromotion;
+        if (lastPromotion && typed.length === 5) finalPromotion = lastPromotion;
         sendMove(lastSquare, twoLast.join(''), finalPromotion);
         lastSquare = '';
         lastPromotion = null;
         typed.slice(0, typed.length);
-    } else if(isSquare) lastSquare = twoLast.join('');
+    } else if (isSquare) lastSquare = twoLast.join('');
 });
 
-document.addEventListener("DOMContentLoaded", () => {
-    connection();
+async function feastVictory() {
+    setTimeout(() => document.querySelector('#state-popup .popup-option').focus(), 100);
+
+    const colors = [
+        "#FF006E",
+        "#FB5607",
+        "#FFBE0B",
+        "#00F5D4",
+        "#00BBF9",
+        "#8338EC",
+        "#FF4D6D",
+        "#FFFFFF"
+    ];
+
+    fireworks.launch(20);
+
+    setTimeout(() => {
+        confetti({
+            position: { x: window.innerWidth / 2, y: window.innerHeight },
+            count: 1000,
+            size: 3,
+            velocity: 1000,
+            fade: false,
+            colors
+        });
+    }, 600);
+
+    const cheeringSong = document.querySelector('#cheeringSong');
+    cheeringSong.volume = 0.2;
+    try {
+        cheeringSong.currentTime = 1.9
+        await cheeringSong.play();
+
+        setTimeout(() => {
+            cheeringSong.pause();
+        }, 15000);
+    } catch { }
+
+    await wait(2000);
+    fireworks.launch(20);
+    confetti({
+        position: { x: window.innerWidth / 2, y: window.innerHeight },
+        count: 500,
+        size: 2,
+        velocity: 1000,
+        fade: false,
+        colors
+    });
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    const rulesButton = document.getElementById('rules-button');
+    if (rulesButton) {
+        rulesButton.href = '/regles/?g=parachess&from=' + encodeURIComponent(window.location.pathname + window.location.search);
+    }
 });

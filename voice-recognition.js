@@ -28,8 +28,8 @@ const alphabetHomophones = {
 };
 
 const chiffresHomophones = {
-    "1": ["un", "hein", "une"],
-    "2": ["deux", "de"],
+    "1": ["un", "hein", "une", "d'un"],
+    "2": ["deux", "de", "deu", "d'eux"],
     "3": ["trois"],
     "4": ["quatre"],
     "5": ["cinq"],
@@ -46,7 +46,8 @@ const vocMenu = ["retour", "quitter", "revenir", "accueil", "aide",
     "crédits", "sommes", "nous", "règle", "règles", "mentions",
     "échecs", "puissance", "coordonnées", "caméra", "micro", "légales",
     "activer", "désactiver", "créer", "automatiquement", "partie",
-    "ordinateur", "ordinateurs", "coup", "précédent"];
+    "ordinateur", "ordinateurs", "coup", "précédent",
+    "jouer", "sur", "écran", "écrans", "mention", "légal"];
 const vocPuissance4 = ["colonne"];
 const pieces = ["tour", "cavalier", "fou", "dame", "pion", "roi"];
 const ordre = ["abandonner", "recommencer", "rejouer", "non", "annuler"];
@@ -56,6 +57,7 @@ const reverseMap = {};
 Object.entries(alphabetHomophones).forEach(([letter, syns]) => syns.forEach(s => reverseMap[s] = letter));
 Object.entries(chiffresHomophones).forEach(([digit, syns]) => syns.forEach(s => reverseMap[s] = digit));
 Object.entries(puissance4Homophones).forEach(([word, syns]) => syns.forEach(s => reverseMap[s] = word));
+Object.entries(screenHomophones).forEach(([word, syns]) => syns.forEach(s => reverseMap[s] = word));
 
 const grammarChess = [...pieces, ...ordre, ...ignore, ...vocMenu];
 
@@ -109,8 +111,8 @@ export function startListening(callback) {
 
     server.on('message', (msg, rinfo) => {
         const audioPayload = msg.slice(12);
-        if (rec.acceptWaveform(audioPayload)) {
-            const rawText = rec.result().text;
+        if (recChess.acceptWaveform(audioPayload)) {
+            const rawText = recChess.result().text;
             const cleanedText = transform(rawText);
             callback(cleanedText, rinfo.address);
         }
@@ -159,9 +161,15 @@ export function detectMenuCommand(text) {
         if (words.includes("désactiver")) return "coordonnees-off";
         if (words.includes("activer")) return "coordonnees-on";
     }
-    if (words.includes("ordinateur") || words.includes("ordinateurs")) {
-        if (words.includes("1")) return "un-ordinateur";
-        if (words.includes("2")) return "deux-ordinateurs";
+
+    const hasScreen = words.some(w => ["écran", "écrans", "ecran", "ecrans"].includes(w));
+    const hasJouer = words.includes("jouer");
+    const hasOne = words.some(w => ["1", "un", "une"].includes(w));
+    const hasTwo = words.some(w => ["2", "deux", "de", "deu"].includes(w));
+
+    if (hasScreen && hasJouer) {
+        if (hasOne) return "un-ecran";
+        if (hasTwo) return "deux-ecrans";
     }
     if (words.includes("créer") && (words.includes("automatiquement") || words.includes("partie"))) return "creer-partie";
     if (words.includes("aide")) return "aide";

@@ -267,12 +267,12 @@ body {
 }
 
 .mini-connect-board > div.red-chip {
-    background: #ef4444;
+    background: #e53e3e;
     box-shadow: inset 0 -2px 4px rgba(0,0,0,0.2), 0 2px 4px rgba(255,255,255,0.3);
 }
 
-.mini-connect-board > div.blue-chip {
-    background: #3b82f6;
+.mini-connect-board > div.yellow-chip {
+    background: #e9c46a;
     box-shadow: inset 0 -2px 4px rgba(0,0,0,0.2), 0 2px 4px rgba(255,255,255,0.3);
 }
 

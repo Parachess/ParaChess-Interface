@@ -138,10 +138,10 @@ export default class Board {
   /**
    * export the board into a 6x7 Matrix
    *
-   * @returns {Array<Array<str>>} a 6x7 Martrix
+   * @returns {Array<Array<str>>} a 6x7 Matrix
    */
   export() {
-    return this.board;
+    return JSON.parse(JSON.stringify(this.board));
   }
 
   /**

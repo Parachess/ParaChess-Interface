@@ -14,13 +14,14 @@
 }
 
 #left {
+    border-left: 1px solid rgba(0, 32.5, 47.5);
     height: 100%;
-    overflow-y: scroll;
+    text-align: center;
 }
 
 #right {
-    border-left: 1px solid rgba(0, 32.5, 47.5);
     height: 100%;
+    overflow-y: scroll;
 }
 
 h2 {
@@ -31,25 +32,91 @@ h2 {
     font-weight: bold;
 }
 
-#left ul#game-list {
+#right ul#registered-games-list,
+#right ul#other-games-list {
     font-family: Inter;
     font-size: 15px;
 }
 
-#left ul#game-list li p a {
+#right ul#registered-games-list li p a,
+#right ul#other-games-list li p a {
     color: black;
     text-decoration: underline;
     margin: 0 10px 0 10px;
 }
 
-#left ul#game-list li p span.unplayable {
+#right ul#other-games-list li p span.unplayable {
     color: rgb(83, 83, 83);
     text-decoration: line-through;
     margin: 0 10px 0 10px;
 }
 
 #right #form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     text-align: center;
+    width: 100%;
+}
+
+.creation-mode-auto,
+.creation-mode-custom {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.creation-mode-custom label {
+    display: block;
+    font-family: Inter, system-ui, sans-serif;
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+}
+
+#id,
+#fen-code {
+    width: 250px;
+    max-width: 100%;
+    box-sizing: border-box;
+    font-size: 0.9rem;
+    padding: 8px 12px;
+    margin-bottom: 12px;
+    border: 1.5px solid #d1d5db;
+    border-radius: 8px;
+    outline: none;
+    background: #ffffff;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#id:focus,
+#fen-code:focus {
+    border-color: #0097db;
+    box-shadow: 0 0 0 3px rgba(0, 151, 219, 0.2);
+}
+
+.text-divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    max-width: 250px;
+    margin: 12px auto;
+}
+
+.text-divider::before,
+.text-divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.text-divider span {
+    padding: 0 10px;
+    font-family: Inter, system-ui, sans-serif;
+    font-size: 13px;
+    color: #666;
+    font-weight: 500;
 }
 
 button#create.modern-button, button#auto-create.modern-button, #form a.modern-button {
@@ -57,7 +124,7 @@ button#create.modern-button, button#auto-create.modern-button, #form a.modern-bu
     max-width: 250px;
 }
 
-.modern-button img{
+.modern-button img {
 
     width: 24px;
     height: 24px;
@@ -75,9 +142,10 @@ button#create.modern-button, button#auto-create.modern-button, #form a.modern-bu
 
 .divider {
     width: 100%;
+    max-width: 320px;
     height: 1px;
     background: rgba(0, 0, 0, 0.15);
-    margin: 1rem 0;
+    margin: 0.75rem auto;
 }
 @media (max-width: 800px) {
     #logo {
@@ -104,13 +172,13 @@ button#create.modern-button, button#auto-create.modern-button, #form a.modern-bu
         overflow-y: visible;
     }
 
-    #right {
+    #left {
         border-left: none;
         border-bottom: 1px solid rgba(0, 32.5, 47.5);
         padding: 10px 12px 12px;
     }
 
-    #left {
+    #right {
         border-top: none;
         padding: 10px 12px;
         max-height: none;
@@ -150,6 +218,10 @@ button#create.modern-button, button#auto-create.modern-button, #form a.modern-bu
         align-items: center;
     }
 
+    .text-divider {
+        margin: 6px auto;
+    }
+
     .switch {
         margin: 4px 0 10px 0;
         gap: 0.3rem;
@@ -184,7 +256,8 @@ button#create.modern-button, button#auto-create.modern-button, #form a.modern-bu
     }
 
 
-    #left ul#game-list {
+    #right ul#registered-games-list,
+    #right ul#other-games-list {
         font-size: 0.8rem;
         margin-top: 6px;
     }

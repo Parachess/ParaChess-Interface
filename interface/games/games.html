@@ -55,7 +55,7 @@
       if (isPromotion(finalKey)) actions.textContent += finalKey + " ";
     });
   </script>
-  <body data-voice-page="games">
+  <body data-voice-page="help">
     <div id="head-tracker"></div>
     <div id="face-detection-popup" class="popup">
       <div class="popup-body">
@@ -123,17 +123,92 @@
         <div class="inline-options">
           <button class="popup-option" onclick="closePopups()">Fermer</button>
         </div>
-      </div>
-      <div class="popupBackground"></div>
-    </div>
-    <div id="unknown-game-popup" class="popup">
-      <div class="popup-body">
-        <h3>Une erreur est survenue !</h3>
-        <p id="unknown-game-message">Rien à signaler</p>
-        <div class="inline-options">
-          <button class="popup-option" onclick="goToMenu()">
-            Menu principal
-          </button>
+        <div id="content">
+            <div id="header">
+                <a href="/" id="return" aria-label="Retourner au menu">
+                    <img src="/public/assets/return.svg" alt="return" />
+                    <div class="voice-command-hint-button">
+                        <img src="/public/assets/parler_blanc.png" alt="Parler">
+                        <span>"retour"</span>
+                    </div>
+                </a>
+                <a href="/">
+                    <img id="logo" src="/public/assets/paragames.svg" alt="Logo ParaGames" />
+                </a>
+                <button id="toggle-facial-button" class="facial-active" aria-label="Activer/Désactiver le suivi du visage" onclick="displayFacialDetectionPopup(event);">
+                    <img id="toggle-face-button-image" src="/public/assets/eye-open.svg" alt="🔴" />
+                </button>
+                <button id="toggle-vocal-button" class="vocal-active" aria-label="Activer/Désactiver la commande vocale" onclick="toggleVocalMode(event);">
+                    <img id="toggle-vocal-button-image" src="/public/assets/mic-on.svg" alt="🎙️" />
+                </button>
+                <a href="/rules/" id="rules-button" aria-label="Voir les règles du jeu">
+                    <img id="rules-image" src="/public/assets/rules.png" alt="Règles" />
+                    <div class="voice-command-hint-button">
+                        <img src="/public/assets/parler_blanc.png" alt="Parler">
+                        <span>"règles"</span>
+                    </div>
+                 </a>
+            </div>
+            <img class="background" src="/public/assets/background.svg" alt="" />
+            
+            <div id="separate">
+                <div class="panel" id="left">
+                    <h2>
+                        <div id="logo-button-1" class="logo-button"></div>
+                        Créer une nouvelle partie
+                    </h2>
+                    <div id="form">
+                            <label for="play-with-someone" class="switch" style ="padding: 12px;">
+                                <span class="switch-label">Jouer à <span id="number-of-computer">1</span> écran<span id="computer-s"></span></span>
+                                <input type="checkbox" class="toggle-checkbox" id="play-with-someone" aria-label="Jouer seul ou à plusieurs." onclick="switchComputer();" />
+                            </label>
+
+                        <div class="divider"></div>
+
+                        <div class="creation-mode-auto">
+                            <button id="auto-create" aria-label="Créer automatiquement la partie" class="modern-button" onclick="createGameAutomatically();">
+                                <span class="auto-create-active">
+                                    <img src="/public/assets/parler_blanc.png" alt="Parler">
+                                    "Créer automatiquement"
+                                </span>
+                                <span class="auto-create-inactive">
+                                    Créer automatiquement
+                                </span>
+                            </button>
+                        </div>
+
+                        <div class="text-divider"><span>ou</span></div>
+
+                        <div class="creation-mode-custom">
+                            <input id="id" name="id" type="text" selected placeholder="Nom de la partie" />
+                            <div id="fen-form">
+                                <label for="fen-code">
+                                    Code FEN (optionnel) :
+                                </label>
+                                <input id="fen-code" name="fen" type="text" placeholder="Position initiale" />
+                            </div>
+                            <button id="create" aria-label="Créer la partie" class="modern-button" onclick="createGame();" select>Créer</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel" id="right">
+                    <h2>
+                        <div id="logo-button-2" class="logo-button"></div>
+                        Mes parties
+                    </h2>
+                    <br />
+                    <ul id="registered-games-list"></ul>
+                    <div class="divider"></div>
+                    <h2>
+                        Rejoindre une partie existante
+                    </h2>
+                    <br />
+                    <ul id="other-games-list">
+            
+                    </ul>
+                </div>
+                <br />
+            </div>
         </div>
       </div>
       <div class="popupBackground"></div>

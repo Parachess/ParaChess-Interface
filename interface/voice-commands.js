@@ -20,7 +20,15 @@ const VOICE_PAGE = (function detectPage() {
 /** GÉNÉRAL : Commandes communes à toutes les pages  **/
 /******************************************************/
 function goBackForward(command) {
-    if (command === 'retour') { window.history.back(); return true; }
+    if (command === 'retour') {
+        const returnBtn = document.getElementById('return');
+        if (returnBtn && returnBtn.href && window.history.length <= 1) {
+            window.location.href = returnBtn.href;
+        } else {
+            window.history.back();
+        }
+        return true;
+    }
     if (command === 'revenir') { window.history.forward(); return true; }
     return false;
 }
@@ -36,7 +44,7 @@ function goBackForward(command) {
     function dest() {
         return {
             credits: page === 'credits' ? null : '/credits',
-            about: page === 'a-propos' ? null : '/a-propos',
+            about: page === 'about-us' ? null : '/a-propos',
             legal: page === 'mentions-legales' ? null : '/mentions-legales',
             aide: page === 'help' ? null : '/aide',
             parachess: '/jeux/?g=parachess',
@@ -146,7 +154,7 @@ function goBackForward(command) {
  
     function dest() {
         return {
-            regles: game ? `/regles/?g=${game}` : null,
+            regles: game ? `/regles/?g=${game}&from=${encodeURIComponent(location.pathname + location.search)}` : null,
             parachess: game === 'parachess' ? null : '/jeux/?g=parachess',
             disconnect4: game === 'disconnect4' ? null : '/jeux/?g=disconnect4'
         };
@@ -189,7 +197,7 @@ function goBackForward(command) {
             case 'micro-off':
                 if (vocalMode) toggleVocalMode();
                 break;
-            case 'un-ordinateur': {
+            case 'un-ecran': {
                 const cb = document.getElementById('play-with-someone');
                 if (cb && cb.checked && typeof window.switchComputer === 'function') {
                     cb.checked = false;
@@ -197,7 +205,7 @@ function goBackForward(command) {
                 }
                 break;
             }
-            case 'deux-ordinateurs': {
+            case 'deux-ecrans': {
                 const cb = document.getElementById('play-with-someone');
                 if (cb && !cb.checked && typeof window.switchComputer === 'function') {
                     cb.checked = true;
@@ -298,7 +306,7 @@ function goBackForward(command) {
                 window.open('/aide', '_self');
                 break;
             case 'regles':
-                window.open('/regles/?g=parachess', '_self');
+                window.open('/regles/?g=parachess&from=' + encodeURIComponent(window.location.pathname + window.location.search), '_self');
                 break;
             case 'a-propos':
                 window.open('/a-propos', '_self');
@@ -421,7 +429,7 @@ function goBackForward(command) {
                 window.open('/aide', '_self');
                 break;
             case 'regles':
-                window.open('/regles/?g=parachess', '_self');
+                window.open('/regles/?g=parachess&from=' + encodeURIComponent(window.location.pathname + window.location.search), '_self');
                 break;
             case 'a-propos':
                 window.open('/a-propos', '_self');
@@ -529,7 +537,7 @@ function goBackForward(command) {
                 window.open('/aide', '_self');
                 break;
             case 'regles':
-                window.open('/regles/?g=disconnect4', '_self');
+                window.open('/regles/?g=disconnect4&from=' + encodeURIComponent(window.location.pathname + window.location.search), '_self');
                 break;
             case 'a-propos':
                 window.open('/a-propos', '_self');
@@ -634,10 +642,10 @@ function goBackForward(command) {
                 window.open('/credits', '_self');
                 break;
             case 'aide':
-                window.open('aide', '_self');
+                window.open('/aide', '_self');
                 break;
             case 'regles':
-                window.open('/regles/?g=disconnect4', '_self');
+                window.open('/regles/?g=disconnect4&from=' + encodeURIComponent(window.location.pathname + window.location.search), '_self');
                 break;
             case 'a-propos':
                 window.open('/a-propos', '_self');
