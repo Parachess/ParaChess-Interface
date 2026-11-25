@@ -72,7 +72,6 @@ function resetGame() {
     socket?.emit('resetState');
 }
 
-<<<<<<< HEAD
 function resign() {
     document.getElementById("confirmation-popup").classList.add("visible");
     setTimeout(() => document.querySelector('#confirmation-popup .popup-option').focus(), 100);
@@ -81,11 +80,6 @@ function resign() {
 function displayAttemptResult(answer) {
     if (answer.status !== "ALLOWED") {
         document.getElementById('refused-popup-text').innerText = answer.reason;
-=======
-function displayAttemptResult(status, side) {
-    if (status !== "ALLOWED") {
-        document.getElementById('refused-popup-text').innerText = side;
->>>>>>> mailis
         document.getElementById('refused-popup').classList.add('visible');
         setTimeout(() => document.querySelector('#refused-popup .popup-option').focus(), 100);
         return;
@@ -123,7 +117,6 @@ function validateResign(validation = false) {
     if (validation) socket?.emit("resign", sides[0]);
 }
 
-<<<<<<< HEAD
 async function feastVictory() {
     setTimeout(() => document.querySelector('#state-popup .popup-option').focus(), 100);
 
@@ -180,8 +173,4 @@ window.addEventListener('DOMContentLoaded', () => {
     if (rulesButton) {
         rulesButton.href = '/regles/?g=disconnect4&from=' + encodeURIComponent(window.location.pathname + window.location.search);
     }
-=======
-document.addEventListener("DOMContentLoaded", () => {
-    connection();
->>>>>>> mailis
 });

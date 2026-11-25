@@ -16,7 +16,6 @@ function createSendEval(nsp, gameId) {
     };
 }
 
-<<<<<<< HEAD
 /**
  * Resigns a game a send a message to inform users
  * 
@@ -104,19 +103,6 @@ function undo(nsp, id, ip) {
 }
 
 function handleTextCommand(nsp, text, address) {
-=======
-function undoOnce(nsp, id, game) {
-    if (game.gameOver || !game.history.length || game.history.length === game.undoneAt) return;
-    game.undo(true, true);
-    game.undoneAt = game.history.length;
-    game.displayBoard();
-    nsp.to('game:' + id).emit('boardStates', game.getPositions());
-    nsp.to('game:' + id).emit('legalMoves', game.getAllLegalMoves());
-    nsp.to('game:' + id).emit('state', game.getState());
-}
-
-function fromTextToMove(nsp, text, address) {
->>>>>>> mailis
     const ip = extractIP(address);
 
     if (!lastParachessUserGamesId[ip]) return;
@@ -211,14 +197,9 @@ export default function parachessNamespace(io) {
         });
 
         socket.on('undo', () => {
-<<<<<<< HEAD
             if (!parachessGames[id].isPlayer(ip))
                 return;
             undo(nsp, id, ip);
-=======
-            const game = parachessGames[id];
-            if (game.isPlayer(ip)) undoOnce(nsp, id, game);
->>>>>>> mailis
         });
 
         socket.on('fen', fen => {

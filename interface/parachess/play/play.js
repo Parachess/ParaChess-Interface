@@ -21,14 +21,9 @@ function connection() {
         },
         transports: ["websocket"]
     });
-<<<<<<< HEAD
 
     socket?.on('access', result => displayAttemptResult(result));
 
-=======
-    
-    socket?.on('side', (status, side) => displayAttemptResult(status, side));
->>>>>>> mailis
     socket?.on('voice-command', handleVoiceCommand);
 
     socket?.on('resetBoard', () => window.victoryDisplayed = false);
@@ -157,7 +152,6 @@ function displayAttemptResult(result) {
         document.getElementById('refused-popup-text').innerText = result.reason;
         document.getElementById('refused-popup').classList.add('visible');
         setTimeout(() => document.querySelector('#refused-popup .popup-option').focus(), 100);
-<<<<<<< HEAD
     } else {
         sides = result.sides;
         if (sides.includes('b') && !sides.includes('w')) chessboard.classList.add('rotated');
@@ -168,15 +162,6 @@ function displayAttemptResult(result) {
         } else
             document.getElementById('undo-button').classList.add('hidden');
     }
-=======
-    } else if (side === 'b' && !Array.from(chessboard.classList).includes("rotated")) chessboard.classList.add('rotated');
-    else if (side === 'w' && Array.from(chessboard.classList).includes("rotated")) chessboard.classList.remove('rotated');
-    if (side !== '*')
-        document.getElementById('undo-button').classList.add('hidden');
-    else if (side === '*')
-        document.getElementById('undo-button').classList.remove('hidden');
-    document.getElementById('undo-button').classList.toggle('hidden', status !== "ALLOWED");
->>>>>>> mailis
 }
 
 function hideAll() {
@@ -255,7 +240,6 @@ window.addEventListener('keydown', e => {
     } else if (isSquare) lastSquare = twoLast.join('');
 });
 
-<<<<<<< HEAD
 async function feastVictory() {
     setTimeout(() => document.querySelector('#state-popup .popup-option').focus(), 100);
 
@@ -311,8 +295,4 @@ window.addEventListener('DOMContentLoaded', () => {
     if (rulesButton) {
         rulesButton.href = '/regles/?g=parachess&from=' + encodeURIComponent(window.location.pathname + window.location.search);
     }
-=======
-document.addEventListener("DOMContentLoaded", () => {
-    connection();
->>>>>>> mailis
 });
