@@ -12,7 +12,7 @@ function connection() {
     });
 
     socket?.on('side', (status, side) => displayAttemptResult(status, side));
-    socket?.on('voice-command', cmd => window.handleVoiceCommand?.(cmd));
+    socket?.on('voice-command', handleVoiceCommand);
 
     socket?.on('boardStates', states => {
         positions = states;
@@ -64,6 +64,8 @@ function displayAttemptResult(status, side) {
         setTimeout(() => document.querySelector('#refused-popup .popup-option').focus(), 100);
         return;
     }
+    if (side !== '*')
+        document.getElementById('undo-button').classList.add('hidden');
 }
 
 function hideAll() {
