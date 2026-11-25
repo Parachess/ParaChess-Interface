@@ -42,9 +42,9 @@ const puissance4Homophones = {
     "colonne" : ["colonnes", "colonne", 'cologne']
 };
 
-const vocMenu = ["menu", "retour", "quitter", "revenir", "accueil",
-    "crédits", "propos", "sommes", "nous", "règle", "règles", "aide", "mentions", "légales",
-    "échecs", "puissance", "coordonnées", "caméra", "micro",
+const vocMenu = ["retour", "quitter", "revenir", "accueil", "aide",
+    "crédits", "sommes", "nous", "règle", "règles", "mentions",
+    "échecs", "puissance", "coordonnées", "caméra", "micro", "légales",
     "activer", "désactiver", "créer", "automatiquement", "partie",
     "ordinateur", "ordinateurs", "coup", "précédent"];
 const vocPuissance4 = ["colonne"];
@@ -144,7 +144,7 @@ export function detectMenuCommand(text) {
     if (words.includes("précédent")) return "coup-precedent";
     if (words.includes("crédits")) return "credits";
     if (words.includes("mention") || words.includes("légal") || words.includes("mentions") || words.includes("légales")) return "mentions-legales";
-    if (words.includes("propos") || words.includes("sommes") || words.includes("nous")) return "a-propos";
+    if (words.includes("sommes") || words.includes("nous")) return "a-propos";
     if (words.includes("échecs") || words.includes("échec")) return "parachess";
     if (words.includes("puissance")) return "disconnect4";
     if (words.includes("caméra")) {
@@ -168,7 +168,7 @@ export function detectMenuCommand(text) {
     if (words.includes("règle") || words.includes("règles")) return "regles";
     if (words.includes("quitter")) return "quitter";
     if (words.includes("accueil")) return "accueil";
-    if (words.includes("retour") || words.includes("menu")) return "retour";
+    if (words.includes("retour")) return "retour";
 
     return null;
 }
