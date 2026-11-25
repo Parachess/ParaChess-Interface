@@ -142,7 +142,6 @@
         const urlParams = new URLSearchParams(window.location.search);
         const game = urlParams.get("g") || "parachess";
 
-<<<<<<< HEAD
             // Déterminer l'URL de retour selon la provenance
             let returnUrl = null;
             let isGame = false;
@@ -207,19 +206,6 @@
                 returnBtn.href = returnUrl;
                 returnBtn.setAttribute('aria-label', isGame ? 'Retourner à la partie' : 'Retourner au menu');
             }
-=======
-        const logo = document.getElementById("logo");
-        if (game === "disconnect4") {
-          logo.src = "/public/assets/paragames.svg";
-        } else {
-          logo.src = "/public/assets/paragames_logo.svg";
-        }
->>>>>>> mailis
-
-        const returnBtn = document.getElementById("return");
-        if (returnBtn) {
-          returnBtn.href = "/jeux?g=" + game;
-        }
 
         try {
           const response = await fetch(`/public/rules/${game}.html`);

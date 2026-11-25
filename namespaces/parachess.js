@@ -102,7 +102,14 @@ function undo(nsp, id, ip) {
     }
 }
 
-function handleTextCommand(nsp, text, address) {
+function undoOnce(nsp, id, game, ip) {
+    if (game.gameOver || !game.history.length || game.history.length === game.undoneAt) return;
+    const before = game.history.length;
+    undo(nsp, id, ip);
+    if (game.history.length < before) game.undoneAt = game.history.length;
+}
+
+function handleTextCommand(nsp, socket, text, address) {
     const ip = extractIP(address);
 
     if (!lastParachessUserGamesId[ip]) return;
@@ -116,7 +123,7 @@ function handleTextCommand(nsp, text, address) {
     const menuCommand = detectMenuCommand(lowerCaseText);
 
     if (menuCommand === 'coup-precedent') {
-        undoOnce(nsp, id, game);
+        undoOnce(nsp, id, game, ip);
         return;
     }
 
@@ -236,7 +243,7 @@ export default function parachessNamespace(io) {
             if (recChess.acceptWaveform(uint8)) {
                 const result = recChess.result();
                 if (result?.text) {
-                    handleTextCommand(nsp, transform(result.text, grammarChess), ip);
+                    handleTextCommand(nsp, socket, transform(result.text, grammarChess), ip);
                 }
             }
         });

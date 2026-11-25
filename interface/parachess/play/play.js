@@ -24,7 +24,7 @@ function connection() {
 
     socket?.on('access', result => displayAttemptResult(result));
 
-    socket?.on('voice-command', handleVoiceCommand);
+    socket?.on('voice-command', cmd => window.handleVoiceCommand?.(cmd));
 
     socket?.on('resetBoard', () => window.victoryDisplayed = false);
 

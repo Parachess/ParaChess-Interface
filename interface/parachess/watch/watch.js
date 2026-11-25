@@ -110,7 +110,6 @@ function showCoordinates() {
 }
 
 document.getElementById('showCoordinates').onchange = showCoordinates;
-<<<<<<< HEAD
 connection();
 
 async function feastVictory() {
@@ -162,9 +161,3 @@ async function feastVictory() {
         colors
     });
 }
-=======
-
-document.addEventListener("DOMContentLoaded", () => {
-    connection();
-});
->>>>>>> mailis

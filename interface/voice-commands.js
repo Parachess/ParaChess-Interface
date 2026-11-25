@@ -44,7 +44,7 @@ function goBackForward(command) {
     function dest() {
         return {
             credits: page === 'credits' ? null : '/credits',
-            about: page === 'a-propos' ? null : '/a-propos',
+            about: page === 'about-us' ? null : '/a-propos',
             legal: page === 'mentions-legales' ? null : '/mentions-legales',
             aide: page === 'help' ? null : '/aide',
             parachess: '/jeux/?g=parachess',
@@ -642,7 +642,7 @@ function goBackForward(command) {
                 window.open('/credits', '_self');
                 break;
             case 'aide':
-                window.open('aide', '_self');
+                window.open('/aide', '_self');
                 break;
             case 'regles':
                 window.open('/regles/?g=disconnect4&from=' + encodeURIComponent(window.location.pathname + window.location.search), '_self');

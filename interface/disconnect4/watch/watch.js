@@ -57,7 +57,6 @@ function hideAll() {
     document.getElementById('state-popup').classList.remove('visible');
 }
 
-<<<<<<< HEAD
 async function feastVictory() {
     setTimeout(() => document.querySelector('#state-popup .popup-option').focus(), 100);
 
@@ -110,8 +109,3 @@ async function feastVictory() {
 
 window.addEventListener('DOMContentLoaded', () => connection());
 connection();
-=======
-document.addEventListener("DOMContentLoaded", () => {
-    connection();
-});
->>>>>>> mailis

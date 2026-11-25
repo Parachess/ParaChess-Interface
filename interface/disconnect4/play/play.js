@@ -21,7 +21,7 @@ function connection() {
     });
 
     socket?.on('access', (answer) => displayAttemptResult(answer));
-    socket?.on('voice-command', handleVoiceCommand);
+    socket?.on('voice-command', cmd => window.handleVoiceCommand?.(cmd));
 
     socket?.on('boardStates', states => {
         positions = states;

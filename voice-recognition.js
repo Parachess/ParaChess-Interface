@@ -46,15 +46,12 @@ const screenHomophones = {
     "écran": ["écran", "écrans", "ecran", "ecrans"]
 };
 
-const vocMenu = ["[unk]", "menu", "retour", "quitter", "revenir", "accueil",
+const vocMenu = ["retour", "quitter", "revenir", "accueil",
     "crédits", "propos", "sommes", "nous", "règle", "règles", "aide", "mentions", "légales",
     "échecs", "puissance", "coordonnées", "caméra", "micro",
     "activer", "désactiver", "créer", "automatiquement", "partie",
-<<<<<<< HEAD
-    "jouer", "écran", "écrans", "ecran", "ecrans"];
-=======
-    "ordinateur", "ordinateurs", "coup", "précédent"];
->>>>>>> mailis
+    "ordinateur", "ordinateurs", "coup", "précédent",
+    "jouer", "sur", "écran", "écrans", "mention", "légal"];
 const vocPuissance4 = ["colonne"];
 const pieces = ["tour", "cavalier", "fou", "dame", "pion", "roi"];
 const ordre = ["abandonner", "recommencer", "rejouer", "non", "annuler"];
@@ -81,20 +78,7 @@ Object.values(alphabetHomophones).forEach(letterSyns => {
 Object.values(alphabetHomophones).forEach(syns => grammarChess.push(...syns));
 Object.values(chiffresHomophones).forEach(syns => grammarChess.push(...syns));
 
-<<<<<<< HEAD
-const screenPhrases = [
-    "un écran", "un ecran", "une écran", "une ecran",
-    "deux écrans", "deux ecran", "deux ecrans", "deu ecran", "deu ecrans", "de écrans", "de ecran",
-    "jouer à un écran", "jouer à un ecran", "jouer à une écran",
-    "jouer à deux écrans", "jouer à deux ecran", "jouer à deux ecrans", "jouer à deu ecran", "jouer à deu ecrans", "jouer à de écrans",
-    "jouer un écran", "jouer deux écrans", "jouer un ecran", "jouer deux ecran",
-    "jouer à un", "jouer à deux", "jouer à deu", "jouer à une"
-];
-
-grammarChess.push("puissance quatre", ...screenPhrases);
-=======
 grammarChess.push("puissance quatre", "un ordinateur", "deux ordinateurs","coup précédent");
->>>>>>> mailis
 
 const grammarPuissance4 = [...ordre, ...vocMenu, ...vocPuissance4];
 const chiffresPuissance4 = ["1", "2", "3", "4", "5", "6", "7"];
@@ -110,11 +94,7 @@ puissance4Homophones["colonne"].forEach(colSyn => {
 Object.values(chiffresHomophones).forEach(syns => grammarPuissance4.push(...syns));
 Object.values(puissance4Homophones).forEach(syns => grammarPuissance4.push(...syns));
 
-<<<<<<< HEAD
-grammarPuissance4.push("puissance quatre", ...screenPhrases);
-=======
 grammarPuissance4.push("puissance quatre", "un ordinateur", "deux ordinateurs","coup précédent");
->>>>>>> mailis
 
 export { grammarChess, grammarPuissance4 };
 
@@ -135,8 +115,8 @@ export function startListening(callback) {
 
     server.on('message', (msg, rinfo) => {
         const audioPayload = msg.slice(12);
-        if (rec.acceptWaveform(audioPayload)) {
-            const rawText = rec.result().text;
+        if (recChess.acceptWaveform(audioPayload)) {
+            const rawText = recChess.result().text;
             const cleanedText = transform(rawText);
             callback(cleanedText, rinfo.address);
         }
@@ -171,7 +151,7 @@ export function detectMenuCommand(text) {
     if (words.includes("crédits")) return "credits";
     if (words.includes("mention") || words.includes("légal") || words.includes("mentions") || words.includes("légales")) return "mentions-legales";
     if (words.includes("propos") || words.includes("sommes") || words.includes("nous")) return "a-propos";
-    if (words.includes("échecs") || words.includes("échec")) return "parachess";
+    if (words.includes("échecs")) return "parachess";
     if (words.includes("puissance")) return "disconnect4";
     if (words.includes("caméra")) {
         if (words.includes("désactiver")) return "camera-off";
@@ -200,7 +180,7 @@ export function detectMenuCommand(text) {
     if (words.includes("règle") || words.includes("règles")) return "regles";
     if (words.includes("quitter")) return "quitter";
     if (words.includes("accueil")) return "accueil";
-    if (words.includes("retour") || words.includes("menu")) return "retour";
+    if (words.includes("retour")) return "retour";
 
     return null;
 }
