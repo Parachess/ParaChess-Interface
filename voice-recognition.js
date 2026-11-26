@@ -57,7 +57,6 @@ const reverseMap = {};
 Object.entries(alphabetHomophones).forEach(([letter, syns]) => syns.forEach(s => reverseMap[s] = letter));
 Object.entries(chiffresHomophones).forEach(([digit, syns]) => syns.forEach(s => reverseMap[s] = digit));
 Object.entries(puissance4Homophones).forEach(([word, syns]) => syns.forEach(s => reverseMap[s] = word));
-Object.entries(screenHomophones).forEach(([word, syns]) => syns.forEach(s => reverseMap[s] = word));
 
 const grammarChess = [...pieces, ...ordre, ...ignore, ...vocMenu];
 
